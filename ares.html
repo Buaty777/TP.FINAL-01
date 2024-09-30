@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.T.P (THE  GAME)</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #game-intro {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .player-text {
+            color: #3498db;
+        }
+
+        .lawyer-text {
+            color: #bada55;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-intro" class="hidden">
+        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí la llamada de un abogado,</p>
+        <p class="lawyer-text">su voz era seria y ronca y únicamente atinó a decir:</p>
+        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
+        <p>Y así empezó mi historia...</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script>
+        function showIntro() {
+            const introElement = document.getElementById('game-intro');
+            introElement.classList.remove('hidden');
+            introElement.style.display = 'block';
+
+            setTimeout(() => {
+                introElement.style.opacity = 1;
+            }, 100);
+
+            const synth = new Tone.Synth().toDestination();
+            const pattern = new Tone.Pattern(function(time, note){
+                synth.triggerAttackRelease(note, 0.5);
+            }, ["C4", "E4", "G4", "B4"], "up");
+
+            Tone.Transport.bpm.value = 60;
+            pattern.start(0);
+            Tone.Transport.start();
+        }
+
+        const playerName = prompt("Introduce tu nombre:");
+        document.getElementById('player-name').textContent = playerName;
+
+        window.onload = function() {
+            showIntro();
+        };
+    </script>
+</body>
+</html>
