@@ -63,6 +63,27 @@
             width: 50px;
             height: 50px;
         }
+
+        #skip-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            color: white;
+        }
+
+        #stop-button {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: #444;
+            border-radius: 5px;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -76,16 +97,16 @@
 
     <div class="panel" id="sound-panel">
         <p>Controles de sonido:</p>
-        <button class="button" onclick="playSadMusic()" style="width: 150px; height: 60px;">Sonido Triste</button>
-        <button class="button" onclick="goToIndex()" style="width: 150px; height: 60px;">Salir</button>
+        <button class="button" onclick="playSadMusic()">Sonido Triste</button>
+        <button class="button" onclick="goToIndex()">Salir</button>
     </div>
 
-    <button class="button" id="stop-button" onclick="toggleSoundPanel()" style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 100px; height: 100px;">
-        <img src="stop.png" alt="Control de Sonido" style="width: 100%; height: 100%;">
+    <button class="button" id="skip-button" onclick="skipCutscene()">
+        <img src="pass.png" alt="Saltar Cinemática">
     </button>
 
-    <button class="button" id="skip-button" onclick="skipCutscene()" style="position: absolute; bottom: 10%; left: 10%; width: 150px; height: 60px;">
-        <img src="pass.png" alt="Saltar Cinemática" style="width: 100%; height: 100%;">
+    <button class="button" id="stop-button" onclick="toggleSoundPanel()">
+        <img src="stop.png" alt="Control de Sonido">
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -141,8 +162,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
