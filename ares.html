@@ -130,8 +130,6 @@
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
-        let synth;
-        let pattern;
         let backgroundMusic;
         let isPlaying = false;
 
@@ -143,20 +141,9 @@
             setTimeout(() => {
                 introElement.style.opacity = 1;
             }, 100);
-
-            synth = new Tone.Synth().toDestination();
-            pattern = new Tone.Pattern(function(time, note){
-                synth.triggerAttackRelease(note, 0.5);
-            }, ["C4", "E4", "G4", "B4"], "up");
-
-            Tone.Transport.bpm.value = 60;
-            pattern.start(0);
-            Tone.Transport.start();
         }
 
         function skipCutscene() {
-            Tone.Transport.stop();
-            document.body.style.backgroundImage = "url('paisaje_1.png')";
             document.getElementById('game-intro').style.display = 'none';
             document.getElementById('sound-menu').style.display = 'block';
             playLongSadMusic();
@@ -172,13 +159,15 @@
         }
 
         function playLongSadMusic() {
-            const notes = ["C4", "E4", "G4", "A4", "B4", "C5"];
+            const notes = ["C4", "E4", "G4", "A4", "B4", "C5", "D5", "E5", "C5", "B4", "A4"];
             backgroundMusic = new Tone.PolySynth().toDestination();
             const loop = new Tone.Loop((time) => {
                 backgroundMusic.triggerAttackRelease(notes, 1, time);
             }, "4n").start(0);
 
+            Tone.Transport.bpm.value = 60; 
             Tone.Transport.start();
+            isPlaying = true;
         }
 
         function togglePlay() {
@@ -215,6 +204,3 @@
     </script>
 </body>
 </html>
-
-
-
