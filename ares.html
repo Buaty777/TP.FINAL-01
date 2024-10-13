@@ -4,9 +4,13 @@
     <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (the game)</title>
+    <title>K.T.P (THE GAME)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @font-face {
+            font-family: 'Press Start 2P';
+            src: url('https://fonts.cdnfonts.com/s/10257/PressStart2P-Regular.woff') format('woff');
+        }
+
         body {
             font-family: 'Press Start 2P', cursive;
             background-color: black;
@@ -17,15 +21,16 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
+            margin: 0;
         }
 
-        #intro-juego, #cinematica {
+        #intro-juego {
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
         }
 
-        .texto-jugador {
+        .texto-prota {
             color: #3498db;
         }
 
@@ -33,109 +38,100 @@
             color: #bada55;
         }
 
+        #panel-texto {
+            position: absolute;
+            bottom: 20px;
+            background: rgba(128, 128, 128, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+        }
+
         .oculto {
             display: none;
         }
 
-        .fondo {
+        img {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: url('/mnt/data/paisaje_1.png') no-repeat center center;
-            background-size: cover;
-        }
-
-        .panel-texto {
-            position: absolute;
-            bottom: 10%;
-            left: 10%;
-            right: 10%;
-            padding: 20px;
-            background-color: rgba(50, 50, 50, 0.7); 
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .boton-saltar, .boton-pausar, .boton-salir {
-            position: fixed;
-            bottom: 5%;
-            width: 50px;
             cursor: pointer;
         }
 
-        .boton-saltar {
-            left: 10%;
+        #boton-pasar {
+            top: 20px;
+            right: 20px;
         }
 
-        .boton-pausar {
-            left: 50%;
-            transform: translateX(-50%);
+        #boton-stop {
+            top: 20px;
+            left: 20px;
         }
 
-        .boton-salir {
-            right: 10%;
+        #boton-salir {
+            bottom: 20px;
+            right: 20px;
         }
+
     </style>
 </head>
 <body>
 
-    <div class="fondo"></div>
-
-    <div id="cinematica" class="oculto">
-        <div class="panel-texto">
-            <p>Era una noche cualquiera. Yo, <span id="nombre-jugador" class="texto-jugador"></span>, tranquilo en casa, hasta que sonó el teléfono.</p>
-            <p class="texto-abogado">Del otro lado, una voz ronca y cortante soltó sin más:</p>
-            <p class="texto-abogado">"Pibe... el viejo CROPS me dejó unas cositas para vos... Nos vemos en Pit City. No faltes."</p>
-            <p>Algo en su tono me dejó helado... y así, sin entender nada, todo arrancó.</p>
+    <div id="intro-juego" class="oculto">
+        <div id="panel-texto">
+            <p>un dia, yo <span id="nombre-jugador" class="texto-prota"></span> estaba tranqui en casa cuando sono el telefono... un abogado me dijo:</p>
+            <p class="texto-abogado">"escuchame nene, el sr. crops me dijo que vengas a la ciudad pit... tenés que hacer unas cosas"</p>
+            <p class="texto-abogado">"dale, movete antes que tenga que hacer el laburo yo, o querés que te pase lo que a dardo cuando no paga la cuenta?"</p>
+            <p>y ahi arranca mi aventura... como diria pepe argento: "voy a ser el gerente... del fracaso"</p>
         </div>
     </div>
 
-    <img src="/mnt/data/pass.png" class="boton-saltar" onclick="saltarIntro()">
-    <img src="/mnt/data/stop.png" class="boton-pausar" onclick="abrirPanelSonido()">
-    <a href="index.html"><img src="/mnt/data/salir.png" class="boton-salir"></a>
+    <img id="boton-pasar" src="assets/pass.png" alt="Pasar cinemática" onclick="saltarCinematica()">
+    <img id="boton-stop" src="assets/stop.png" alt="Ajustes de sonido" onclick="abrirPanelSonido()">
+    <img id="boton-salir" src="assets/salir.png" alt="Salir del juego" onclick="salirJuego()">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         function mostrarIntro() {
-            const introElement = document.getElementById('cinematica');
+            const introElement = document.getElementById('intro-juego');
             introElement.classList.remove('oculto');
             introElement.style.display = 'block';
-
             setTimeout(() => {
                 introElement.style.opacity = 1;
             }, 100);
 
-            const sintetizador = new Tone.Synth().toDestination();
-            const patron = new Tone.Pattern(function(time, nota){
-                sintetizador.triggerAttackRelease(nota, 0.5);
-            }, ["C4", "E4", "G4", "B4", "D5", "F5", "A5", "C5"], "up");
+            const synth = new Tone.Synth().toDestination();
+            const pattern = new Tone.Pattern(function (time, note) {
+                synth.triggerAttackRelease(note, 0.5);
+            }, ["C4", "E4", "G4", "B4"], "up");
 
             Tone.Transport.bpm.value = 60;
-            patron.start(0);
+            pattern.start(0);
             Tone.Transport.start();
         }
 
-        function saltarIntro() {
-            const introElement = document.getElementById('cinematica');
+        function saltarCinematica() {
+            const introElement = document.getElementById('intro-juego');
             introElement.style.display = 'none';
+            alert("cinematica saltada... y bue, como siempre, el argentino va apurado");
         }
 
         function abrirPanelSonido() {
-            console.log('Panel de sonido abierto');
+            alert("panel de sonido... si querés mas volumen, mejor anda a cambiar el equipo");
         }
 
-        const nombreJugador = prompt("¿Cómo te llamás?");
+        function salirJuego() {
+            alert("te vas, como dice pepe: pensas trabajar menos que un inspector de subte");
+            window.location.href = 'index.html';
+        }
+
+        const nombreJugador = prompt("como te llamas, campeon?");
         document.getElementById('nombre-jugador').textContent = nombreJugador;
 
-        window.onload = function() {
+        window.onload = function () {
             mostrarIntro();
         };
     </script>
 </body>
 </html>
+
+
 
