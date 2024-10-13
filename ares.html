@@ -4,7 +4,7 @@
     <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAAME)</title>
+    <title>K.T.P (the game)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         body {
@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        #intro-juego, #cinematica-bus {
+        #intro-juego, #cinematica {
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
@@ -37,17 +37,28 @@
             display: none;
         }
 
-        .contenedor-colectivo {
+        .fondo {
             position: absolute;
-            bottom: 10%;
-            left: -20%;
-            width: 100px;
-            animation: moverColectivo 10s linear infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('/mnt/data/paisaje_1.png') no-repeat center center;
+            background-size: cover;
         }
 
-        @keyframes moverColectivo {
-            0% { left: -20%; }
-            100% { left: 120%; }
+        .panel-texto {
+            position: absolute;
+            bottom: 10%;
+            left: 10%;
+            right: 10%;
+            padding: 20px;
+            background-color: rgba(50, 50, 50, 0.7); 
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            text-align: left;
         }
 
         .boton-saltar, .boton-pausar, .boton-salir {
@@ -69,68 +80,19 @@
         .boton-salir {
             right: 10%;
         }
-
-        .escena {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 150px;
-            background: repeating-linear-gradient(to right, #228B22, #228B22 10px, #32CD32 10px, #32CD32 20px);
-        }
-
-        .arbol {
-            width: 50px;
-            height: 100px;
-            background-color: brown;
-            position: absolute;
-            bottom: 0;
-            border-radius: 10px;
-        }
-
-        .arbol:before {
-            content: '';
-            position: absolute;
-            bottom: 80%;
-            left: -20px;
-            width: 90px;
-            height: 70px;
-            background-color: #228B22;
-            border-radius: 50%;
-        }
-
-        .arbol:nth-child(2) {
-            left: 20%;
-        }
-
-        .arbol:nth-child(3) {
-            left: 50%;
-        }
-
-        .arbol:nth-child(4) {
-            left: 80%;
-        }
     </style>
 </head>
 <body>
 
-    <div id="cinematica-bus" class="oculto">
-        <div class="contenedor-colectivo">
-            <img src="/mnt/data/bus.png" alt="colectivo">
-        </div>
-        <div class="escena">
-            <div class="arbol"></div>
-            <div class="arbol"></div>
-            <div class="arbol"></div>
-            <div class="arbol"></div>
-        </div>
-    </div>
+    <div class="fondo"></div>
 
-    <div id="intro-juego" class="oculto">
-        <p>Era una noche cualquiera. Yo, <span id="nombre-jugador" class="texto-jugador"></span>, tranquilo en casa, hasta que sonó el teléfono.</p>
-        <p class="texto-abogado">Del otro lado, una voz ronca y cortante soltó sin más:</p>
-        <p class="texto-abogado">"Pibe... el viejo CROPS me dejó unas cositas para vos... Nos vemos en Pit City. No faltes."</p>
-        <p>Algo en su tono me dejó helado... y así, sin entender nada, todo arrancó.</p>
+    <div id="cinematica" class="oculto">
+        <div class="panel-texto">
+            <p>Era una noche cualquiera. Yo, <span id="nombre-jugador" class="texto-jugador"></span>, tranquilo en casa, hasta que sonó el teléfono.</p>
+            <p class="texto-abogado">Del otro lado, una voz ronca y cortante soltó sin más:</p>
+            <p class="texto-abogado">"Pibe... el viejo CROPS me dejó unas cositas para vos... Nos vemos en Pit City. No faltes."</p>
+            <p>Algo en su tono me dejó helado... y así, sin entender nada, todo arrancó.</p>
+        </div>
     </div>
 
     <img src="/mnt/data/pass.png" class="boton-saltar" onclick="saltarIntro()">
@@ -140,7 +102,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         function mostrarIntro() {
-            const introElement = document.getElementById('intro-juego');
+            const introElement = document.getElementById('cinematica');
             introElement.classList.remove('oculto');
             introElement.style.display = 'block';
 
@@ -151,7 +113,7 @@
             const sintetizador = new Tone.Synth().toDestination();
             const patron = new Tone.Pattern(function(time, nota){
                 sintetizador.triggerAttackRelease(nota, 0.5);
-            }, ["C4", "E4", "G4", "B4", "D5", "F5", "A5", "C5"], "up"); 
+            }, ["C4", "E4", "G4", "B4", "D5", "F5", "A5", "C5"], "up");
 
             Tone.Transport.bpm.value = 60;
             patron.start(0);
@@ -159,15 +121,8 @@
         }
 
         function saltarIntro() {
-            const introElement = document.getElementById('intro-juego');
-            const cinematicaBus = document.getElementById('cinematica-bus');
-            
+            const introElement = document.getElementById('cinematica');
             introElement.style.display = 'none';
-            cinematicaBus.classList.remove('oculto');
-            cinematicaBus.style.display = 'block';
-            setTimeout(() => {
-                cinematicaBus.style.opacity = 1;
-            }, 100);
         }
 
         function abrirPanelSonido() {
