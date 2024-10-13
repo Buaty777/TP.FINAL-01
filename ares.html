@@ -55,14 +55,14 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 30px;
-            margin: 15px;
+            padding: 10px;
+            margin: 10px;
             font-size: 24px;
         }
 
         .button img {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
         }
 
         #skip-button {
@@ -88,6 +88,12 @@
             width: 200px;
             margin-top: 10px;
         }
+
+        .menu-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -102,7 +108,7 @@
     <div class="menu" id="sound-menu">
         <p>Menú</p>
         <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
-        <div>
+        <div class="menu-buttons">
             <button class="button" onclick="goToIndex()">
                 <img src="salir.png" alt="Salir">
             </button>
@@ -128,7 +134,226 @@
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
-        let isPlaying = false;
+        let isPlaying = true;
+
+        const synth = new Tone.Synth().toDestination();
+        const piano = new Tone.Sampler({
+            urls: {
+                "A0": "A0.mp3",
+                "C1": "C1.mp3",
+                "D#1": "Ds1.mp3",
+                "F#1": "Fs1.mp3",
+                "A1": "A1.mp3",
+            },
+            baseUrl: "https://tonejs.github.io/audio/salamander/"
+        }).toDestination();
+
+        const melody = new Tone.Sequence(
+            (time, note) => {
+                piano.triggerAttackRelease(note, "10n", time);
+            },
+            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
+            "4n"
+        );
+
+        window.onload = function() {
+            showIntro();
+            Tone.start();
+            Tone.Transport.start();
+            melody.start();
+        };
+
+        function showIntro() {
+            const introElement = document.getElementById('game-intro');
+            introElement.classList.remove('hidden');
+            introElement.style.display = 'block';
+
+            setTimeout(() => {
+                introElement.style.opacity = 1;
+            }, 100);
+        }
+
+        function skipCutscene() {
+            document.getElementById('game-intro').style.display = 'none';
+            document.getElementById('sound-menu').style.display = 'block';
+        }
+
+        function toggleSoundMenu() {
+            const menu = document.getElementById('sound-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function goToIndex() {
+            window.location.href = 'index.html';
+        }
+
+        function togglePlay() {
+            if (!isPlaying) {
+                Tone.Transport.start();
+                isPlaying = true;
+            }
+        }
+
+        function togglePause() {
+            if (isPlaying) {
+                Tone.Transport.pause();
+                isPlaying = false;
+            }
+        }
+
+        const volumeSlider = document.getElementById('volume-slider');
+        volumeSlider.addEventListener('input', (event) => {
+            const volume = event.target.value;
+            Tone.Destination.volume.value = (volume - 100) / 100;
+        });
+
+        const buttons = document.querySelectorAll('.button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const clickSound = new Tone.Synth().toDestination();
+                clickSound.triggerAttackRelease('C4', '8n');
+            });
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.T.P (THE GAME)</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #game-intro {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .player-text {
+            color: #3498db;
+        }
+
+        .lawyer-text {
+            color: #bada55;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 300px;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            font-size: 24px;
+        }
+
+        .button img {
+            width: 80px;
+            height: 80px;
+        }
+
+        #skip-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: white;
+        }
+
+        #stop-button {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: transparent;
+            color: white;
+        }
+
+        .volume-slider {
+            width: 200px;
+            margin-top: 10px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-intro" class="hidden">
+        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
+        <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
+        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
+        <p>Y así empezó mi historia...</p>
+    </div>
+
+    <div class="menu" id="sound-menu">
+        <p>Menú</p>
+        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
+        <div class="menu-buttons">
+            <button class="button" onclick="goToIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="button" id="play-button" onclick="togglePlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="button" id="pause-button" onclick="togglePause()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
+    </div>
+
+    <button class="button" id="skip-button" onclick="skipCutscene()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="button" id="stop-button" onclick="toggleSoundMenu()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script>
+        const playerName = prompt("Introduce tu nombre:");
+        document.getElementById('player-name').textContent = playerName;
+
+        let isPlaying = true;
 
         const synth = new Tone.Synth().toDestination();
         const piano = new Tone.Sampler({
