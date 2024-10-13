@@ -55,13 +55,14 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 10px;
-            margin: 5px;
+            padding: 15px;
+            margin: 10px;
+            font-size: 20px;
         }
 
         .button img {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px; 
         }
 
         #skip-button {
@@ -103,15 +104,17 @@
     <div class="menu" id="sound-menu">
         <p>Menú</p>
         <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
-        <button class="button" onclick="goToIndex()">
-            <img src="salir.png" alt="Salir">
-        </button>
-        <button class="button" id="play-button" onclick="togglePlay()">
-            <img src="inicio.png" alt="Iniciar Música">
-        </button>
-        <button class="button" id="pause-button" onclick="togglePause()">
-            <img src="pausa.png" alt="Pausar Música">
-        </button>
+        <div>
+            <button class="button" onclick="goToIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="button" id="play-button" onclick="togglePlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="button" id="pause-button" onclick="togglePause()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
     </div>
 
     <button class="button" id="skip-button" onclick="skipCutscene()">
@@ -169,19 +172,19 @@
         }
 
         function playSadMusicWithBus() {
-            backgroundMusic = new Tone.Synth().toDestination();
+            const length = 60;
+            backgroundMusic = new Tone.PolySynth().toDestination();
             busNoise = new Tone.Noise("brown").toDestination();
             
-            backgroundMusic.triggerAttackRelease('C3', '1n');
-            backgroundMusic.triggerAttackRelease('G3', '1n', "+0.5");
-            backgroundMusic.triggerAttackRelease('E3', '1n', "+1");
+            const notes = ["C4", "E4", "G4", "A4", "B4", "C5"];
+            backgroundMusic.triggerAttackRelease(notes, length);
 
-            busNoise.volume.value = -20; 
+            busNoise.volume.value = -30;
             busNoise.start();
 
             setTimeout(() => {
                 busNoise.stop();
-            }, 5000);
+            }, 60000);
         }
 
         function togglePlay() {
