@@ -106,6 +106,12 @@
         <button class="button" onclick="goToIndex()">
             <img src="salir.png" alt="Salir">
         </button>
+        <button class="button" id="play-button" onclick="togglePlay()">
+            <img src="inicio.png" alt="Iniciar Música">
+        </button>
+        <button class="button" id="pause-button" onclick="togglePause()">
+            <img src="pausa.png" alt="Pausar Música">
+        </button>
     </div>
 
     <button class="button" id="skip-button" onclick="skipCutscene()">
@@ -124,6 +130,7 @@
         let synth;
         let pattern;
         let backgroundMusic, busNoise;
+        let isPlaying = false;
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
@@ -169,6 +176,7 @@
             backgroundMusic.triggerAttackRelease('G3', '1n', "+0.5");
             backgroundMusic.triggerAttackRelease('E3', '1n', "+1");
 
+            busNoise.volume.value = -20; 
             busNoise.start();
 
             setTimeout(() => {
@@ -176,10 +184,24 @@
             }, 5000);
         }
 
+        function togglePlay() {
+            if (!isPlaying) {
+                Tone.Transport.start();
+                isPlaying = true;
+            }
+        }
+
+        function togglePause() {
+            if (isPlaying) {
+                Tone.Transport.pause();
+                isPlaying = false;
+            }
+        }
+
         const volumeSlider = document.getElementById('volume-slider');
         volumeSlider.addEventListener('input', (event) => {
             const volume = event.target.value;
-            Tone.Destination.volume.value = (volume - 100) / 100; 
+            Tone.Destination.volume.value = (volume - 100) / 100;
         });
 
         const buttons = document.querySelectorAll('.button');
@@ -196,4 +218,5 @@
     </script>
 </body>
 </html>
+
 
