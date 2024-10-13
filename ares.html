@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><link rel="icon" href="LOGO 1.ico" type="image/x-icon">
+<head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.P.T (the game)</title>
@@ -151,7 +152,6 @@
             align-items: center;
         }
 
-    
         @media (max-width: 768px) {
             .panel {
                 position: fixed; 
@@ -192,88 +192,73 @@
     </div>
 
     <script>
-        const synth = new Tone.PolySynth(Tone.Synth, {
-            oscillator: {
-                type: 'triangle' 
-            },
-            envelope: {
-                attack: 0.2,
-                decay: 0.4,
-                sustain: 0.6,
-                release: 1
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'triangle' },
+                envelope: { attack: 0.2, decay: 0.4, sustain: 0.6, release: 1 }
+            }).toDestination();
+
+            const bassSynth = new Tone.MonoSynth({
+                oscillator: { type: 'sawtooth' },
+                envelope: { attack: 0.1, decay: 0.3, sustain: 0.5, release: 0.7 }
+            }).toDestination();
+
+            const melodySequence = new Tone.Sequence((time, note) => {
+                synth.triggerAttackRelease(note, '4n', time);
+            }, [
+                'C4', 'E4', 'G4', 'C5', 'G4', 'E4', 'D4', 'C4', 
+                'A3', 'C4', 'F4', 'E4', 'C4', 'A3', 'G3', 'F3',
+                'F4', 'A4', 'C5', 'E5', 'D5', 'B4', 'G4', 'E4',
+                'C3', 'D3', 'E3', 'G3', 'C4', 'A3', 'G3', 'F3'
+            ]).start(0);
+
+            const bassSequence = new Tone.Sequence((time, note) => {
+                bassSynth.triggerAttackRelease(note, '8n', time);
+            }, [
+                'C2', 'C3', 'A2', 'G2', 'F2', 'E2', 'D2', 'C2', 
+                'F2', 'G2', 'A2', 'G2', 'E2', 'D2', 'C2', 'B1'
+            ]).start(0);
+
+            function startMusic() {
+                Tone.Transport.start();
             }
-        }).toDestination();
 
-        const bassSynth = new Tone.MonoSynth({
-            oscillator: {
-                type: 'sawtooth' 
-            },
-            envelope: {
-                attack: 0.1,
-                decay: 0.3,
-                sustain: 0.5,
-                release: 0.7
+            function pauseMusic() {
+                Tone.Transport.pause();
             }
-        }).toDestination();
 
-        const melodySequence = new Tone.Sequence((time, note) => {
-            synth.triggerAttackRelease(note, '4n', time);
-        }, [
-            'C4', 'E4', 'G4', 'C5', 'G4', 'E4', 'D4', 'C4', 
-            'A3', 'C4', 'F4', 'E4', 'C4', 'A3', 'G3', 'F3',
-            'F4', 'A4', 'C5', 'E5', 'D5', 'B4', 'G4', 'E4',
-            'C3', 'D3', 'E3', 'G3', 'C4', 'A3', 'G3', 'F3'  
-        ]).start(0);
-
-        const bassSequence = new Tone.Sequence((time, note) => {
-            bassSynth.triggerAttackRelease(note, '8n', time);
-        }, [
-            'C2', 'C3', 'A2', 'G2', 'F2', 'E2', 'D2', 'C2', 
-            'F2', 'G2', 'A2', 'G2', 'E2', 'D2', 'C2', 'B1'
-        ]).start(0);
-
-        function startMusic() {
-            Tone.Transport.start();
-        }
-
-        function pauseMusic() {
-            Tone.Transport.pause();
-        }
-
-        const musicVolumeControl = document.getElementById('musicVolumeControl');
-        musicVolumeControl.addEventListener('input', function() {
-            const volume = Math.min(musicVolumeControl.value, 30) / 100; 
-            Tone.Master.volume.value = volume * -30; 
-        });
-
-        const blupVolumeSlider = document.getElementById('blupVolumeSlider');
-        blupVolumeSlider.addEventListener('input', function() {
-            const volume = blupVolumeSlider.value / 100;
-           
-        });
-
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', () => {
-                Tone.start(); 
-                synth.triggerAttackRelease('C4', '8n'); 
+            const musicVolumeControl = document.getElementById('musicVolumeControl');
+            musicVolumeControl.addEventListener('input', function() {
+                const volume = Math.min(musicVolumeControl.value, 30) / 100;
+                Tone.Master.volume.value = volume * -30;
             });
-        });
 
-        function togglePanel(panelId) {
-            const panel = document.getElementById(panelId + '-panel');
-            if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
+            const blupVolumeSlider = document.getElementById('blupVolumeSlider');
+            blupVolumeSlider.addEventListener('input', function() {
+                const volume = blupVolumeSlider.value / 100;
+            });
+
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => {
+                    Tone.start(); 
+                    synth.triggerAttackRelease('C4', '8n'); 
+                });
+            });
+
+            function togglePanel(panelId) {
+                const panel = document.getElementById(panelId + '-panel');
+                if (panel.style.display === 'none' || panel.style.display === '') {
+                    panel.style.display = 'block';
+                } else {
+                    panel.style.display = 'none';
+                }
             }
-        }
 
-        
-        Tone.Master.volume.value = -20; 
-        Tone.start() 
-            .then(() => {
+            Tone.Master.volume.value = -20; 
+            Tone.start().then(() => {
                 startMusic();
             });
+        });
     </script>
 </body>
 </html>
