@@ -1,147 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
+<head><link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAME)</title>
+    <title>K.P.T (the game)</title>
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: black;
-            color: white;
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
+            position: relative;
             overflow: hidden;
         }
 
-        #game-intro {
-            display: none;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
+        .background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, #003366 0%, #0099ff 100%);
+            z-index: -2;
+            pointer-events: none;
         }
 
-        .player-text {
-            color: #3498db;
+        .menu-background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('MENU_1.png') no-repeat center center;
+            background-size: contain;
+            z-index: -1;
         }
 
-        .lawyer-text {
-            color: #bada55;
+        .button-container {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
         }
 
-        .hidden {
-            display: none;
+        .menu-button, .start-button {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 200px; 
+            height: 80px; 
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.3s ease, margin 0.3s ease;
+        }
+
+        .menu-button {
+            background-image: url('menu_.png');
+            background-color: transparent;
+        }
+
+        .start-button {
+            background-image: url('start.png');
+            background-color: transparent;
+        }
+
+        .menu-button:hover, .start-button:hover {
+            transform: scale(1.1);
         }
 
         .panel {
             display: none;
             position: absolute;
             top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
+            left: calc(50% + 250px); 
             width: 350px;
             height: 300px;
-            background-color: rgba(128, 128, 128, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .button {
             background-color: transparent;
             border: none;
-            cursor: pointer;
-            padding: 10px;
-            margin: 5px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: url('panel_2_1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        .button img {
-            width: 50px;
-            height: 50px;
+        .volume-slider {
+            width: 130px;
+            margin-bottom: 100px; 
+        }
+
+        .control-buttons {
+            position: absolute;
+            left: 250px;
+            top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .play-button, .pause-button {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 80px; 
+            height: 80px;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            outline: none;
+            background-color: transparent;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        }
+
+        .play-button {
+            background-image: url('inicio.png');
+        }
+
+        .pause-button {
+            background-image: url('pausa.png');
+        }
+
+        .volume-slider-container {
+            position: absolute;
+            bottom: 5%; 
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .volume-slider-top {
+            position: absolute;
+            top: 30%; 
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    
+        @media (max-width: 768px) {
+            .panel {
+                position: fixed; 
+                bottom: 0;
+                left: 0;
+                width: 100%; 
+                height: auto; 
+                display: block;
+                overflow-y: auto; 
+                z-index: 2; 
+            }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.js"></script>
 </head>
 <body>
+    <div class="background-container"></div>
+    <div class="menu-background-container"></div>
 
-    <div id="game-intro" class="hidden">
-        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
-        <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
-        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
-        <p>Y así empezó mi historia...</p>
+    <div class="button-container">
+        <button class="menu-button" onclick="togglePanel('menu')"></button>
+        <a href="ares.html">
+            <button class="start-button"></button>
+        </a>
     </div>
 
-    <div class="panel" id="sound-panel">
-        <p>Controles de sonido:</p>
-        <button class="button" onclick="playSadMusic()">Sonido Triste</button>
-        <button class="button" onclick="goToIndex()">Salir</button>
+    <div id="menu-panel" class="panel">
+        <div class="volume-slider-top">
+            <input type="range" min="0" max="100" value="10" class="volume-slider" id="blupVolumeSlider">
+        </div>
+        <div class="volume-slider-container">
+            <input type="range" min="0" max="100" value="10" class="volume-slider" id="musicVolumeControl">
+        </div>
+        <div class="control-buttons">
+            <button class="play-button" onclick="startMusic()"></button>
+            <button class="pause-button" onclick="pauseMusic()"></button>
+        </div>
     </div>
 
-    <button class="button" id="skip-button" onclick="skipCutscene()">
-        <img src="pass.png" alt="Saltar Cinemática">
-    </button>
-
-    <button class="button" id="stop-button" onclick="toggleSoundPanel()">
-        <img src="stop.png" alt="Control de Sonido">
-    </button>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const playerName = prompt("Introduce tu nombre:");
-        document.getElementById('player-name').textContent = playerName;
+        const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: {
+                type: 'triangle' 
+            },
+            envelope: {
+                attack: 0.2,
+                decay: 0.4,
+                sustain: 0.6,
+                release: 1
+            }
+        }).toDestination();
 
-        function showIntro() {
-            const introElement = document.getElementById('game-intro');
-            introElement.classList.remove('hidden');
-            introElement.style.display = 'block';
+        const bassSynth = new Tone.MonoSynth({
+            oscillator: {
+                type: 'sawtooth' 
+            },
+            envelope: {
+                attack: 0.1,
+                decay: 0.3,
+                sustain: 0.5,
+                release: 0.7
+            }
+        }).toDestination();
 
-            setTimeout(() => {
-                introElement.style.opacity = 1;
-            }, 100);
+        const melodySequence = new Tone.Sequence((time, note) => {
+            synth.triggerAttackRelease(note, '4n', time);
+        }, [
+            'C4', 'E4', 'G4', 'C5', 'G4', 'E4', 'D4', 'C4', 
+            'A3', 'C4', 'F4', 'E4', 'C4', 'A3', 'G3', 'F3',
+            'F4', 'A4', 'C5', 'E5', 'D5', 'B4', 'G4', 'E4',
+            'C3', 'D3', 'E3', 'G3', 'C4', 'A3', 'G3', 'F3'  
+        ]).start(0);
 
-            const synth = new Tone.Synth().toDestination();
-            const pattern = new Tone.Pattern(function(time, note){
-                synth.triggerAttackRelease(note, 0.5);
-            }, ["C4", "E4", "G4", "B4"], "up");
+        const bassSequence = new Tone.Sequence((time, note) => {
+            bassSynth.triggerAttackRelease(note, '8n', time);
+        }, [
+            'C2', 'C3', 'A2', 'G2', 'F2', 'E2', 'D2', 'C2', 
+            'F2', 'G2', 'A2', 'G2', 'E2', 'D2', 'C2', 'B1'
+        ]).start(0);
 
-            Tone.Transport.bpm.value = 60;
-            pattern.start(0);
+        function startMusic() {
             Tone.Transport.start();
         }
 
-        function skipCutscene() {
-            document.body.style.backgroundImage = "url('paisaje_1.png')";
-            document.getElementById('game-intro').style.display = 'none';
-            document.getElementById('sound-panel').style.display = 'block';
+        function pauseMusic() {
+            Tone.Transport.pause();
         }
 
-        function toggleSoundPanel() {
-            const panel = document.getElementById('sound-panel');
-            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        const musicVolumeControl = document.getElementById('musicVolumeControl');
+        musicVolumeControl.addEventListener('input', function() {
+            const volume = Math.min(musicVolumeControl.value, 30) / 100; 
+            Tone.Master.volume.value = volume * -30; 
+        });
+
+        const blupVolumeSlider = document.getElementById('blupVolumeSlider');
+        blupVolumeSlider.addEventListener('input', function() {
+            const volume = blupVolumeSlider.value / 100;
+           
+        });
+
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                Tone.start(); 
+                synth.triggerAttackRelease('C4', '8n'); 
+            });
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId + '-panel');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
         }
 
-        function goToIndex() {
-            window.location.href = 'index.html';
-        }
-
-        function playSadMusic() {
-            const synth = new Tone.Synth().toDestination();
-            synth.triggerAttackRelease('C3', '1n');
-            synth.triggerAttackRelease('G3', '1n', "+0.5");
-            synth.triggerAttackRelease('E3', '1n', "+1");
-            Tone.Transport.start();
-        }
-
-        window.onload = function() {
-            showIntro();
-        };
+        
+        Tone.Master.volume.value = -20; 
+        Tone.start() 
+            .then(() => {
+                startMusic();
+            });
     </script>
 </body>
 </html>
-
 
 
 
