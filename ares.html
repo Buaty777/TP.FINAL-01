@@ -84,6 +84,17 @@
             border-radius: 5px;
             color: white;
         }
+
+        .volume-slider {
+            width: 130px;
+            margin-bottom: 20px; 
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -97,8 +108,11 @@
 
     <div class="panel" id="sound-panel">
         <p>Controles de sonido:</p>
-        <button class="button" onclick="playSadMusic()">Sonido Triste</button>
-        <button class="button" onclick="goToIndex()">Salir</button>
+        <div class="control-buttons">
+            <input type="range" min="0" max="100" value="10" class="volume-slider" id="musicVolumeControl">
+            <button class="button" onclick="playSadMusic()">Sonido Triste</button>
+            <button class="button" onclick="goToIndex()">Salir</button>
+        </div>
     </div>
 
     <button class="button" id="skip-button" onclick="skipCutscene()">
@@ -114,17 +128,17 @@
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
+        let synth, sadSynth, pattern;
+
         function showIntro() {
             const introElement = document.getElementById('game-intro');
             introElement.classList.remove('hidden');
             introElement.style.display = 'block';
 
-            setTimeout(() => {
-                introElement.style.opacity = 1;
-            }, 100);
+            introElement.style.opacity = 1;
 
-            const synth = new Tone.Synth().toDestination();
-            const pattern = new Tone.Pattern(function(time, note){
+            synth = new Tone.Synth().toDestination();
+            pattern = new Tone.Pattern(function(time, note){
                 synth.triggerAttackRelease(note, 0.5);
             }, ["C4", "E4", "G4", "B4"], "up");
 
@@ -134,9 +148,11 @@
         }
 
         function skipCutscene() {
+            Tone.Transport.stop();
             document.body.style.backgroundImage = "url('paisaje_1.png')";
             document.getElementById('game-intro').style.display = 'none';
             document.getElementById('sound-panel').style.display = 'block';
+            playSadMusic();
         }
 
         function toggleSoundPanel() {
@@ -149,12 +165,25 @@
         }
 
         function playSadMusic() {
-            const synth = new Tone.Synth().toDestination();
-            synth.triggerAttackRelease('C3', '1n');
-            synth.triggerAttackRelease('G3', '1n', "+0.5");
-            synth.triggerAttackRelease('E3', '1n', "+1");
+            sadSynth = new Tone.Synth().toDestination();
+            sadSynth.triggerAttackRelease('C3', '1n');
+            sadSynth.triggerAttackRelease('G3', '1n', "+0.5");
+            sadSynth.triggerAttackRelease('E3', '1n', "+1");
             Tone.Transport.start();
         }
+
+        const musicVolumeControl = document.getElementById('musicVolumeControl');
+        musicVolumeControl.addEventListener('input', function() {
+            const volume = Math.min(musicVolumeControl.value, 30) / 100; 
+            Tone.Master.volume.value = volume * -30; 
+        });
+
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                Tone.start(); 
+                synth.triggerAttackRelease('C4', '8n'); 
+            });
+        });
 
         window.onload = function() {
             showIntro();
