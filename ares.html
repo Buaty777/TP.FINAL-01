@@ -55,14 +55,14 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 15px;
+            padding: 20px;
             margin: 10px;
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .button img {
-            width: 60px;
-            height: 60px; 
+            width: 70px;
+            height: 70px; 
         }
 
         #skip-button {
@@ -132,7 +132,7 @@
 
         let synth;
         let pattern;
-        let backgroundMusic, busNoise;
+        let backgroundMusic;
         let isPlaying = false;
 
         function showIntro() {
@@ -159,7 +159,7 @@
             document.body.style.backgroundImage = "url('paisaje_1.png')";
             document.getElementById('game-intro').style.display = 'none';
             document.getElementById('sound-menu').style.display = 'block';
-            playSadMusicWithBus();
+            playLongSadMusic();
         }
 
         function toggleSoundMenu() {
@@ -171,20 +171,14 @@
             window.location.href = 'index.html';
         }
 
-        function playSadMusicWithBus() {
-            const length = 60;
-            backgroundMusic = new Tone.PolySynth().toDestination();
-            busNoise = new Tone.Noise("brown").toDestination();
-            
+        function playLongSadMusic() {
             const notes = ["C4", "E4", "G4", "A4", "B4", "C5"];
-            backgroundMusic.triggerAttackRelease(notes, length);
+            backgroundMusic = new Tone.PolySynth().toDestination();
+            const loop = new Tone.Loop((time) => {
+                backgroundMusic.triggerAttackRelease(notes, 1, time);
+            }, "4n").start(0);
 
-            busNoise.volume.value = -30;
-            busNoise.start();
-
-            setTimeout(() => {
-                busNoise.stop();
-            }, 60000);
+            Tone.Transport.start();
         }
 
         function togglePlay() {
@@ -221,5 +215,6 @@
     </script>
 </body>
 </html>
+
 
 
