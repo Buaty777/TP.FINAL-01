@@ -55,14 +55,14 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 20px;
-            margin: 10px;
+            padding: 30px;
+            margin: 15px;
             font-size: 24px;
         }
 
         .button img {
-            width: 70px;
-            height: 70px; 
+            width: 100px;
+            height: 100px; 
         }
 
         #skip-button {
@@ -130,8 +130,28 @@
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
-        let backgroundMusic;
         let isPlaying = false;
+
+        
+        const synth = new Tone.Synth().toDestination();
+        const piano = new Tone.Sampler({
+            urls: {
+                "A0": "A0.mp3",
+                "C1": "C1.mp3",
+                "D#1": "Ds1.mp3",
+                "F#1": "Fs1.mp3",
+                "A1": "A1.mp3",
+            },
+            baseUrl: "https://tonejs.github.io/audio/salamander/"
+        }).toDestination();
+
+        const melody = new Tone.Sequence(
+            (time, note) => {
+                piano.triggerAttackRelease(note, "10n", time);
+            },
+            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4"],
+            "4n"
+        );
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
@@ -146,7 +166,6 @@
         function skipCutscene() {
             document.getElementById('game-intro').style.display = 'none';
             document.getElementById('sound-menu').style.display = 'block';
-            playSadMelody();
         }
 
         function toggleSoundMenu() {
@@ -158,22 +177,10 @@
             window.location.href = 'index.html';
         }
 
-        function playSadMelody() {
-            const notes = ["E4", "C4", "G3", "D4", "B3", "A3"];
-            backgroundMusic = new Tone.PolySynth().toDestination();
-            const loop = new Tone.Loop((time) => {
-                backgroundMusic.triggerAttackRelease(notes, 1, time);
-            }, "4n").start(0);
-
-            Tone.Transport.bpm.value = 50; 
-            Tone.Destination.volume.value = -15; 
-            Tone.Transport.start();
-            isPlaying = true;
-        }
-
         function togglePlay() {
             if (!isPlaying) {
                 Tone.Transport.start();
+                melody.start();
                 isPlaying = true;
             }
         }
