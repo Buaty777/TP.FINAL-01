@@ -218,6 +218,9 @@
         function typeDialogue(line) {
             let i = 0;
             const dialogueBox = document.getElementById('dialogue-box');
+            const speakerName = line.speaker === 'Jugador' ? playerName : 'Abogado';
+            dialogueBox.innerHTML = `<span class="${line.speaker === 'Jugador' ? 'player-text' : 'lawyer-text'}">${speakerName}:</span> `;
+
             const typingInterval = setInterval(() => {
                 if (i < line.text.length) {
                     dialogueBox.innerHTML += line.text[i];
@@ -227,20 +230,12 @@
                     i++;
                 } else {
                     clearInterval(typingInterval);
-                    if (line.speaker === 'Jugador') {
-                        setTimeout(() => {
-                            dialogueBox.innerHTML = '';
-                            currentLine++;
-                            if (currentLine < dialogue.length) {
-                                typeDialogue(dialogue[currentLine]);
-                            }
-                        }, 1000);
+                    currentLine++;
+                    if (currentLine < dialogue.length) {
+                        setTimeout(showDialogue, 1000);
                     } else {
                         setTimeout(() => {
-                            currentLine++;
-                            if (currentLine < dialogue.length) {
-                                typeDialogue(dialogue[currentLine]);
-                            }
+                            dialogueBox.classList.add('hidden');
                         }, 1000);
                     }
                 }
@@ -267,7 +262,6 @@
 
         function togglePause() {
             Tone.Transport.pause();
-            melody.stop();
         }
     </script>
 </body>
