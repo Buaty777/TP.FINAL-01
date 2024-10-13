@@ -103,6 +103,7 @@
             background-image: url('paisaje_1.png');
             background-size: cover;
             z-index: -1;
+            display: none;
         }
 
         .dialogue-box {
@@ -203,6 +204,7 @@
 
         function skipCutscene() {
             document.getElementById('game-intro').style.display = 'none';
+            document.getElementById('background').style.display = 'block';
             showDialogue();
         }
 
@@ -225,9 +227,21 @@
                     i++;
                 } else {
                     clearInterval(typingInterval);
-                    currentLine++;
-                    if (currentLine < dialogue.length) {
-                        setTimeout(() => typeDialogue(dialogue[currentLine]), 1000);
+                    if (line.speaker === 'Jugador') {
+                        setTimeout(() => {
+                            dialogueBox.innerHTML = '';
+                            currentLine++;
+                            if (currentLine < dialogue.length) {
+                                typeDialogue(dialogue[currentLine]);
+                            }
+                        }, 1000);
+                    } else {
+                        setTimeout(() => {
+                            currentLine++;
+                            if (currentLine < dialogue.length) {
+                                typeDialogue(dialogue[currentLine]);
+                            }
+                        }, 1000);
                     }
                 }
             }, 100);
@@ -242,286 +256,18 @@
             window.location.href = 'index.html';
         }
 
-        const volumeSlider = document.getElementById('volume-slider');
-        volumeSlider.addEventListener('input', (event) => {
-            const volume = event.target.value;
-            Tone.Destination.volume.value = (volume - 100) / 100;
+        document.getElementById('volume-slider').addEventListener('input', (event) => {
+            Tone.getDestination().volume.value = event.target.value - 100;
         });
 
         function togglePlay() {
-            if (Tone.Transport.state !== 'started') {
-                Tone.Transport.start();
-            }
-        }
-
-        function togglePause() {
-            if (Tone.Transport.state === 'started') {
-                Tone.Transport.pause();
-            }
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAME)</title>
-    <style>
-        body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        #game-intro {
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-        }
-
-        .player-text {
-            color: #3498db;
-        }
-
-        .lawyer-text {
-            color: #bada55;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .menu {
-            display: none;
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            height: 300px;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .button {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            font-size: 24px;
-        }
-
-        .button img {
-            width: 80px;
-            height: 80px;
-        }
-
-        #skip-button {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
-            background-color: transparent;
-            color: white;
-        }
-
-        #stop-button {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            background-color: transparent;
-            color: white;
-        }
-
-        .volume-slider {
-            width: 200px;
-            margin-top: 10px;
-        }
-
-        .menu-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .background-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('paisaje_1.png');
-            background-size: cover;
-            z-index: -1;
-        }
-
-        .dialogue-box {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: auto;
-            background-color: rgba(34, 34, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 1;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="game-intro">
-        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
-        <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
-        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
-        <p>Y así empezó mi historia...</p>
-    </div>
-
-    <div class="menu" id="sound-menu">
-        <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
-        <div class="menu-buttons">
-            <button class="button" onclick="goToIndex()">
-                <img src="salir.png" alt="Salir">
-            </button>
-            <button class="button" id="play-button" onclick="togglePlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="button" id="pause-button" onclick="togglePause()">
-                <img src="pausa.png" alt="Pausar Música">
-            </button>
-        </div>
-    </div>
-
-    <button class="button" id="skip-button" onclick="skipCutscene()">
-        <img src="pass.png" alt="Saltar Cinemática">
-    </button>
-
-    <button class="button" id="stop-button" onclick="toggleSoundMenu()">
-        <img src="stop.png" alt="Control de Sonido">
-    </button>
-
-    <div id="background" class="background-image"></div>
-
-    <div id="dialogue-box" class="dialogue-box hidden"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
-    <script>
-        const playerName = prompt("Introduce tu nombre:");
-        document.getElementById('player-name').textContent = playerName;
-
-        const piano = new Tone.Synth().toDestination();
-        const phoneSound = new Tone.Synth().toDestination();
-        const callAcceptSound = new Tone.Synth().toDestination();
-        const callEndSound = new Tone.Synth().toDestination();
-
-        const melody = new Tone.Sequence(
-            (time, note) => {
-                piano.triggerAttackRelease(note, "8n", time);
-            },
-            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
-            "4n"
-        );
-
-        const dialogue = [
-            { speaker: 'Jugador', text: '... *Sonido de teléfono*', sound: phoneSound },
-            { speaker: 'Jugador', text: '*contesta*', sound: callAcceptSound },
-            { speaker: 'Abogado', text: 'Hola muchacho, como va el viaje?', sound: null },
-            { speaker: 'Jugador', text: 'bueno... va bien, va bien... solo que me sigo pensando porque debo ir yo...', sound: null },
-            { speaker: 'Abogado', text: 'no lo sé... el viejo corps estaba algo loco jajaja', sound: null },
-            { speaker: 'Jugador', text: '...', sound: null },
-            { speaker: 'Abogado', text: 'en fin, te espero dónde te dije que estaría, adiós.', sound: null },
-            { speaker: 'Jugador', text: '..., en verdad esto será raro...', sound: callEndSound }
-        ];
-
-        let currentLine = 0;
-
-        window.onload = async function() {
-            await Tone.start();
             Tone.Transport.start();
             melody.start();
-            showIntro();
-        };
-
-        function showIntro() {
-            const introElement = document.getElementById('game-intro');
-            introElement.style.opacity = 1;
-        }
-
-        function skipCutscene() {
-            document.getElementById('game-intro').style.display = 'none';
-            showDialogue();
-        }
-
-        function showDialogue() {
-            const dialogueBox = document.getElementById('dialogue-box');
-            dialogueBox.classList.remove('hidden');
-            dialogueBox.innerHTML = '';
-            typeDialogue(dialogue[currentLine]);
-        }
-
-        function typeDialogue(line) {
-            let i = 0;
-            const dialogueBox = document.getElementById('dialogue-box');
-            const typingInterval = setInterval(() => {
-                if (i < line.text.length) {
-                    dialogueBox.innerHTML += line.text[i];
-                    if (line.sound) {
-                        line.sound.triggerAttackRelease('C4', '8n');
-                    }
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
-                    currentLine++;
-                    if (currentLine < dialogue.length) {
-                        setTimeout(() => typeDialogue(dialogue[currentLine]), 1000);
-                    }
-                }
-            }, 100);
-        }
-
-        function toggleSoundMenu() {
-            const menu = document.getElementById('sound-menu');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function goToIndex() {
-            window.location.href = 'index.html';
-        }
-
-        const volumeSlider = document.getElementById('volume-slider');
-        volumeSlider.addEventListener('input', (event) => {
-            const volume = event.target.value;
-            Tone.Destination.volume.value = (volume - 100) / 100;
-        });
-
-        function togglePlay() {
-            if (Tone.Transport.state !== 'started') {
-                Tone.Transport.start();
-            }
         }
 
         function togglePause() {
-            if (Tone.Transport.state === 'started') {
-                Tone.Transport.pause();
-            }
+            Tone.Transport.pause();
+            melody.stop();
         }
     </script>
 </body>
