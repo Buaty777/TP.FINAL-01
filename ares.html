@@ -6,15 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (THE GAME)</title>
     <style>
-        @font-face {
-            font-family: 'Press Start 2P';
-            src: url('https://fonts.cdnfonts.com/s/10257/PressStart2P-Regular.woff') format('woff');
-        }
-
         body {
             font-family: 'Press Start 2P', cursive;
-            background: url('assets/paisaje_1.png') no-repeat center center fixed;
-            background-size: cover;
+            background-color: black;
             color: white;
             display: flex;
             justify-content: center;
@@ -22,90 +16,94 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
-            margin: 0;
         }
 
-        #intro-juego {
+        #game-intro {
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
-            z-index: 10;
         }
 
-        .texto-prota {
+        .player-text {
             color: #3498db;
         }
 
-        .texto-abogado {
+        .lawyer-text {
             color: #bada55;
         }
 
-        #panel-texto {
-            position: absolute;
-            bottom: 20px;
-            background: rgba(128, 128, 128, 0.7);
-            padding: 20px;
-            border-radius: 15px;
-            width: 80%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            font-family: 'Press Start 2P', cursive;
-        }
-
-        .oculto {
+        .hidden {
             display: none;
         }
 
-        img {
+        .panel {
+            display: none;
             position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 300px;
+            background-color: rgba(128, 128, 128, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .button {
+            background-color: transparent;
+            border: none;
             cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+        }
+
+        .button img {
             width: 50px;
             height: 50px;
         }
-
-        #boton-pasar {
-            top: 20px;
-            right: 20px;
-        }
-
-        #boton-stop {
-            top: 20px;
-            left: 20px;
-        }
-
-        #boton-salir {
-            bottom: 20px;
-            right: 20px;
-        }
-
     </style>
 </head>
 <body>
 
-    <div id="intro-juego" class="oculto">
-        <div id="panel-texto">
-            <p>un dia, yo <span id="nombre-jugador" class="texto-prota"></span> estaba tranqui en casa cuando sono el telefono... un abogado me dijo:</p>
-            <p class="texto-abogado">"escuchame nene, el sr. crops me dijo que vengas a la ciudad pit... tenés que hacer unas cosas"</p>
-            <p class="texto-abogado">"dale, movete antes que tenga que hacer el laburo yo, o querés que te pase lo que a dardo cuando no paga la cuenta?"</p>
-            <p>y ahi arranca mi aventura... como diria pepe argento: "voy a ser el gerente... del fracaso"</p>
-        </div>
+    <div id="game-intro" class="hidden">
+        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
+        <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
+        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
+        <p>Y así empezó mi historia...</p>
     </div>
 
-    <img id="boton-pasar" src="assets/pass.png" alt="Pasar cinemática" onclick="saltarCinematica()">
-    <img id="boton-stop" src="assets/stop.png" alt="Ajustes de sonido" onclick="abrirPanelSonido()">
-    <img id="boton-salir" src="assets/salir.png" alt="Salir del juego" onclick="salirJuego()">
+    <div class="panel" id="sound-panel">
+        <p>Controles de sonido:</p>
+        <button class="button" onclick="playSadMusic()">Sonido Triste</button>
+        <button class="button" onclick="goToIndex()">Salir</button>
+    </div>
+
+    <button class="button" id="skip-button" onclick="skipCutscene()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="button" id="stop-button" onclick="toggleSoundPanel()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        function mostrarIntro() {
-            const introElement = document.getElementById('intro-juego');
-            introElement.classList.remove('oculto');
+        const playerName = prompt("Introduce tu nombre:");
+        document.getElementById('player-name').textContent = playerName;
+
+        function showIntro() {
+            const introElement = document.getElementById('game-intro');
+            introElement.classList.remove('hidden');
             introElement.style.display = 'block';
+
             setTimeout(() => {
                 introElement.style.opacity = 1;
             }, 100);
 
             const synth = new Tone.Synth().toDestination();
-            const pattern = new Tone.Pattern(function (time, note) {
+            const pattern = new Tone.Pattern(function(time, note){
                 synth.triggerAttackRelease(note, 0.5);
             }, ["C4", "E4", "G4", "B4"], "up");
 
@@ -114,170 +112,36 @@
             Tone.Transport.start();
         }
 
-        function saltarCinematica() {
-            const introElement = document.getElementById('intro-juego');
-            introElement.style.display = 'none';
-            alert("Si queres, ya podés seguir con el juego");
+        function skipCutscene() {
+            document.body.style.backgroundImage = "url('paisaje_1.png')";
+            document.getElementById('game-intro').style.display = 'none';
+            document.getElementById('sound-panel').style.display = 'block';
         }
 
-        function abrirPanelSonido() {
-            alert("panel de sonido... si querés mas volumen, mejor anda a cambiar el equipo");
+        function toggleSoundPanel() {
+            const panel = document.getElementById('sound-panel');
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
         }
 
-        function salirJuego() {
-            alert("te vas, como dice pepe: pensas trabajar menos que un inspector de subte");
+        function goToIndex() {
             window.location.href = 'index.html';
         }
 
-        const nombreJugador = prompt("como te llamas, campeon?");
-        document.getElementById('nombre-jugador').textContent = nombreJugador;
-
-        window.onload = function () {
-            mostrarIntro();
-        };
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAME)</title>
-    <style>
-        @font-face {
-            font-family: 'Press Start 2P';
-            src: url('https://fonts.cdnfonts.com/s/10257/PressStart2P-Regular.woff') format('woff');
-        }
-
-        body {
-            font-family: 'Press Start 2P', cursive;
-            background: url('assets/paisaje_1.png') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
-            margin: 0;
-        }
-
-        #intro-juego {
-            display: none;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            z-index: 10;
-        }
-
-        .texto-prota {
-            color: #3498db;
-        }
-
-        .texto-abogado {
-            color: #bada55;
-        }
-
-        #panel-texto {
-            position: absolute;
-            bottom: 20px;
-            background: rgba(128, 128, 128, 0.7);
-            padding: 20px;
-            border-radius: 15px;
-            width: 80%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            font-family: 'Press Start 2P', cursive;
-        }
-
-        .oculto {
-            display: none;
-        }
-
-        img {
-            position: absolute;
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-        }
-
-        #boton-pasar {
-            top: 20px;
-            right: 20px;
-        }
-
-        #boton-stop {
-            top: 20px;
-            left: 20px;
-        }
-
-        #boton-salir {
-            bottom: 20px;
-            right: 20px;
-        }
-
-    </style>
-</head>
-<body>
-
-    <div id="intro-juego" class="oculto">
-        <div id="panel-texto">
-            <p>un dia, yo <span id="nombre-jugador" class="texto-prota"></span> estaba tranqui en casa cuando sono el telefono... un abogado me dijo:</p>
-            <p class="texto-abogado">"escuchame nene, el sr. crops me dijo que vengas a la ciudad pit... tenés que hacer unas cosas"</p>
-            <p class="texto-abogado">"dale, movete antes que tenga que hacer el laburo yo, o querés que te pase lo que a dardo cuando no paga la cuenta?"</p>
-            <p>y ahi arranca mi aventura... como diria pepe argento: "voy a ser el gerente... del fracaso"</p>
-        </div>
-    </div>
-
-    <img id="boton-pasar" src="assets/pass.png" alt="Pasar cinemática" onclick="saltarCinematica()">
-    <img id="boton-stop" src="assets/stop.png" alt="Ajustes de sonido" onclick="abrirPanelSonido()">
-    <img id="boton-salir" src="assets/salir.png" alt="Salir del juego" onclick="salirJuego()">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
-    <script>
-        function mostrarIntro() {
-            const introElement = document.getElementById('intro-juego');
-            introElement.classList.remove('oculto');
-            introElement.style.display = 'block';
-            setTimeout(() => {
-                introElement.style.opacity = 1;
-            }, 100);
-
+        function playSadMusic() {
             const synth = new Tone.Synth().toDestination();
-            const pattern = new Tone.Pattern(function (time, note) {
-                synth.triggerAttackRelease(note, 0.5);
-            }, ["C4", "E4", "G4", "B4"], "up");
-
-            Tone.Transport.bpm.value = 60;
-            pattern.start(0);
+            synth.triggerAttackRelease('C3', '1n');
+            synth.triggerAttackRelease('G3', '1n', "+0.5");
+            synth.triggerAttackRelease('E3', '1n', "+1");
             Tone.Transport.start();
         }
 
-        function saltarCinematica() {
-            const introElement = document.getElementById('intro-juego');
-            introElement.style.display = 'none';
-            alert("Si queres, ya podés seguir con el juego");
-        }
-
-        function abrirPanelSonido() {
-            alert("panel de sonido... si querés mas volumen, mejor anda a cambiar el equipo");
-        }
-
-        function salirJuego() {
-            alert("te vas, como dice pepe: pensas trabajar menos que un inspector de subte");
-            window.location.href = 'index.html';
-        }
-
-        const nombre = prompt("como te llamas, campeon?");
-        document.getElementById('nombre-jugador').textContent = nombreJugador;
-
-        window.onload = function () {
-            mostrarIntro();
+        window.onload = function() {
+            showIntro();
         };
     </script>
 </body>
 </html>
+
 
 
 
