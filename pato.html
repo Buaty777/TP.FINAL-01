@@ -68,9 +68,9 @@
 
         #abogado {
             position: absolute;
-            right: 10%;
-            bottom: 20px;
-            width: 150px;
+            right: 5%;
+            bottom: 10px;
+            width: 120px;
             height: auto;
             opacity: 0;
             transition: opacity 1s ease, transform 1s ease;
@@ -115,7 +115,7 @@
             top: 15%;
             left: 50%;
             transform: translateX(-50%);
-            width: 350px;
+            width: 250px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
             padding: 20px;
@@ -130,6 +130,17 @@
 
         button {
             margin: 10px;
+        }
+
+        #boton-menu-sonido {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -153,7 +164,7 @@
 
     <button id="boton-saltar">Saltar Cinemática</button>
     <button id="boton-detener">Detener Sonido</button>
-    <button id="boton-salir">Salir</button>
+    <button id="boton-menu-sonido" onclick="activarMenuSonido()">Control de Sonido</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
@@ -201,6 +212,11 @@
                 document.getElementById('pantalla-negra').style.display = 'none';
                 mostrarDialogo();
             }, 4000);
+        }
+
+        function activarMenuSonido() {
+            const menu = document.getElementById('menu-sonido');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
         function irAIndex() {
