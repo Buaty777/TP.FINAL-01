@@ -19,65 +19,8 @@
             overflow: hidden;
         }
 
-        .menu-sonido {
+        .oculto {
             display: none;
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            height: auto;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .boton {
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            padding: 20px;
-            margin: 10px;
-            font-size: 24px;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .boton:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
-        .boton img {
-            width: 70px;
-            height: 70px;
-        }
-
-        #boton-saltar {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        #boton-detener {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        .barra-volumen {
-            width: 200px;
-            margin-top: 10px;
         }
 
         .panel-dialogo {
@@ -90,7 +33,7 @@
             padding: 20px;
             width: 80%;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: block; /* Cambiado a block para mostrar el panel */
+            display: none;
         }
 
         .texto-dialogo {
@@ -98,24 +41,17 @@
             font-size: 18px;
         }
 
-        .texto-jugador {
-            color: #3498db;
-        }
-
-        .texto-abogado {
-            color: #bada55;
-        }
-
-        .oculto {
-            display: none;
-        }
-
-        #imagen-npc {
+        #abogado {
             position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px; /* Ajustar tamaño según sea necesario */
+            bottom: 10%;
+            right: 15%;
+            width: 100px;
+            animation: movimiento 1s infinite alternate;
+        }
+
+        @keyframes movimiento {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
         }
     </style>
 </head>
@@ -125,103 +61,28 @@
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
 
-    <img id="imagen-npc" src="abogado.png" class="oculto" alt="Abogado">
-
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
-        <div>
-            <button class="boton" onclick="irAIndex()">
-                <img src="salir.png" alt="Salir">
-            </button>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="pausa.png" alt="Pausar Música">
-            </button>
-        </div>
-    </div>
-
-    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
-        <img src="pass.png" alt="Saltar Cinemática">
-    </button>
-
-    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
-        <img src="stop.png" alt="Control de Sonido">
-    </button>
+    <img id="abogado" src="abogado.png" alt="Abogado">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const nombreJugador = prompt("Introduce tu nombre:");
-        document.getElementById('texto-dialogo').innerHTML = `${nombreJugador} ... *Sonido de teléfono*`;
-
-        let estaReproduciendo = false;
         let indiceDialogo = 0;
         const lineasDialogo = [
-            `${nombreJugador}: una...una tienda?!`,
-            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
+            `una...una tienda?!`,
+            `no me digas que debo encargarme de esto la #### madre...`,
             `Abogado: muchacho!`,
-            `${nombreJugador} (pensamiento): es...un maniquí?`,
-            `${nombreJugador}: h-hola`,
-            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el por qué ni el cómo.`,
-            `${nombreJugador}: pero...`,
+            `es...un maniquí?`,
+            `h-hola`,
+            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porque ni el como.`,
+            `pero...`,
             `Abogado: dije no preguntes!, ahora sígueme.`,
-            `${nombreJugador}: bueno...`
+            `bueno...`
         ];
-
-        function saltarCinematica() {
-            mostrarDialogo();
-        }
-
-        function activarMenuSonido() {
-            const menu = document.getElementById('menu-sonido');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function irAIndex() {
-            window.location.href = 'index.html';
-        }
-
-        function activarPlay() {
-            if (!estaReproduciendo) {
-                Tone.Transport.start();
-                estaReproduciendo = true;
-            }
-        }
-
-        function activarPausa() {
-            if (estaReproduciendo) {
-                Tone.Transport.pause();
-                estaReproduciendo = false;
-            }
-        }
-
-        const controlVolumen = document.getElementById('control-volumen');
-        controlVolumen.addEventListener('input', (event) => {
-            const volumen = event.target.value;
-            Tone.Destination.volume.value = (volumen - 100) / 100;
-        });
-
-        const controlVolumenEfectos = document.getElementById('control-volumen-efectos');
-        controlVolumenEfectos.addEventListener('input', (event) => {
-            const volumenEfectos = event.target.value;
-            Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
-        });
 
         function mostrarDialogo() {
             if (indiceDialogo < lineasDialogo.length) {
                 const dialogoElemento = document.getElementById('texto-dialogo');
                 dialogoElemento.textContent = '';
                 let indiceCaracter = 0;
-
-                // Mostrar imagen del abogado al llegar a su diálogo
-                if (lineasDialogo[indiceDialogo].startsWith("Abogado:")) {
-                    document.getElementById('imagen-npc').classList.remove('oculto');
-                } else {
-                    document.getElementById('imagen-npc').classList.add('oculto');
-                }
 
                 const intervalo = setInterval(() => {
                     if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
@@ -230,31 +91,21 @@
                     } else {
                         clearInterval(intervalo);
                         indiceDialogo++;
-                        setTimeout(mostrarDialogo, 1000); // Espera 1 segundo antes de mostrar el siguiente diálogo
+                        setTimeout(mostrarDialogo, 1000);
                     }
                 }, 80);
+            } else {
+                document.getElementById('panel-dialogo').style.display = 'none';
             }
         }
 
-        function crearMelodia() {
-            const synth = new Tone.Synth().toDestination();
-            const now = Tone.now();
-
-            const notas = ["C4", "E4", "G4", "B4", "C5"];
-            notas.forEach((nota, index) => {
-                synth.triggerAttackRelease(nota, 0.5, now + index * 0.5);
-            });
-            Tone.Transport.scheduleRepeat((time) => {
-                notas.forEach((nota, index) => {
-                    synth.triggerAttackRelease(nota, 0.5, time + index * 0.5);
-                });
-            }, "4n");
+        function iniciarJuego() {
+            const panel = document.getElementById('panel-dialogo');
+            panel.style.display = 'block';
+            mostrarDialogo();
         }
 
-        window.onload = () => {
-            mostrarDialogo();
-            crearMelodia();
-        };
+        window.onload = iniciarJuego;
     </script>
 </body>
 </html>
