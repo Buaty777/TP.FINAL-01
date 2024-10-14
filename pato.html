@@ -165,7 +165,7 @@
                 mostrarAbogado();
                 setTimeout(() => {
                     dialogoElemento.classList.remove('texto-visible');
-                    setTimeout(mostrarDialogo, 500); // Pausa entre diálogos
+                    setTimeout(mostrarDialogo, 500); 
                 }, 3000);
             }
         }
@@ -179,7 +179,7 @@
                 abogado.style.opacity = 0;
                 setTimeout(() => {
                     abogado.style.display = 'none';
-                }, 500); // Tiempo para que se desvanezca
+                }, 500); 
             }
         }
 
@@ -192,15 +192,7 @@
             window.location.href = 'index.html';
         }
 
-        function activarPlay() {
-            Tone.Transport.start();
-        }
-
-        function activarPausa() {
-            Tone.Transport.pause();
-        }
-
-        Tone.Transport.bpm.value = 120;
+        let isPlaying = false;
         const piano = new Tone.Synth().toDestination();
         const melodia = [
             'C4', 'E4', 'G4', 'A4', 'B4', 'C5', 'A4', 'G4',
@@ -208,13 +200,26 @@
             'C4', 'D4', 'E4', 'C4', 'G4', 'A4', 'B4', 'C5'
         ];
 
+        Tone.Transport.bpm.value = 120;
         Tone.Transport.scheduleRepeat((time) => {
             melodia.forEach((note, index) => {
                 piano.triggerAttackRelease(note, '8n', time + index * 0.3);
             });
         }, '2m');
 
-        Tone.Transport.start();
+        function activarPlay() {
+            if (!isPlaying) {
+                Tone.Transport.start();
+                isPlaying = true;
+            }
+        }
+
+        function activarPausa() {
+            if (isPlaying) {
+                Tone.Transport.pause();
+                isPlaying = false;
+            }
+        }
 
         function cambiarVolumen(valor) {
             Tone.Destination.volume.value = (valor - 100) / 100;
@@ -224,3 +229,4 @@
     </script>
 </body>
 </html>
+
