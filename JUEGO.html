@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-image: url('tienda.png');
+            background-image: url('tienda.jpg');
             background-size: cover;
             color: white;
             display: flex;
@@ -119,23 +119,33 @@
         }
 
         #resultado {
-            margin: 10px;
-            padding: 5px;
-            border: 1px solid white;
-            width: 80%;
-            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #calculo {
+            margin-top: 20px;
+            width: 50%;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        #boton-pagar {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div id="pantalla-negra"></div>
     <img src="abogado.png" alt="Abogado" id="abogado">
-    <img src="npc 1.png" alt="NPC 1" id="npc1">
-    <img src="npc 2.png" alt="NPC 2" id="npc2">
+    <img src="npc1.png" alt="NPC 1" id="npc1">
+    <img src="npc2.png" alt="NPC 2" id="npc2">
 
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
-        <p id="introduccion" class="texto-dialogo"></p>
     </div>
 
     <div class="menu-sonido" id="menu-sonido">
@@ -163,31 +173,16 @@
         <img src="stop.png" alt="Control de Sonido">
     </button>
 
-    <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
-        <img src="calculadora.png" alt="Calculadora">
-    </button>
-
-    <button class="boton" id="boton-precios" onclick="mostrarPrecios()">
-        <img src="nota.png" alt="Lista de Precios">
-    </button>
-
-    <div id="resultado"></div>
+    <div id="resultado">¿Cuánto debes pagar?</div>
+    <input type="text" id="calculo" placeholder="Ingresa tu cálculo aquí">
+    <button class="boton" id="boton-pagar" onclick="verificarPago()">Debe Pagar</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         let indiceDialogo = 0;
         const dialogos = [
-            `Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cuál tiene los precios de las cosas y el otro una calculadora, arréglate con eso.`,
-            `[abogado] Abogado: ¡Dije que no preguntes! Sígueme.`
+            `Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cuál tiene los precios de las cosas y el otro una calculadora, arreglate con eso.`
         ];
-
-        const precios = {
-            Jabón: 900,
-            Chetos: 1700,
-            Refresco: 800,
-            Queso: 1200,
-            Uranio: 11000
-        };
 
         function mostrarDialogo() {
             if (indiceDialogo < dialogos.length) {
@@ -195,12 +190,11 @@
                 dialogoElemento.classList.add('texto-visible');
                 dialogoElemento.textContent = dialogos[indiceDialogo];
                 indiceDialogo++;
-                mostrarAbogado();
                 setTimeout(() => {
                     dialogoElemento.classList.remove('texto-visible');
                     setTimeout(() => {
                         if (indiceDialogo >= dialogos.length) {
-                            iniciarNPC1();
+                            mostrarNPC1();
                         } else {
                             mostrarDialogo();
                         }
@@ -209,127 +203,60 @@
             }
         }
 
-        function mostrarAbogado() {
-            const abogado = document.getElementById('abogado');
-            abogado.style.display = 'block';
-            abogado.style.opacity = 1;
-        }
-
-        function iniciarNPC1() {
+        function mostrarNPC1() {
             const npc1 = document.getElementById('npc1');
             npc1.style.display = 'block';
-            mostrarNPCDialogo(npc1, "Ay Holis!!!! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?");
+            setTimeout(() => {
+                mostrarTextoNPC1();
+            }, 500);
         }
 
-        function mostrarNPCDialogo(npc, mensaje) {
+        function mostrarTextoNPC1() {
             const dialogoElemento = document.getElementById('texto-dialogo');
+            dialogoElemento.textContent = "Ay Holis!!!! Me dices cuanto sería el jabón y dos refrescos tres chetos y un queso plis?";
             dialogoElemento.classList.add('texto-visible');
-            dialogoElemento.textContent = mensaje;
             setTimeout(() => {
                 dialogoElemento.classList.remove('texto-visible');
-                const resultadoElemento = document.getElementById('resultado');
-                const respuesta = prompt("Por favor, introduce el precio total:");
-                evaluarRespuesta(respuesta, 900 + (2 * 800) + (3 * 1700) + 1200, npc);
+                setTimeout(() => {
+                    npc1.style.display = 'none';
+                    mostrarNPC2();
+                }, 2000);
             }, 3000);
         }
 
-        function evaluarRespuesta(respuesta, correcto, npc) {
-            if (parseInt(respuesta) === correcto) {
-                alert("Ayyy muchas gracias!!!");
-            } else if (parseInt(respuesta) > correcto) {
-                alert("Oye!!! Esto es una estafa...");
-            } else {
-                alert("Oh!!! Una ganga!!!");
-            }
-            npc.style.display = 'none';
-            iniciarNPC2();
-        }
-
-        function iniciarNPC2() {
+        function mostrarNPC2() {
             const npc2 = document.getElementById('npc2');
             npc2.style.display = 'block';
-            mostrarNPCDialogo(npc2, "Dame siete quesos...");
-        }
-
-        function mostrarPrecios() {
-            let listaPrecios = "Lista de Precios:\n";
-            for (const producto in precios) {
-                listaPrecios += `${producto} = ${precios[producto]}\n`;
-            }
-            alert(listaPrecios);
-        }
-
-        function abrirCalculadora() {
-            const calculadoraHTML = `
-            <div id="calculadora" style="background-color: white; padding: 20px; border-radius: 10px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                <h2>Calculadora</h2>
-                <input type="text" id="display" readonly style="width: 100%; margin-bottom: 10px;">
-                <div>
-                    ${[1, 2, 3, 4, 5].map(num => `<button onclick="agregarNumero(${num})">${num}</button>`).join('')}
-                </div>
-                <div>
-                    <button onclick="agregarOperacion('+')">+</button>
-                    <button onclick="agregarOperacion('-')">-</button>
-                    <button onclick="calcular()">=</button>
-                    <button onclick="cerrarCalculadora()">Cerrar</button>
-                </div>
-            </div>`;
-            document.body.insertAdjacentHTML('beforeend', calculadoraHTML);
-        }
-
-        function agregarNumero(num) {
-            const display = document.getElementById('display');
-            display.value += num;
-        }
-
-        function agregarOperacion(operacion) {
-            const display = document.getElementById('display');
-            display.value += ` ${operacion} `;
-        }
-
-        function calcular() {
-            const display = document.getElementById('display');
-            const resultado = eval(display.value);
-            alert(`Resultado: ${resultado}`);
-            display.value = '';
-        }
-
-        function cerrarCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            if (calculadora) {
-                calculadora.remove();
-            }
-        }
-
-        function iniciarCancion() {
-            const synth = new Tone.Synth().toDestination();
-            const loop = new Tone.Loop((time) => {
-                synth.triggerAttackRelease("C4", "8n", time);
-                synth.triggerAttackRelease("E4", "8n", time + 0.5);
-                synth.triggerAttackRelease("G4", "8n", time + 1);
-            }, "2n").start(0);
-            Tone.Transport.bpm.value = 90;
-            Tone.Transport.start();
-        }
-
-        window.onload = function() {
-            document.getElementById('pantalla-negra').style.display = 'block';
+            const dialogoElemento = document.getElementById('texto-dialogo');
+            dialogoElemento.textContent = "Dame siete quesos...";
+            dialogoElemento.classList.add('texto-visible');
             setTimeout(() => {
-                document.getElementById('pantalla-negra').style.display = 'none';
-                mostrarDialogo();
-                iniciarCancion();
-            }, 4000);
-        };
+                dialogoElemento.classList.remove('texto-visible');
+            }, 3000);
+        }
+
+        function verificarPago() {
+            const input = document.getElementById('calculo').value;
+            const resultadoElemento = document.getElementById('resultado');
+            const pagoCorrecto = 900 + 800 * 2 + 1700 + 1200;
+
+            if (parseInt(input) === pagoCorrecto) {
+                resultadoElemento.textContent = "Ayyy muchas gracias!!!";
+            } else if (parseInt(input) > pagoCorrecto) {
+                resultadoElemento.textContent = "Oye!!! Esto es una estafa...";
+            } else {
+                resultadoElemento.textContent = "Oh!!! Una ganga!!!";
+            }
+
+            setTimeout(() => {
+                mostrarNPC2();
+            }, 2000);
+        }
 
         function cambiarVolumen(volumen) {
         }
 
         function cambiarVolumenEfectos(volumen) {
-        }
-
-        function activarMenuSonido() {
-            const menuSonido = document.getElementById('menu-sonido');
-            menuSonido.style.display = menuSonido.style.display === 'block' ? 'none' : 'block';
         }
 
         function activarPlay() {
@@ -338,9 +265,26 @@
         function activarPausa() {
         }
 
+        function activarMenuSonido() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = menuSonido.style.display === 'none' ? 'block' : 'none';
+        }
+
         function irAIndex() {
             window.location.href = 'index.html';
         }
+
+        function saltarCinematica() {
+            mostrarDialogo();
+            document.getElementById('pantalla-negra').style.display = 'none';
+        }
+
+        window.onload = function () {
+            setTimeout(() => {
+                document.getElementById('pantalla-negra').style.display = 'none';
+                mostrarDialogo();
+            }, 4000);
+        };
     </script>
 </body>
 </html>
