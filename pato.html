@@ -1,161 +1,186 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda</title>
+    <title>K.T.P (EL JUEGO)</title>
     <style>
         body {
-            margin: 0;
-            overflow: hidden;
-            background: linear-gradient(to bottom, #000, #fff);
-        }
-        #fondo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.png');
             background-size: cover;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-        }
-        #texto-inicial {
-            font-size: 2em;
             color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             text-align: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
+            overflow: hidden;
+        }
+
+        .menu-sonido {
+            display: none;
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: auto;
+            background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .barra-volumen {
+            width: 200px;
+            margin-top: 10px;
+        }
+
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 20px;
+            margin: 10px;
+            font-size: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .boton img {
+            width: 70px;
+            height: 70px;
+        }
+
+        .panel-dialogo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             display: none;
         }
-        #panel-sonido {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-        }
-        button {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            margin: 5px;
-            cursor: pointer;
-        }
-        .volume-control {
-            margin: 5px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        #conversacion {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            color: white;
-            font-size: 1.5em;
+
+        .texto-dialogo {
+            margin: 0;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div id="fondo"></div>
-    <div id="texto-inicial">Cargando...</div>
-    <div id="conversacion"></div>
-    <div id="panel-sonido">
-        <button id="pass-button">Pass</button>
-        <input type="range" class="volume-control" id="volume-control" min="0" max="1" step="0.01" value="0.5">
-        <label for="volume-control">Volumen</label>
+
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú</p>
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
+        <div>
+            <button class="boton" onclick="irAIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
     </div>
-    
+
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
+
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const fondo = document.getElementById('fondo');
-        const textoInicial = document.getElementById('texto-inicial');
-        const conversacionDiv = document.getElementById('conversacion');
-        const passButton = document.getElementById('pass-button');
-        const volumeControl = document.getElementById('volume-control');
-        let audioVolume = 0.5;
+        const nombreJugador = prompt("Introduce tu nombre:");
+        const lineasDialogo = [
+            `${nombreJugador}: una...una tienda?!`,
+            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `${nombreJugador} (pensamiento): es...un maniquí?`,
+            `${nombreJugador}: h-hola`,
+            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
+            `${nombreJugador}: pero...`,
+            `Abogado: dije no preguntes!, ahora sígueme.`,
+            `${nombreJugador}: bueno...`
+        ];
 
-        fondo.style.opacity = 1;
+        let indiceDialogo = 0;
 
-        function mostrarTextoInicial() {
-            textoInicial.style.display = 'block';
-            setTimeout(() => {
-                textoInicial.textContent = 'dos horas y diez minutos después';
-                textoInicial.style.display = 'block';
-                setTimeout(() => {
-                    textoInicial.style.display = 'none';
-                }, 3000);
-            }, 3000);
+        function activarMenuSonido() {
+            const menu = document.getElementById('menu-sonido');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
-        const synth = new Tone.Synth().toDestination();
-        const piano = new Tone.Sampler({
-            urls: {
-                "A0": "A0.mp3",
-                "C1": "C1.mp3",
-                "D#1": "Ds1.mp3",
-                "F#1": "Fs1.mp3",
-                "A1": "A1.mp3",
-            },
-            baseUrl: "https://tonejs.github.io/audio/salamander/"
-        }).toDestination();
+        function irAIndex() {
+            window.location.href = 'index.html';
+        }
 
-        const melody = new Tone.Sequence(
-            (time, note) => {
-                piano.triggerAttackRelease(note, "10n", time);
-            },
-            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
-            "4n"
-        );
-
-        Tone.start();
-        Tone.Transport.start();
-        melody.start();
-
-        volumeControl.addEventListener('input', () => {
-            audioVolume = volumeControl.value;
-            Tone.getDestination().volume.value = audioVolume * 10; 
-        });
-
-        passButton.addEventListener('click', () => {
-            if (passButton.disabled) return;
-            passButton.disabled = true;
-
-            const dialogo = [
-                "[nombre del usuario]: una...una tienda?!",
-                "[nombre del usuario]: no me digas que debo encargarme de esto la #### madre...",
-                "Abogado: muchacho!",
-                "[nombre del usuario] (pensamiento): es...un maniquí?",
-                "[nombre del usuario]: h-hola",
-                "Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo",
-                "[nombre del usuario]: pero...",
-                "Abogado: dije no preguntes!, ahora sígueme.",
-                "[nombre del usuario]: bueno..."
-            ];
-
-            let index = 0;
-
-            function mostrarDialogo() {
-                if (index < dialogo.length) {
-                    conversacionDiv.textContent = dialogo[index];
-                    index++;
-                    setTimeout(mostrarDialogo, 2000);
-                } else {
-                    conversacionDiv.textContent = "";
-                    passButton.disabled = false;
-                }
+        function activarPlay() {
+            if (!estaReproduciendo) {
+                Tone.Transport.start();
+                estaReproduciendo = true;
             }
+        }
 
-            mostrarDialogo();
-            mostrarTextoInicial();
+        function activarPausa() {
+            if (estaReproduciendo) {
+                Tone.Transport.pause();
+                estaReproduciendo = false;
+            }
+        }
+
+        const controlVolumen = document.getElementById('control-volumen');
+        controlVolumen.addEventListener('input', (event) => {
+            const volumen = event.target.value;
+            Tone.Destination.volume.value = (volumen - 100) / 100;
         });
 
-        mostrarTextoInicial();
+        const controlVolumenEfectos = document.getElementById('control-volumen-efectos');
+        controlVolumenEfectos.addEventListener('input', (event) => {
+            const volumenEfectos = event.target.value;
+            Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
+        });
+
+        function mostrarDialogo() {
+            if (indiceDialogo < lineasDialogo.length) {
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.textContent = '';
+                let indiceCaracter = 0;
+
+                const intervalo = setInterval(() => {
+                    if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
+                        dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
+                        indiceCaracter++;
+                    } else {
+                        clearInterval(intervalo);
+                        indiceDialogo++;
+                        setTimeout(mostrarDialogo, 1000);
+                    }
+                }, 80);
+            }
+        }
+
+        window.onload = mostrarDialogo;
     </script>
 </body>
 </html>
-
