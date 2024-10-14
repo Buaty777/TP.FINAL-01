@@ -1,139 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego K.P.T</title>
+    <title>K.T.P (EL JUEGO)</title>
     <style>
         body {
+            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.png');
             background-size: cover;
-            font-family: Arial, sans-serif;
-            color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
         }
-        #panel-dialogo {
-            position: fixed;
-            bottom: 10%;
+
+        .menu-sonido {
+            display: none;
+            position: absolute;
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.9);
+            width: 350px;
+            height: auto;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 20px;
+            margin: 10px;
+            font-size: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .boton img {
+            width: 70px;
+            height: 70px;
+        }
+
+        #boton-saltar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        #boton-detener {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .barra-volumen {
+            width: 200px;
+            margin-top: 10px;
+        }
+
+        .panel-dialogo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
             padding: 20px;
             width: 80%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             display: none;
-            opacity: 0;
-            transition: opacity 0.5s;
         }
-        #botones {
-            position: fixed;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
+
+        .texto-dialogo {
+            margin: 0;
+            font-size: 18px;
         }
-        button {
-            background-color: #3498db;
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s;
+
+        .texto-jugador {
+            color: #3498db;
         }
-        button:hover {
-            background-color: #2980b9;
+
+        .texto-abogado {
+            color: #bada55;
         }
-        input[type="range"] {
-            width: 100%;
-            margin-top: 10px;
+
+        .oculto {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="panel-dialogo">
-        <p id="texto-dialogo"></p>
-        <img id="npc-imagen" src="abogado.png" alt="Abogado" style="display: none;">
-    </div>
-    <div id="botones">
-        <button id="pass-btn">Pass</button>
-        <button id="sound-btn">Sonido</button>
-    </div>
-    <input id="control-volumen" type="range" min="0" max="100" value="100">
-    <input id="control-volumen-efectos" type="range" min="0" max="100" value="100">
-    
-    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
-    <script>
-        const nombreJugador = localStorage.getItem('nombreJugador') || "Jugador";
-        const dialogoElement = document.getElementById('texto-dialogo');
-        const passButton = document.getElementById('pass-btn');
-        const npcImagen = document.getElementById('npc-imagen');
 
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
+
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú</p>
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
+        <div>
+            <button class="boton" onclick="irAIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
+    </div>
+
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script>
+        const nombreJugador = prompt("Introduce tu nombre:");
+        document.getElementById('nombre-jugador').textContent = nombreJugador;
+
+        let estaReproduciendo = false;
+        let indiceDialogo = 0;
         const lineasDialogo = [
-            `${nombreJugador}: una...una tienda?!`,
-            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
-            `Abogado: muchacho!`,
-            `${nombreJugador} (pensamiento): es...un maniquí?`,
-            `${nombreJugador}: h-hola`,
-            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
-            `${nombreJugador}: pero...`,
-            `Abogado: dije no preguntes!, ahora sígueme.`,
-            `${nombreJugador}: bueno...`
+            `${nombreJugador} ... *Sonido de teléfono*`,
+            `${nombreJugador} *contesta*`,
+            `Abogado: Hola muchacho, ¿cómo va el viaje?`,
+            `${nombreJugador}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
+            `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
+            `${nombreJugador}: ...`,
+            `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
+            `*La llamada termina*`,
+            `${nombreJugador}: ..., en verdad esto será raro...`
         ];
 
-        let indiceDialogo = 0;
-
-        const synthTexto = new Tone.Synth().toDestination();
-        const synthBoton = new Tone.Synth().toDestination();
-
-        const playTexto = () => {
-            synthTexto.triggerAttackRelease("C4", 0.1);
-        };
-
-        const playBoton = () => {
-            synthBoton.triggerAttackRelease("E4", 0.1);
-        };
-
-        const mostrarDialogo = () => {
-            if (indiceDialogo < lineasDialogo.length) {
-                const texto = lineasDialogo[indiceDialogo];
-                dialogoElement.innerText = texto;
-
-                const panel = document.getElementById('panel-dialogo');
-                panel.style.display = 'block';
-                panel.style.opacity = 1;
-
-                playTexto();
-                indiceDialogo++;
-                setTimeout(mostrarDialogo, 3000);
-            } else {
-                document.getElementById('panel-dialogo').style.display = 'none';
-            }
-        };
-
-        passButton.addEventListener('click', () => {
+        function saltarCinematica() {
+            document.getElementById('panel-dialogo').style.display = 'block';
             mostrarDialogo();
-            passButton.style.display = 'none';
-            playBoton();
-        });
+        }
 
-        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5', 'C5', 'E5', 'D5', 'C5', 'B4', 'A4', 'G4'];
+        function activarMenuSonido() {
+            const menu = document.getElementById('menu-sonido');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
 
-        const playMelody = () => {
-            let now = Tone.now();
-            melodyNotes.forEach((note, index) => {
-                synthTexto.triggerAttackRelease(note, 0.5, now + index * 0.5);
-            });
-        };
+        function irAIndex() {
+            window.location.href = 'index.html';
+        }
 
-        Tone.start().then(() => {
-            Tone.Transport.scheduleRepeat((time) => {
-                playMelody();
-            }, '4n');
-            Tone.Transport.start();
-        });
+        function activarPlay() {
+            if (!estaReproduciendo) {
+                Tone.Transport.start();
+                estaReproduciendo = true;
+            }
+        }
+
+        function activarPausa() {
+            if (estaReproduciendo) {
+                Tone.Transport.pause();
+                estaReproduciendo = false;
+            }
+        }
 
         const controlVolumen = document.getElementById('control-volumen');
         controlVolumen.addEventListener('input', (event) => {
@@ -147,161 +201,28 @@
             Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
         });
 
-        mostrarDialogo();
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego K.P.T</title>
-    <style>
-        body {
-            background-image: url('tienda.png');
-            background-size: cover;
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-        #panel-dialogo {
-            position: fixed;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        #botones {
-            position: fixed;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-        }
-        button {
-            background-color: #3498db;
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        input[type="range"] {
-            width: 100%;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div id="panel-dialogo">
-        <p id="texto-dialogo"></p>
-        <img id="npc-imagen" src="abogado.png" alt="Abogado" style="display: none;">
-    </div>
-    <div id="botones">
-        <button id="pass-btn">Pass</button>
-        <button id="sound-btn">Sonido</button>
-    </div>
-    <input id="control-volumen" type="range" min="0" max="100" value="100">
-    <input id="control-volumen-efectos" type="range" min="0" max="100" value="100">
-    
-    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
-    <script>
-        const nombreJugador = localStorage.getItem('nombreJugador') || "Jugador";
-        const dialogoElement = document.getElementById('texto-dialogo');
-        const passButton = document.getElementById('pass-btn');
-        const npcImagen = document.getElementById('npc-imagen');
-
-        const lineasDialogo = [
-            `${nombreJugador}: una...una tienda?!`,
-            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
-            `Abogado: muchacho!`,
-            `${nombreJugador} (pensamiento): es...un maniquí?`,
-            `${nombreJugador}: h-hola`,
-            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
-            `${nombreJugador}: pero...`,
-            `Abogado: dije no preguntes!, ahora sígueme.`,
-            `${nombreJugador}: bueno...`
-        ];
-
-        let indiceDialogo = 0;
-
-        const synthTexto = new Tone.Synth().toDestination();
-        const synthBoton = new Tone.Synth().toDestination();
-
-        const playTexto = () => {
-            synthTexto.triggerAttackRelease("C4", 0.1);
-        };
-
-        const playBoton = () => {
-            synthBoton.triggerAttackRelease("E4", 0.1);
-        };
-
-        const mostrarDialogo = () => {
+        function mostrarDialogo() {
             if (indiceDialogo < lineasDialogo.length) {
-                const texto = lineasDialogo[indiceDialogo];
-                dialogoElement.innerText = texto;
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.textContent = '';
+                let indiceCaracter = 0;
 
-                const panel = document.getElementById('panel-dialogo');
-                panel.style.display = 'block';
-                panel.style.opacity = 1;
-
-                playTexto();
-                indiceDialogo++;
-                setTimeout(mostrarDialogo, 3000);
-            } else {
-                document.getElementById('panel-dialogo').style.display = 'none';
+                const intervalo = setInterval(() => {
+                    if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
+                        dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
+                        indiceCaracter++;
+                    } else {
+                        clearInterval(intervalo);
+                        indiceDialogo++;
+                        setTimeout(mostrarDialogo, 1000);
+                    }
+                }, 80);
             }
+        }
+
+        window.onload = () => {
+            activarMenuSonido();
         };
-
-        passButton.addEventListener('click', () => {
-            mostrarDialogo();
-            passButton.style.display = 'none';
-            playBoton();
-        });
-
-        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5', 'C5', 'E5', 'D5', 'C5', 'B4', 'A4', 'G4'];
-
-        const playMelody = () => {
-            let now = Tone.now();
-            melodyNotes.forEach((note, index) => {
-                synthTexto.triggerAttackRelease(note, 0.5, now + index * 0.5);
-            });
-        };
-
-        Tone.start().then(() => {
-            Tone.Transport.scheduleRepeat((time) => {
-                playMelody();
-            }, '4n');
-            Tone.Transport.start();
-        });
-
-        const controlVolumen = document.getElementById('control-volumen');
-        controlVolumen.addEventListener('input', (event) => {
-            const volumen = event.target.value;
-            Tone.Destination.volume.value = (volumen - 100) / 100;
-        });
-
-        const controlVolumenEfectos = document.getElementById('control-volumen-efectos');
-        controlVolumenEfectos.addEventListener('input', (event) => {
-            const volumenEfectos = event.target.value;
-            Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
-        });
-
-        mostrarDialogo();
     </script>
 </body>
 </html>
-
