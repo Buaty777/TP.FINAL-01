@@ -9,7 +9,6 @@
         body {
             font-family: 'Press Start 2P', cursive;
             background-color: black;
-            background-image: url('paisaje_1.png');
             background-size: cover;
             background-position: center;
             color: white;
@@ -22,9 +21,18 @@
         }
 
         #game-intro {
-            display: none;
-            opacity: 0;
+            background-color: black;
+            display: block;
+            opacity: 1;
             transition: opacity 2s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .player-text {
@@ -65,7 +73,7 @@
 
         .button img {
             width: 100px;
-            height: 100px; 
+            height: 100px;
         }
 
         #skip-button {
@@ -78,11 +86,10 @@
             color: white;
         }
 
-        #stop-button {
+        #play-button, #pause-button {
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 10px;
             padding: 15px 30px;
             background-color: #444;
             border-radius: 5px;
@@ -117,7 +124,7 @@
 </head>
 <body>
 
-    <div id="game-intro" class="hidden">
+    <div id="game-intro">
         <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
         <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
         <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
@@ -131,12 +138,6 @@
             <button class="button" onclick="goToIndex()">
                 <img src="salir.png" alt="Salir">
             </button>
-            <button class="button" id="play-button" onclick="togglePlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="button" id="pause-button" onclick="togglePause()">
-                <img src="pausa.png" alt="Pausar Música">
-            </button>
         </div>
     </div>
 
@@ -144,8 +145,12 @@
         <img src="pass.png" alt="Saltar Cinemática">
     </button>
 
-    <button class="button" id="stop-button" onclick="toggleSoundMenu()">
-        <img src="stop.png" alt="Control de Sonido">
+    <button class="button" id="play-button" onclick="togglePlay()">
+        <img src="inicio.png" alt="Iniciar Música">
+    </button>
+
+    <button class="button" id="pause-button" onclick="togglePause()">
+        <img src="pausa.png" alt="Pausar Música">
     </button>
 
     <div class="text-panel" id="dialogue-panel">
@@ -161,7 +166,6 @@
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
-            introElement.classList.remove('hidden');
             introElement.style.display = 'block';
 
             setTimeout(() => {
@@ -171,17 +175,35 @@
 
         function skipCutscene() {
             document.getElementById('game-intro').style.display = 'none';
-            document.getElementById('sound-menu').style.display = 'block';
             document.body.style.backgroundImage = 'url("paisaje_1.png")';
+            showConversation();
         }
 
-        function toggleSoundMenu() {
-            const menu = document.getElementById('sound-menu');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
+        function showConversation() {
+            const dialoguePanel = document.getElementById('dialogue-panel');
+            dialoguePanel.style.display = 'block';
 
-        function goToIndex() {
-            window.location.href = 'index.html';
+            let dialogue = [
+                `[${playerName}] ... *Sonido de teléfono*`,
+                `[${playerName}] *contesta*`,
+                `[Abogado] Hola muchacho, ¿cómo va el viaje?`,
+                `[${playerName}] Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
+                `[Abogado] No lo sé... el viejo Crops estaba algo loco jajaja`,
+                `[${playerName}] ...`,
+                `[Abogado] En fin, te espero donde te dije que estaría, adiós.`,
+                `*La llamada termina*`,
+                `[${playerName}] ..., en verdad esto será raro...`
+            ];
+
+            let index = 0;
+            function displayNextLine() {
+                if (index < dialogue.length) {
+                    document.getElementById('dialogue-text').textContent = dialogue[index];
+                    index++;
+                    setTimeout(displayNextLine, 2000);
+                }
+            }
+            displayNextLine();
         }
 
         function togglePlay() {
@@ -202,14 +224,6 @@
         volumeSlider.addEventListener('input', (event) => {
             const volume = event.target.value;
             Tone.Destination.volume.value = (volume - 100) / 100;
-        });
-
-        const buttons = document.querySelectorAll('.button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                const clickSound = new Tone.Synth().toDestination();
-                clickSound.triggerAttackRelease('C4', '8n');
-            });
         });
 
         window.onload = function() {
