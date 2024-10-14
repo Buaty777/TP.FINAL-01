@@ -19,13 +19,17 @@
             overflow: hidden;
         }
 
-        #texto-despues {
-            display: none;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
+        .panel-dialogo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
             border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            display: none;
         }
 
         .texto-jugador {
@@ -66,11 +70,6 @@
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        .boton img {
-            width: 70px;
-            height: 70px;
-        }
-
         #boton-saltar {
             position: absolute;
             bottom: 10px;
@@ -97,19 +96,6 @@
             margin-top: 10px;
         }
 
-        .panel-dialogo {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: none;
-        }
-
         .texto-dialogo {
             margin: 0;
             font-size: 18px;
@@ -117,10 +103,6 @@
     </style>
 </head>
 <body>
-
-    <div id="texto-despues" class="oculto">
-        <p>Dos horas y diez minutos después...</p>
-    </div>
 
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
@@ -155,7 +137,14 @@
     <script>
         let estaReproduciendo = false;
         let indiceDialogo = 0;
-        const nombreJugador = "TuNombre"; // Cambia esto por el nombre deseado
+        let nombreJugador = "";
+
+        function obtenerNombreJugador() {
+            const params = new URLSearchParams(window.location.search);
+            nombreJugador = params.get('nombre');
+            if (!nombreJugador) nombreJugador = "Jugador";
+        }
+
         const lineasDialogo = [
             `${nombreJugador}: una...una tienda?!`,
             `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
@@ -171,20 +160,6 @@
         function saltarCinematica() {
             document.getElementById('panel-dialogo').style.display = 'block';
             mostrarDialogo();
-        }
-
-        function mostrarTextoDespues() {
-            const textoDespues = document.getElementById('texto-despues');
-            textoDespues.classList.remove('oculto');
-            textoDespues.style.display = 'block';
-
-            setTimeout(() => {
-                textoDespues.style.opacity = 1;
-            }, 100);
-
-            setTimeout(() => {
-                window.location.href = 'pato.html';
-            }, 3000);
         }
 
         function activarMenuSonido() {
@@ -238,9 +213,48 @@
                 setTimeout(mostrarDialogo, 3000);
             } else {
                 document.getElementById('panel-dialogo').style.display = 'none';
-                mostrarTextoDespues();
             }
         }
+
+        function playSonidoBoton() {
+            const audio = new Audio('sonido_boton.mp3');
+            audio.play();
+        }
+
+        const botones = document.querySelectorAll('.boton');
+        botones.forEach(boton => {
+            boton.addEventListener('click', playSonidoBoton);
+        });
+
+        const synth = new Tone.Synth({
+            oscillator: {
+                type: 'triangle'
+            },
+            envelope: {
+                attack: 0.1,
+                decay: 0.2,
+                sustain: 0.5,
+                release: 1
+            }
+        }).toDestination();
+
+        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5'];
+
+        const playMelody = () => {
+            let now = Tone.now();
+            melodyNotes.forEach((note, index) => {
+                synth.triggerAttackRelease(note, 0.5, now + index * 0.5);
+            });
+        };
+
+        Tone.start().then(() => {
+            Tone.Transport.scheduleRepeat((time) => {
+                playMelody();
+            }, '4n');
+            Tone.Transport.start();
+        });
+
+        obtenerNombreJugador();
     </script>
 </body>
 </html>
