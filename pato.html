@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-image: url('tienda.png');
+            background-image: url('paisaje_1.png');
             background-size: cover;
             color: white;
             display: flex;
@@ -17,6 +17,27 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
+        }
+
+        #introduccion-juego, #texto-despues {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .texto-jugador {
+            color: #3498db;
+        }
+
+        .texto-abogado {
+            color: #bada55;
+        }
+
+        .oculto {
+            display: none;
         }
 
         .menu-sonido {
@@ -32,11 +53,6 @@
             padding: 20px;
             box-sizing: border-box;
             backdrop-filter: blur(5px);
-        }
-
-        .barra-volumen {
-            width: 200px;
-            margin-top: 10px;
         }
 
         .boton {
@@ -59,6 +75,32 @@
             height: 70px;
         }
 
+        #boton-saltar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        #boton-detener {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .barra-volumen {
+            width: 200px;
+            margin-top: 10px;
+        }
+
         .panel-dialogo {
             position: absolute;
             bottom: 20px;
@@ -79,6 +121,21 @@
     </style>
 </head>
 <body>
+
+    <div id="introduccion-juego" class="oculto">
+        <p>Un día, yo <span id="nombre-jugador" class="texto-jugador"></span> recibí una llamada de un abogado,</p>
+        <p class="texto-abogado">su voz era seria y ronca, solo atinó a decir:</p>
+        <p class="texto-abogado">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
+        <p>Y así empezó mi historia...</p>
+    </div>
+
+    <div id="texto-despues" class="oculto">
+        <p>Dos horas y diez minutos después...</p>
+    </div>
+
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
 
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú</p>
@@ -105,26 +162,51 @@
         <img src="stop.png" alt="Control de Sonido">
     </button>
 
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
-    </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const nombreJugador = prompt("Introduce tu nombre:");
+        let estaReproduciendo = false;
+        let indiceDialogo = 0;
         const lineasDialogo = [
-            `${nombreJugador}: una...una tienda?!`,
-            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
-            `Abogado: muchacho!`,
-            `${nombreJugador} (pensamiento): es...un maniquí?`,
-            `${nombreJugador}: h-hola`,
-            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
-            `${nombreJugador}: pero...`,
-            `Abogado: dije no preguntes!, ahora sígueme.`,
-            `${nombreJugador}: bueno...`
+            `${nombreJugador} ... *Sonido de teléfono*`,
+            `${nombreJugador} *contesta*`,
+            `Abogado: Hola muchacho, ¿cómo va el viaje?`,
+            `${nombreJugador}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
+            `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
+            `${nombreJugador}: ...`,
+            `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
+            `*La llamada termina*`,
+            `${nombreJugador}: ..., en verdad esto será raro...`
         ];
 
-        let indiceDialogo = 0;
+        function mostrarIntroduccion() {
+            const introElement = document.getElementById('introduccion-juego');
+            introElement.classList.remove('oculto');
+            introElement.style.display = 'block';
+
+            setTimeout(() => {
+                introElement.style.opacity = 1;
+            }, 100);
+        }
+
+        function saltarCinematica() {
+            document.getElementById('introduccion-juego').style.display = 'none';
+            document.getElementById('panel-dialogo').style.display = 'block';
+            mostrarDialogo();
+        }
+
+        function mostrarTextoDespues() {
+            const textoDespues = document.getElementById('texto-despues');
+            textoDespues.classList.remove('oculto');
+            textoDespues.style.display = 'block';
+
+            setTimeout(() => {
+                textoDespues.style.opacity = 1;
+            }, 100);
+
+            setTimeout(() => {
+                window.location.href = 'pato.html';
+            }, 3000);
+        }
 
         function activarMenuSonido() {
             const menu = document.getElementById('menu-sonido');
@@ -163,24 +245,25 @@
 
         function mostrarDialogo() {
             if (indiceDialogo < lineasDialogo.length) {
-                const dialogoElemento = document.getElementById('texto-dialogo');
-                dialogoElemento.textContent = '';
-                let indiceCaracter = 0;
+                const texto = lineasDialogo[indiceDialogo];
+                document.getElementById('texto-dialogo').innerText = texto;
 
-                const intervalo = setInterval(() => {
-                    if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
-                        dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
-                        indiceCaracter++;
-                    } else {
-                        clearInterval(intervalo);
-                        indiceDialogo++;
-                        setTimeout(mostrarDialogo, 1000);
-                    }
-                }, 80);
+                const panel = document.getElementById('panel-dialogo');
+                panel.style.display = 'block';
+
+                setTimeout(() => {
+                    panel.style.opacity = 1;
+                }, 100);
+
+                indiceDialogo++;
+                setTimeout(mostrarDialogo, 3000);
+            } else {
+                document.getElementById('panel-dialogo').style.display = 'none';
+                mostrarTextoDespues();
             }
         }
 
-        window.onload = mostrarDialogo;
+        mostrarIntroduccion();
     </script>
 </body>
 </html>
