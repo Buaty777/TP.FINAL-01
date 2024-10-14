@@ -220,8 +220,26 @@
             }
         }
 
+        function crearMelodia() {
+            const synth = new Tone.Synth().toDestination();
+            const now = Tone.now();
+
+            const notas = ["C4", "E4", "G4", "B4", "C5"];
+            notas.forEach((nota, index) => {
+                synth.triggerAttackRelease(nota, 0.5, now + index * 0.5);
+            });
+
+            Tone.Transport.scheduleRepeat((time) => {
+                synth.triggerAttackRelease("C4", 0.5, time);
+                synth.triggerAttackRelease("E4", 0.5, time + 0.5);
+                synth.triggerAttackRelease("G4", 0.5, time + 1);
+            }, "4n");
+        }
+
         window.onload = () => {
+            crearMelodia();
             activarMenuSonido();
+            mostrarDialogo();
         };
     </script>
 </body>
