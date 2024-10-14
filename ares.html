@@ -8,8 +8,7 @@
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-image: url('paisaje_1.png');
-            background-size: cover;
+            background-color: black;
             color: white;
             display: flex;
             justify-content: center;
@@ -23,9 +22,6 @@
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
-            background-color: black;
-            padding: 20px;
-            border-radius: 10px;
         }
 
         .player-text {
@@ -157,26 +153,6 @@
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
-        const synth = new Tone.Synth().toDestination();
-        const piano = new Tone.Sampler({
-            urls: {
-                "A0": "A0.mp3",
-                "C1": "C1.mp3",
-                "D#1": "Ds1.mp3",
-                "F#1": "Fs1.mp3",
-                "A1": "A1.mp3",
-            },
-            baseUrl: "https://tonejs.github.io/audio/salamander/"
-        }).toDestination();
-
-        const melody = new Tone.Sequence(
-            (time, note) => {
-                piano.triggerAttackRelease(note, "10n", time);
-            },
-            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
-            "4n"
-        );
-
         let isPlaying = false;
         let dialogueIndex = 0;
         const dialogueLines = [
@@ -219,7 +195,6 @@
         function togglePlay() {
             if (!isPlaying) {
                 Tone.Transport.start();
-                melody.start();
                 isPlaying = true;
             }
         }
@@ -239,7 +214,7 @@
 
         const effectVolumeSlider = document.getElementById('effect-volume-slider');
         effectVolumeSlider.addEventListener('input', (event) => {
-            const effectVolume = event.target.value;
+            const effectVolume = event.target.value
         });
 
         function changeVolume(value) {
@@ -247,6 +222,7 @@
         }
 
         function changeEffectVolume(value) {
+        
         }
 
         function displayDialogue() {
@@ -254,35 +230,55 @@
                 const line = dialogueLines[dialogueIndex];
                 const dialogueText = document.getElementById('dialogue-text');
                 dialogueText.textContent = '';
-                let currentIndex = 0;
+                let charIndex = 0;
 
-                function typeNextCharacter() {
-                    if (currentIndex < line.length) {
-                        dialogueText.textContent += line.charAt(currentIndex);
-                        currentIndex++;
-                        synth.triggerAttackRelease("C4", "8n");
-                        setTimeout(typeNextCharacter, 50);
+                const typingInterval = setInterval(() => {
+                    if (charIndex < line.length) {
+                        dialogueText.textContent += line.charAt(charIndex);
+                        charIndex++;
+                        const typingSound = new Tone.Synth().toDestination();
+                        typingSound.triggerAttackRelease('C4', '8n');
                     } else {
+                        clearInterval(typingInterval);
                         dialogueIndex++;
-                        setTimeout(displayDialogue, 1000);
+                        setTimeout(displayDialogue, 1500); 
                     }
-                }
-
-                typeNextCharacter();
-            } else {
-                setTimeout(() => {
-                    document.getElementById('dialogue-panel').style.display = 'none';
-                }, 2000);
+                }, 100); 
             }
         }
+
+        const buttons = document.querySelectorAll('.button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const clickSound = new Tone.Synth().toDestination();
+                clickSound.triggerAttackRelease('C4', '8n');
+            });
+        });
+
+        const piano = new Tone.Sampler({
+            urls: {
+                "A0": "A0.mp3",
+                "C1": "C1.mp3",
+                "D#1": "Ds1.mp3",
+                "F#1": "Fs1.mp3",
+                "A1": "A1.mp3",
+            },
+            baseUrl: "https://tonejs.github.io/audio/salamander/"
+        }).toDestination();
+
+        const melody = new Tone.Sequence(
+            (time, note) => {
+                piano.triggerAttackRelease(note, "10n", time);
+            },
+            ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
+            "4n"
+        );
 
         Tone.start();
         Tone.Transport.start();
         melody.start();
-        showIntro();
-        setTimeout(() => {
-            skipCutscene();
-        }, 10000);
+
+        window.onload = showIntro;
     </script>
 </body>
 </html>
