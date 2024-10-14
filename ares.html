@@ -4,7 +4,7 @@
     <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAME)</title>
+    <title>K.T.P (EL JUEGO)</title>
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        #game-intro {
+        #introduccion-juego, #texto-despues {
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
@@ -28,19 +28,19 @@
             border-radius: 10px;
         }
 
-        .player-text {
+        .texto-jugador {
             color: #3498db;
         }
 
-        .lawyer-text {
+        .texto-abogado {
             color: #bada55;
         }
 
-        .hidden {
+        .oculto {
             display: none;
         }
 
-        .menu {
+        .menu-sonido {
             display: none;
             position: absolute;
             top: 15%;
@@ -55,52 +55,53 @@
             backdrop-filter: blur(5px);
         }
 
-        .button {
+        .boton {
             background-color: transparent;
-            border: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
             padding: 20px;
             margin: 10px;
             font-size: 24px;
-            transition: transform 0.2s;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .button:hover {
+        .boton:hover {
             transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
         }
 
-        .button img {
+        .boton img {
             width: 70px;
             height: 70px;
         }
 
-        #skip-button {
+        #boton-saltar {
             position: absolute;
             bottom: 10px;
             left: 10px;
             padding: 10px 20px;
-            background-color: #444;
-            border-radius: 5px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
         }
 
-        #stop-button {
+        #boton-detener {
             position: absolute;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             padding: 15px 30px;
-            background-color: #444;
-            border-radius: 5px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
         }
 
-        .volume-slider {
+        .barra-volumen {
             width: 200px;
             margin-top: 10px;
         }
 
-        .dialogue-panel {
+        .panel-dialogo {
             position: absolute;
             bottom: 20px;
             left: 50%;
@@ -113,7 +114,7 @@
             display: none;
         }
 
-        .dialogue-text {
+        .texto-dialogo {
             margin: 0;
             font-size: 18px;
         }
@@ -121,64 +122,68 @@
 </head>
 <body>
 
-    <div id="game-intro" class="hidden">
-        <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
-        <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
-        <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
+    <div id="introduccion-juego" class="oculto">
+        <p>Un día, yo <span id="nombre-jugador" class="texto-jugador"></span> recibí una llamada de un abogado,</p>
+        <p class="texto-abogado">su voz era seria y ronca, solo atinó a decir:</p>
+        <p class="texto-abogado">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
         <p>Y así empezó mi historia...</p>
     </div>
 
-    <div class="dialogue-panel" id="dialogue-panel">
-        <p class="dialogue-text" id="dialogue-text"></p>
+    <div id="texto-despues" class="oculto">
+        <p>Dos horas y diez minutos después...</p>
     </div>
 
-    <div class="menu" id="sound-menu">
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
+
+    <div class="menu-sonido" id="menu-sonido">
         <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider" oninput="changeVolume(this.value)">
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="effect-volume-slider" oninput="changeEffectVolume(this.value)">
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
         <div>
-            <button class="button" onclick="goToIndex()">
+            <button class="boton" onclick="irAIndex()">
                 <img src="salir.png" alt="Salir">
             </button>
-            <button class="button" id="play-button" onclick="togglePlay()">
+            <button class="boton" id="boton-play" onclick="activarPlay()">
                 <img src="inicio.png" alt="Iniciar Música">
             </button>
-            <button class="button" id="pause-button" onclick="togglePause()">
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
                 <img src="pausa.png" alt="Pausar Música">
             </button>
         </div>
     </div>
 
-    <button class="button" id="skip-button" onclick="skipCutscene()">
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
         <img src="pass.png" alt="Saltar Cinemática">
     </button>
 
-    <button class="button" id="stop-button" onclick="toggleSoundMenu()">
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
         <img src="stop.png" alt="Control de Sonido">
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const playerName = prompt("Introduce tu nombre:");
-        document.getElementById('player-name').textContent = playerName;
+        const nombreJugador = prompt("Introduce tu nombre:");
+        document.getElementById('nombre-jugador').textContent = nombreJugador;
 
-        let isPlaying = false;
-        let dialogueIndex = 0;
-        const dialogueLines = [
-            `${playerName} ... *Sonido de teléfono*`,
-            `${playerName} *contesta*`,
+        let estaReproduciendo = false;
+        let indiceDialogo = 0;
+        const lineasDialogo = [
+            `${nombreJugador} ... *Sonido de teléfono*`,
+            `${nombreJugador} *contesta*`,
             `Abogado: Hola muchacho, ¿cómo va el viaje?`,
-            `${playerName}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
+            `${nombreJugador}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
             `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
-            `${playerName}: ...`,
+            `${nombreJugador}: ...`,
             `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
             `*La llamada termina*`,
-            `${playerName}: ..., en verdad esto será raro...`
+            `${nombreJugador}: ..., en verdad esto será raro...`
         ];
 
-        function showIntro() {
-            const introElement = document.getElementById('game-intro');
-            introElement.classList.remove('hidden');
+        function mostrarIntroduccion() {
+            const introElement = document.getElementById('introduccion-juego');
+            introElement.classList.remove('oculto');
             introElement.style.display = 'block';
 
             setTimeout(() => {
@@ -186,84 +191,81 @@
             }, 100);
         }
 
-        function skipCutscene() {
-            document.getElementById('game-intro').style.display = 'none';
-            document.getElementById('dialogue-panel').style.display = 'block';
-            displayDialogue();
+        function saltarCinematica() {
+            document.getElementById('introduccion-juego').style.display = 'none';
+            document.getElementById('panel-dialogo').style.display = 'block';
+            mostrarDialogo();
         }
 
-        function toggleSoundMenu() {
-            const menu = document.getElementById('sound-menu');
+        function mostrarTextoDespues() {
+            const textoDespues = document.getElementById('texto-despues');
+            textoDespues.classList.remove('oculto');
+            textoDespues.style.display = 'block';
+
+            setTimeout(() => {
+                textoDespues.style.opacity = 1;
+            }, 100);
+
+            setTimeout(() => {
+                window.location.href = 'pato.html';
+            }, 3000);
+        }
+
+        function activarMenuSonido() {
+            const menu = document.getElementById('menu-sonido');
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
-        function goToIndex() {
+        function irAIndex() {
             window.location.href = 'index.html';
         }
 
-        function togglePlay() {
-            if (!isPlaying) {
+        function activarPlay() {
+            if (!estaReproduciendo) {
                 Tone.Transport.start();
-                isPlaying = true;
+                estaReproduciendo = true;
             }
         }
 
-        function togglePause() {
-            if (isPlaying) {
+        function activarPausa() {
+            if (estaReproduciendo) {
                 Tone.Transport.pause();
-                isPlaying = false;
+                estaReproduciendo = false;
             }
         }
 
-        const volumeSlider = document.getElementById('volume-slider');
-        volumeSlider.addEventListener('input', (event) => {
-            const volume = event.target.value;
-            Tone.Destination.volume.value = (volume - 100) / 100;
+        const controlVolumen = document.getElementById('control-volumen');
+        controlVolumen.addEventListener('input', (event) => {
+            const volumen = event.target.value;
+            Tone.Destination.volume.value = (volumen - 100) / 100;
         });
 
-        const effectVolumeSlider = document.getElementById('effect-volume-slider');
-        effectVolumeSlider.addEventListener('input', (event) => {
-            const effectVolume = event.target.value;
-            Tone.Destination.volume.value = (effectVolume - 100) / 100;
+        const controlVolumenEfectos = document.getElementById('control-volumen-efectos');
+        controlVolumenEfectos.addEventListener('input', (event) => {
+            const volumenEfectos = event.target.value;
+            Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
         });
 
-        function changeVolume(value) {
-            Tone.Destination.volume.value = (value - 100) / 100;
-        }
+        function mostrarDialogo() {
+            if (indiceDialogo < lineasDialogo.length) {
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.textContent = '';
+                let indiceCaracter = 0;
 
-        function changeEffectVolume(value) {
-            Tone.Destination.volume.value = (value - 100) / 100;
-        }
-
-        function displayDialogue() {
-            if (dialogueIndex < dialogueLines.length) {
-                const line = dialogueLines[dialogueIndex];
-                const dialogueText = document.getElementById('dialogue-text');
-                dialogueText.textContent = '';
-                let charIndex = 0;
-
-                const typingInterval = setInterval(() => {
-                    if (charIndex < line.length) {
-                        dialogueText.textContent += line.charAt(charIndex);
-                        charIndex++;
-                        const typingSound = new Tone.Synth().toDestination();
-                        typingSound.triggerAttackRelease('C4', '8n');
+                const intervalo = setInterval(() => {
+                    if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
+                        dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
+                        indiceCaracter++;
                     } else {
-                        clearInterval(typingInterval);
-                        dialogueIndex++;
-                        setTimeout(displayDialogue, 1500);
+                        clearInterval(intervalo);
+                        indiceDialogo++;
+                        setTimeout(mostrarDialogo, 1000);
                     }
-                }, 200);
+                }, 80);
+            } else {
+                mostrarTextoDespues();
             }
         }
-
-        const buttons = document.querySelectorAll('.button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                const clickSound = new Tone.Synth().toDestination();
-                clickSound.triggerAttackRelease('C4', '8n');
-            });
-        });
 
         const piano = new Tone.Sampler({
             urls: {
@@ -276,7 +278,7 @@
             baseUrl: "https://tonejs.github.io/audio/salamander/"
         }).toDestination();
 
-        const melody = new Tone.Sequence(
+        const melodia = new Tone.Sequence(
             (time, note) => {
                 piano.triggerAttackRelease(note, "10n", time);
             },
@@ -286,9 +288,9 @@
 
         Tone.start();
         Tone.Transport.start();
-        melody.start();
+        melodia.start();
 
-        window.onload = showIntro;
+        window.onload = mostrarIntroduccion;
     </script>
 </body>
 </html>
