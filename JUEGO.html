@@ -16,6 +16,22 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            position: relative;
+        }
+
+        .pantalla-negra {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
         }
 
         .texto-intro {
@@ -82,12 +98,26 @@
             display: none;
             margin-top: 20px;
         }
+
+        #panel-sonido {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 
-    <div class="texto-intro">
+    <div class="pantalla-negra" id="pantallaNegra">
         <p>Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista que tiene los precios de las cosas y el otro, una calculadora. ¡Arreglate con eso!</p>
+    </div>
+
+    <img src="tienda.jpg" alt="Tienda" id="tienda" style="display: none; width: 100%; height: auto;">
+
+    <div id="panel-sonido">
+        <button class="boton" id="iniciar-musica" onclick="iniciarMusica()">Iniciar Música</button>
+        <button class="boton" id="parar-musica" onclick="pararMusica()">Detener Música</button>
     </div>
 
     <div>
@@ -224,6 +254,10 @@
 
         window.onload = () => {
             crearMelodia();
+            setTimeout(() => {
+                document.getElementById('pantallaNegra').style.display = 'none';
+                document.getElementById('tienda').style.display = 'block';
+            }, 4000);
         };
 
         function crearMelodia() {
@@ -241,6 +275,16 @@
             });
 
             Tone.Transport.start();
+        }
+
+        function iniciarMusica() {
+            Tone.start().then(() => {
+                crearMelodia();
+            });
+        }
+
+        function pararMusica() {
+            Tone.Transport.stop();
         }
     </script>
 </body>
