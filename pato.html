@@ -146,13 +146,13 @@
         const dialogos = [
             `Una... una tienda?!`,
             `No me digas que debo encargarme de esto la #### madre...`,
-            `Abogado: muchacho!`,
+            `[abogado] Abogado: muchacho!`,
             `(Es un maniquí?)`,
             `H-hola`,
-            `Abogado: Bueno, como ya viste, el viejo Corps te dejó una tienda.`,
+            `[abogado] Abogado: Bueno, como ya viste, el viejo Corps te dejó una tienda.`,
             `No preguntes el porqué ni el cómo.`,
             `Pero...`,
-            `Abogado: ¡Dije que no preguntes! Sígueme.`,
+            `[abogado] Abogado: ¡Dije que no preguntes! Sígueme.`,
             `Bueno...`
         ];
 
@@ -163,17 +163,23 @@
                 dialogoElemento.textContent = dialogos[indiceDialogo];
                 indiceDialogo++;
                 mostrarAbogado();
-                setTimeout(mostrarDialogo, 3000);
+                setTimeout(() => {
+                    dialogoElemento.classList.remove('texto-visible');
+                    setTimeout(mostrarDialogo, 500); // Pausa entre diálogos
+                }, 3000);
             }
         }
 
         function mostrarAbogado() {
             const abogado = document.getElementById('abogado');
-            if (indiceDialogo === 2 || indiceDialogo >= 5) {
+            if (dialogos[indiceDialogo - 1].includes("[abogado]")) {
                 abogado.style.display = 'block';
                 abogado.style.opacity = 1;
             } else {
                 abogado.style.opacity = 0;
+                setTimeout(() => {
+                    abogado.style.display = 'none';
+                }, 500); // Tiempo para que se desvanezca
             }
         }
 
@@ -198,7 +204,8 @@
         const piano = new Tone.Synth().toDestination();
         const melodia = [
             'C4', 'E4', 'G4', 'A4', 'B4', 'C5', 'A4', 'G4',
-            'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3', 'F3'
+            'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3', 'F3',
+            'C4', 'D4', 'E4', 'C4', 'G4', 'A4', 'B4', 'C5'
         ];
 
         Tone.Transport.scheduleRepeat((time) => {
