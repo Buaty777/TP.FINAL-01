@@ -105,9 +105,10 @@
         #resultado {
             margin-top: 20px;
             font-size: 24px;
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 0.1);
             padding: 10px;
             border-radius: 10px;
+            color: white;
         }
 
         #calculo {
@@ -173,7 +174,7 @@
     <button class="boton" id="boton-enviar" onclick="verificarPago()">Enviar</button>
 
     <div class="boton-menu">
-        <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
+        <button class="boton" id="boton-calculadora" onclick="toggleCalculadora()">
             <img src="calculadora.png" alt="Calculadora">
         </button>
         <button class="boton" id="boton-precios" onclick="abrirPrecios()">
@@ -192,6 +193,7 @@
         <button class="boton-calculo" onclick="realizarOperacion('+')">+</button>
         <button class="boton-calculo" onclick="realizarOperacion('-')">-</button>
         <button class="boton-calculo" onclick="limpiarCalculadora()">C</button>
+        <button class="boton-calculo" onclick="finalizarOperacion()">=</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -226,26 +228,33 @@
             const pagoCorrecto = 900 + 800 * 2 + 1700 + 1200;
 
             if (parseInt(input) === pagoCorrecto) {
+                resultadoElemento.style.color = 'green';
                 dialogarNPC("Ayyy muchas gracias!!!");
             } else if (parseInt(input) > pagoCorrecto) {
+                resultadoElemento.style.color = 'red';
                 dialogarNPC("Oye!!! Esto es una estafa...");
             } else {
+                resultadoElemento.style.color = 'red';
                 dialogarNPC("Oh!!! Una ganga!!!");
             }
+            resultadoElemento.textContent = `¿Cuánto debes pagar? ${input}`;
         }
 
         function dialogarNPC(mensaje) {
             const dialogoElemento = document.getElementById('texto-dialogo');
             dialogoElemento.textContent = mensaje;
             setTimeout(() => {
-                dialogoElemento.textContent = "";
                 mostrarNPC2();
             }, 3000);
         }
 
         function mostrarNPC2() {
+            const npc1 = document.getElementById('npc1');
+            npc1.style.display = 'none';
+            const npc2 = document.getElementById('npc2');
+            npc2.style.display = 'block';
             const dialogoElemento = document.getElementById('texto-dialogo');
-            dialogoElemento.textContent = "Y ya me puedes decir cuánto es si te llevo siete quesos?";
+            dialogoElemento.textContent = "Dame siete quesos...";
         }
 
         function abrirCalculadora() {
@@ -295,6 +304,15 @@
             resultadoElemento.textContent = resultadoActual;
         }
 
+        function toggleCalculadora() {
+            const calculadora = document.getElementById('calculadora');
+            if (calculadora.style.display === 'none' || calculadora.style.display === '') {
+                calculadora.style.display = 'block';
+            } else {
+                calculadora.style.display = 'none';
+            }
+        }
+
         window.onload = function() {
             setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
@@ -304,3 +322,4 @@
     </script>
 </body>
 </html>
+
