@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        #abogado, #npc1, #npc2 {
+        #npc1, #npc2 {
             position: absolute;
             bottom: 20px;
             right: 10%;
@@ -102,7 +102,7 @@
             color: white;
         }
 
-        #resultado {
+        #total {
             margin-top: 20px;
             font-size: 24px;
             background-color: rgba(255, 255, 0.1);
@@ -157,11 +157,40 @@
             margin-bottom: 10px;
             font-size: 24px;
         }
+
+        #hoja-precios {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 2px solid white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            z-index: 10;
+        }
+
+        #hoja-precios p {
+            margin: 0;
+            font-size: 18px;
+            color: white;
+        }
+
+        .boton-cerrar {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div id="pantalla-negra">Cargando...</div>
-    <img src="abogado.png" alt="Abogado" id="abogado">
     <img src="npc1.png" alt="NPC 1" id="npc1">
     <img src="npc2.png" alt="NPC 2" id="npc2">
 
@@ -169,7 +198,7 @@
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
 
-    <div id="resultado">¿Cuánto debes pagar?</div>
+    <div id="total">Total: 0</div>
     <input type="number" id="calculo" placeholder="Ingresa tu cálculo aquí" min="0">
     <button class="boton" id="boton-enviar" onclick="verificarPago()">Enviar</button>
 
@@ -196,6 +225,15 @@
         <button class="boton-calculo" onclick="finalizarOperacion()">=</button>
     </div>
 
+    <div id="hoja-precios">
+        <p>Jabón = 900</p>
+        <p>Chetos = 1700</p>
+        <p>Refresco = 800</p>
+        <p>Queso = 1200</p>
+        <p>Uranio = 11.000</p>
+        <button class="boton-cerrar" onclick="cerrarPrecios()">Cerrar</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         let indiceDialogo = 0;
@@ -218,34 +256,9 @@
 
         function mostrarNPC1() {
             const npc1 = document.getElementById('npc1');
+            npc1.style.display = 'block';
             const dialogoElemento = document.getElementById('texto-dialogo');
             dialogoElemento.textContent = "Ay Holis!!!! Me dices cuanto sería el jabón y dos refrescos tres chetos y un queso plis?";
-        }
-
-        function verificarPago() {
-            const input = document.getElementById('calculo').value;
-            const resultadoElemento = document.getElementById('resultado');
-            const pagoCorrecto = 900 + 800 * 2 + 1700 + 1200;
-
-            if (parseInt(input) === pagoCorrecto) {
-                resultadoElemento.style.color = 'green';
-                dialogarNPC("Ayyy muchas gracias!!!");
-            } else if (parseInt(input) > pagoCorrecto) {
-                resultadoElemento.style.color = 'red';
-                dialogarNPC("Oye!!! Esto es una estafa...");
-            } else {
-                resultadoElemento.style.color = 'red';
-                dialogarNPC("Oh!!! Una ganga!!!");
-            }
-            resultadoElemento.textContent = `¿Cuánto debes pagar? ${input}`;
-        }
-
-        function dialogarNPC(mensaje) {
-            const dialogoElemento = document.getElementById('texto-dialogo');
-            dialogoElemento.textContent = mensaje;
-            setTimeout(() => {
-                mostrarNPC2();
-            }, 3000);
         }
 
         function mostrarNPC2() {
@@ -263,7 +276,13 @@
         }
 
         function abrirPrecios() {
-            window.open('precios.html', '_blank');
+            const hojaPrecios = document.getElementById('hoja-precios');
+            hojaPrecios.style.display = 'block';
+        }
+
+        function cerrarPrecios() {
+            const hojaPrecios = document.getElementById('hoja-precios');
+            hojaPrecios.style.display = 'none';
         }
 
         let operacionActual = '';
@@ -313,6 +332,21 @@
             }
         }
 
+        function verificarPago() {
+            const totalElemento = document.getElementById('total');
+            const calculo = parseInt(document.getElementById('calculo').value);
+            if (calculo === 900 + (2 * 800) + (3 * 1700) + 1200) {
+                totalElemento.textContent = "Total: " + calculo;
+                totalElemento.style.color = "green";
+                setTimeout(() => {
+                    mostrarNPC2();
+                }, 3000);
+            } else {
+                totalElemento.textContent = "Total: " + calculo;
+                totalElemento.style.color = "red";
+            }
+        }
+
         window.onload = function() {
             setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
@@ -322,4 +356,3 @@
     </script>
 </body>
 </html>
-
