@@ -86,11 +86,21 @@
             color: white;
         }
 
-        #play-button, #pause-button {
+        #play-button {
             position: absolute;
-            top: 10px;
+            bottom: 70px;
             right: 10px;
-            padding: 15px 30px;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            color: white;
+        }
+
+        #pause-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px 20px;
             background-color: #444;
             border-radius: 5px;
             color: white;
@@ -163,6 +173,12 @@
         document.getElementById('player-name').textContent = playerName;
 
         let isPlaying = false;
+        const synth = new Tone.Synth().toDestination();
+
+        async function playNote() {
+            await Tone.start();
+            synth.triggerAttackRelease("C4", "8n");
+        }
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
@@ -196,11 +212,12 @@
             ];
 
             let index = 0;
-            function displayNextLine() {
+            async function displayNextLine() {
                 if (index < dialogue.length) {
+                    playNote(); 
                     document.getElementById('dialogue-text').textContent = dialogue[index];
                     index++;
-                    setTimeout(displayNextLine, 2000);
+                    setTimeout(displayNextLine, 2500);
                 }
             }
             displayNextLine();
@@ -228,7 +245,16 @@
 
         window.onload = function() {
             showIntro();
+            playBackgroundMusic(); 
         };
+
+        function playBackgroundMusic() {
+            const synth = new Tone.Synth().toDestination();
+            const loop = new Tone.Loop((time) => {
+                synth.triggerAttackRelease("C4", "8n", time);
+            }, "4n").start(0);
+            Tone.Transport.start();
+        }
     </script>
 </body>
 </html>
