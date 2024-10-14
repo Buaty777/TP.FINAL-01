@@ -17,6 +17,18 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
+            animation: entrada 1s ease-in-out;
+        }
+
+        @keyframes entrada {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .oculto {
@@ -47,11 +59,37 @@
             right: 15%;
             width: 100px;
             animation: movimiento 1s infinite alternate;
+            z-index: 1;
         }
 
         @keyframes movimiento {
             0% { transform: translateY(0); }
             100% { transform: translateY(-10px); }
+        }
+
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 20px;
+            margin: 10px;
+            font-size: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #boton-saltar, #boton-detener {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
         }
     </style>
 </head>
@@ -62,6 +100,14 @@
     </div>
 
     <img id="abogado" src="abogado.png" alt="Abogado">
+
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática" width="50">
+    </button>
+
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido" width="50">
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
@@ -103,6 +149,15 @@
             const panel = document.getElementById('panel-dialogo');
             panel.style.display = 'block';
             mostrarDialogo();
+        }
+
+        function saltarCinematica() {
+            document.getElementById('panel-dialogo').style.display = 'block';
+            mostrarDialogo();
+        }
+
+        function activarMenuSonido() {
+            // Aquí puedes implementar la lógica para mostrar/ocultar el menú de sonido.
         }
 
         window.onload = iniciarJuego;
