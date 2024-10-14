@@ -9,6 +9,9 @@
         body {
             font-family: 'Press Start 2P', cursive;
             background-color: black;
+            background-image: url('paisaje_1.png');
+            background-size: cover;
+            background-position: center;
             color: white;
             display: flex;
             justify-content: center;
@@ -43,7 +46,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 350px;
-            height: auto;
+            height: 300px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
             padding: 20px;
@@ -55,14 +58,14 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 10px;
-            margin: 10px;
-            font-size: 18px;
+            padding: 30px;
+            margin: 15px;
+            font-size: 24px;
         }
 
         .button img {
-            width: 50px;
-            height: 50px;
+            width: 100px;
+            height: 100px; 
         }
 
         #skip-button {
@@ -91,22 +94,24 @@
             margin-top: 10px;
         }
 
-        .dialogue-panel {
+        .text-panel {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 20px;
-            width: 80%;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: none;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: left;
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .dialogue-text {
-            margin: 0;
-            font-size: 18px;
+        .dialogue {
+            display: none;
         }
     </style>
 </head>
@@ -119,14 +124,9 @@
         <p>Y así empezó mi historia...</p>
     </div>
 
-    <div class="dialogue-panel" id="dialogue-panel">
-        <p class="dialogue-text" id="dialogue-text"></p>
-    </div>
-
     <div class="menu" id="sound-menu">
         <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider" oninput="changeVolume(this.value)">
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="effect-volume-slider" oninput="changeEffectVolume(this.value)">
+        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
         <div>
             <button class="button" onclick="goToIndex()">
                 <img src="salir.png" alt="Salir">
@@ -148,24 +148,16 @@
         <img src="stop.png" alt="Control de Sonido">
     </button>
 
+    <div class="text-panel" id="dialogue-panel">
+        <p id="dialogue-text"></p>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         const playerName = prompt("Introduce tu nombre:");
         document.getElementById('player-name').textContent = playerName;
 
         let isPlaying = false;
-        let dialogueIndex = 0;
-        const dialogueLines = [
-            `${playerName} ... *Sonido de teléfono*`,
-            `${playerName} *contesta*`,
-            `Abogado: Hola muchacho, ¿cómo va el viaje?`,
-            `${playerName}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
-            `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
-            `${playerName}: ...`,
-            `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
-            `*La llamada termina*`,
-            `${playerName}: ..., en verdad esto será raro...`
-        ];
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
@@ -179,8 +171,8 @@
 
         function skipCutscene() {
             document.getElementById('game-intro').style.display = 'none';
-            document.getElementById('dialogue-panel').style.display = 'block';
-            displayDialogue();
+            document.getElementById('sound-menu').style.display = 'block';
+            document.body.style.backgroundImage = 'url("paisaje_1.png")';
         }
 
         function toggleSoundMenu() {
@@ -211,40 +203,6 @@
             const volume = event.target.value;
             Tone.Destination.volume.value = (volume - 100) / 100;
         });
-
-        const effectVolumeSlider = document.getElementById('effect-volume-slider');
-        effectVolumeSlider.addEventListener('input', (event) => {
-            const effectVolume = event.target.value;
-        });
-
-        function changeVolume(value) {
-            Tone.Destination.volume.value = (value - 100) / 100;
-        }
-
-        function changeEffectVolume(value) {
-        }
-
-        function displayDialogue() {
-            if (dialogueIndex < dialogueLines.length) {
-                const line = dialogueLines[dialogueIndex];
-                const dialogueText = document.getElementById('dialogue-text');
-                dialogueText.textContent = '';
-                let charIndex = 0;
-
-                const typingInterval = setInterval(() => {
-                    if (charIndex < line.length) {
-                        dialogueText.textContent += line.charAt(charIndex);
-                        charIndex++;
-                        const typingSound = new Tone.Synth().toDestination();
-                        typingSound.triggerAttackRelease('C4', '8n');
-                    } else {
-                        clearInterval(typingInterval);
-                        dialogueIndex++;
-                        setTimeout(displayDialogue, 1000);
-                    }
-                }, 200);
-            }
-        }
 
         const buttons = document.querySelectorAll('.button');
         buttons.forEach(button => {
