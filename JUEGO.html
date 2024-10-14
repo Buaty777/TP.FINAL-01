@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUEGO</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #282c34;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .texto-intro {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .boton img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #npc {
+            position: absolute;
+            bottom: 20px;
+            left: 10%;
+            width: 150px;
+            display: none;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+            animation: npcAnimation 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes npcAnimation {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .calculadora {
+            display: none;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .campo-resultado {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .input-resultado {
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        .mensaje-npc {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="texto-intro">
+        <p>Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista que tiene los precios de las cosas y el otro, una calculadora. ¡Arreglate con eso!</p>
+    </div>
+
+    <div>
+        <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
+        <button class="boton" id="boton-lista" onclick="mostrarListaPrecios()">
+            <img src="nota.png" alt="Lista de Precios">
+        </button>
+    </div>
+
+    <div id="calculadora" class="calculadora">
+        <h3>Calculadora</h3>
+        <input type="number" id="numero1" min="0" max="5" placeholder="Número 1" class="input-resultado">
+        <input type="number" id="numero2" min="0" max="5" placeholder="Número 2" class="input-resultado">
+        <select id="operacion" class="input-resultado">
+            <option value="+">Suma</option>
+            <option value="-">Resta</option>
+        </select>
+        <div class="campo-resultado">
+            <input type="text" id="resultado" placeholder="Resultado" class="input-resultado">
+            <button onclick="calcular()">Calcular</button>
+        </div>
+        <p id="mensaje-npc" class="mensaje-npc"></p>
+    </div>
+
+    <img src="npc 1.png" alt="NPC" id="npc">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script>
+        const precios = {
+            Jabón: 900,
+            Chetos: 1700,
+            Refresco: 800,
+            Queso: 1200,
+            Uranio: 11000
+        };
+
+        const listaPrecios = `
+            Jabón: $900
+            Chetos: $1700
+            Refresco: $800
+            Queso: $1200
+            Uranio: $11000
+        `;
+
+        function mostrarListaPrecios() {
+            alert(listaPrecios);
+        }
+
+        function abrirCalculadora() {
+            const calculadora = document.getElementById('calculadora');
+            calculadora.style.display = 'block';
+            document.getElementById('mensaje-npc').style.display = 'none';
+            mostrarNPC1();
+        }
+
+        function mostrarNPC1() {
+            const npc = document.getElementById('npc');
+            npc.style.display = 'block';
+            npc.style.opacity = 1;
+            npc.src = 'npc 1.png';
+            setTimeout(() => {
+                npc.style.opacity = 0;
+                setTimeout(() => {
+                    npc.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+
+        function calcular() {
+            const num1 = parseInt(document.getElementById('numero1').value);
+            const num2 = parseInt(document.getElementById('numero2').value);
+            const operacion = document.getElementById('operacion').value;
+            let resultado;
+
+            if (operacion === '+') {
+                resultado = num1 + num2;
+            } else {
+                resultado = num1 - num2;
+            }
+
+            const campoResultado = document.getElementById('resultado');
+            campoResultado.value = resultado;
+
+            validarResultado(resultado);
+        }
+
+        function validarResultado(resultado) {
+            const mensajeNpc = document.getElementById('mensaje-npc');
+            const totalEsperado = precios.Jabón + (2 * precios.Refresco) + (3 * precios.Chetos) + precios.Queso;
+
+            if (resultado === totalEsperado) {
+                mensajeNpc.textContent = "Ayyy muchas gracias!!!";
+            } else if (resultado > totalEsperado) {
+                mensajeNpc.textContent = "Oye!!! Esto es una estafa...";
+            } else {
+                mensajeNpc.textContent = "Oh!!! Una ganga!!!";
+            }
+            mensajeNpc.style.display = 'block';
+            setTimeout(() => {
+                npcSale('npc 2.png');
+            }, 3000);
+        }
+
+        function npcSale(npcImage) {
+            const npc = document.getElementById('npc');
+            npc.style.display = 'block';
+            npc.src = npcImage;
+            const mensajeNpc = document.getElementById('mensaje-npc');
+            mensajeNpc.style.display = 'none';
+            setTimeout(() => {
+                npc.style.opacity = 0;
+                setTimeout(() => {
+                    npc.style.display = 'none';
+                }, 500);
+            }, 3000);
+            mostrarNPC2();
+        }
+
+        function mostrarNPC2() {
+            const npc2 = document.getElementById('npc');
+            npc2.style.display = 'block';
+            npc2.style.opacity = 1;
+            npc2.src = 'npc 2.png';
+
+            setTimeout(() => {
+                npc2.style.opacity = 0;
+                setTimeout(() => {
+                    npc2.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+
+        window.onload = () => {
+            crearMelodia();
+        };
+
+        function crearMelodia() {
+            const synth = new Tone.Synth().toDestination();
+            const notas = [
+                'C4', 'E4', 'G4', 'B4', 'C5', 'A4', 'G4', 'E4', 'C4', 'D4', 'E4', 'C4'
+            ];
+
+            Tone.Transport.bpm.value = 60;
+
+            let tiempo = 0;
+            notas.forEach((nota, index) => {
+                synth.triggerAttackRelease(nota, '8n', tiempo);
+                tiempo += 0.5;
+            });
+
+            Tone.Transport.start();
+        }
+    </script>
+</body>
+</html>
