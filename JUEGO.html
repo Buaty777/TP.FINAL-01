@@ -4,39 +4,73 @@
     <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUEGO</title>
+    <title>K.T.P (EL JUEGO)</title>
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-color: #282c34;
+            background-image: url('tienda.png');
+            background-size: cover;
             color: white;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .pantalla-negra {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            z-index: 10;
-        }
-
-        .texto-intro {
-            margin: 20px;
             text-align: center;
+            overflow: hidden;
+        }
+
+        #abogado, #npc1, #npc2 {
+            position: absolute;
+            bottom: 20px;
+            right: 10%;
+            width: 200px;
+            display: none;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+            animation: npcAnimation 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes npcAnimation {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .panel-dialogo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            display: block;
+        }
+
+        .texto-dialogo {
+            margin: 0;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .texto-visible {
+            opacity: 1;
+        }
+
+        .menu-sonido {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
         }
 
         .boton {
@@ -59,96 +93,94 @@
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        #npc {
+        #boton-saltar {
             position: absolute;
-            bottom: 20px;
-            left: 10%;
-            width: 150px;
-            display: none;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            opacity: 0;
-            animation: npcAnimation 1.5s infinite alternate ease-in-out;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
         }
 
-        @keyframes npcAnimation {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
-
-        .calculadora {
-            display: none;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-        }
-
-        .campo-resultado {
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-
-        .input-resultado {
-            padding: 10px;
-            font-size: 18px;
-        }
-
-        .mensaje-npc {
-            display: none;
-            margin-top: 20px;
-        }
-
-        #panel-sonido {
+        #boton-detener {
             position: absolute;
             top: 10px;
-            right: 10px;
-            z-index: 10;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #pantalla-negra {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: none;
+            z-index: 9999;
+        }
+
+        #resultado {
+            margin: 10px;
+            padding: 5px;
+            border: 1px solid white;
+            width: 80%;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+    <div id="pantalla-negra"></div>
+    <img src="abogado.png" alt="Abogado" id="abogado">
+    <img src="npc 1.png" alt="NPC 1" id="npc1">
+    <img src="npc 2.png" alt="NPC 2" id="npc2">
 
-    <div class="pantalla-negra" id="pantallaNegra">
-        <p>Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista que tiene los precios de las cosas y el otro, una calculadora. ¡Arreglate con eso!</p>
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+        <p id="introduccion" class="texto-dialogo"></p>
     </div>
 
-    <img src="tienda.jpg" alt="Tienda" id="tienda" style="display: none; width: 100%; height: auto;">
-
-    <div id="panel-sonido">
-        <button class="boton" id="iniciar-musica" onclick="iniciarMusica()">Iniciar Música</button>
-        <button class="boton" id="parar-musica" onclick="pararMusica()">Detener Música</button>
-        <button class="boton" id="pasar-dialogo" onclick="pasarDialogo()">Pasar Diálogo</button>
-    </div>
-
-    <div>
-        <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
-            <img src="calculadora.png" alt="Calculadora">
-        </button>
-        <button class="boton" id="boton-lista" onclick="mostrarListaPrecios()">
-            <img src="nota.png" alt="Lista de Precios">
-        </button>
-    </div>
-
-    <div id="calculadora" class="calculadora">
-        <h3>Calculadora</h3>
-        <input type="number" id="numero1" min="0" max="5" placeholder="Número 1" class="input-resultado">
-        <input type="number" id="numero2" min="0" max="5" placeholder="Número 2" class="input-resultado">
-        <select id="operacion" class="input-resultado">
-            <option value="+">Suma</option>
-            <option value="-">Resta</option>
-        </select>
-        <div class="campo-resultado">
-            <input type="text" id="resultado" placeholder="Resultado" class="input-resultado">
-            <button onclick="calcular()">Calcular</button>
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú de Sonido</p>
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
+        <div>
+            <button class="boton" onclick="irAIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
         </div>
-        <p id="mensaje-npc" class="mensaje-npc"></p>
     </div>
 
-    <img src="npc 1.png" alt="NPC" id="npc">
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
+
+    <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
+        <img src="calculadora.png" alt="Calculadora">
+    </button>
+
+    <button class="boton" id="boton-precios" onclick="mostrarPrecios()">
+        <img src="nota.png" alt="Lista de Precios">
+    </button>
+
+    <div id="resultado"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
+        let indiceDialogo = 0;
+        const dialogos = [
+            `Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cuál tiene los precios de las cosas y el otro una calculadora, arréglate con eso.`,
+            `[abogado] Abogado: ¡Dije que no preguntes! Sígueme.`
+        ];
+
         const precios = {
             Jabón: 900,
             Chetos: 1700,
@@ -157,151 +189,157 @@
             Uranio: 11000
         };
 
-        const listaPrecios = `
-            Jabón: $900
-            Chetos: $1700
-            Refresco: $800
-            Queso: $1200
-            Uranio: $11000
-        `;
+        function mostrarDialogo() {
+            if (indiceDialogo < dialogos.length) {
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.classList.add('texto-visible');
+                dialogoElemento.textContent = dialogos[indiceDialogo];
+                indiceDialogo++;
+                mostrarAbogado();
+                setTimeout(() => {
+                    dialogoElemento.classList.remove('texto-visible');
+                    setTimeout(() => {
+                        if (indiceDialogo >= dialogos.length) {
+                            iniciarNPC1();
+                        } else {
+                            mostrarDialogo();
+                        }
+                    }, 500);
+                }, 3000);
+            }
+        }
 
-        function mostrarListaPrecios() {
+        function mostrarAbogado() {
+            const abogado = document.getElementById('abogado');
+            abogado.style.display = 'block';
+            abogado.style.opacity = 1;
+        }
+
+        function iniciarNPC1() {
+            const npc1 = document.getElementById('npc1');
+            npc1.style.display = 'block';
+            mostrarNPCDialogo(npc1, "Ay Holis!!!! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?");
+        }
+
+        function mostrarNPCDialogo(npc, mensaje) {
+            const dialogoElemento = document.getElementById('texto-dialogo');
+            dialogoElemento.classList.add('texto-visible');
+            dialogoElemento.textContent = mensaje;
+            setTimeout(() => {
+                dialogoElemento.classList.remove('texto-visible');
+                const resultadoElemento = document.getElementById('resultado');
+                const respuesta = prompt("Por favor, introduce el precio total:");
+                evaluarRespuesta(respuesta, 900 + (2 * 800) + (3 * 1700) + 1200, npc);
+            }, 3000);
+        }
+
+        function evaluarRespuesta(respuesta, correcto, npc) {
+            if (parseInt(respuesta) === correcto) {
+                alert("Ayyy muchas gracias!!!");
+            } else if (parseInt(respuesta) > correcto) {
+                alert("Oye!!! Esto es una estafa...");
+            } else {
+                alert("Oh!!! Una ganga!!!");
+            }
+            npc.style.display = 'none';
+            iniciarNPC2();
+        }
+
+        function iniciarNPC2() {
+            const npc2 = document.getElementById('npc2');
+            npc2.style.display = 'block';
+            mostrarNPCDialogo(npc2, "Dame siete quesos...");
+        }
+
+        function mostrarPrecios() {
+            let listaPrecios = "Lista de Precios:\n";
+            for (const producto in precios) {
+                listaPrecios += `${producto} = ${precios[producto]}\n`;
+            }
             alert(listaPrecios);
         }
 
         function abrirCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = 'block';
-            document.getElementById('mensaje-npc').style.display = 'none';
-            mostrarNPC1();
+            const calculadoraHTML = `
+            <div id="calculadora" style="background-color: white; padding: 20px; border-radius: 10px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <h2>Calculadora</h2>
+                <input type="text" id="display" readonly style="width: 100%; margin-bottom: 10px;">
+                <div>
+                    ${[1, 2, 3, 4, 5].map(num => `<button onclick="agregarNumero(${num})">${num}</button>`).join('')}
+                </div>
+                <div>
+                    <button onclick="agregarOperacion('+')">+</button>
+                    <button onclick="agregarOperacion('-')">-</button>
+                    <button onclick="calcular()">=</button>
+                    <button onclick="cerrarCalculadora()">Cerrar</button>
+                </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', calculadoraHTML);
         }
 
-        function mostrarNPC1() {
-            const npc = document.getElementById('npc');
-            npc.style.display = 'block';
-            npc.style.opacity = 1;
-            npc.src = 'npc 1.png';
-            setTimeout(() => {
-                npc.style.opacity = 0;
-                setTimeout(() => {
-                    npc.style.display = 'none';
-                }, 500);
-            }, 3000);
+        function agregarNumero(num) {
+            const display = document.getElementById('display');
+            display.value += num;
+        }
+
+        function agregarOperacion(operacion) {
+            const display = document.getElementById('display');
+            display.value += ` ${operacion} `;
         }
 
         function calcular() {
-            const num1 = parseInt(document.getElementById('numero1').value);
-            const num2 = parseInt(document.getElementById('numero2').value);
-            const operacion = document.getElementById('operacion').value;
-            let resultado;
-
-            if (operacion === '+') {
-                resultado = num1 + num2;
-            } else {
-                resultado = num1 - num2;
-            }
-
-            const campoResultado = document.getElementById('resultado');
-            campoResultado.value = resultado;
-
-            validarResultado(resultado);
+            const display = document.getElementById('display');
+            const resultado = eval(display.value);
+            alert(`Resultado: ${resultado}`);
+            display.value = '';
         }
 
-        function validarResultado(resultado) {
-            const mensajeNpc = document.getElementById('mensaje-npc');
-            const totalEsperado = precios.Jabón + (2 * precios.Refresco) + (3 * precios.Chetos) + precios.Queso;
-
-            if (resultado === totalEsperado) {
-                mensajeNpc.textContent = "Ayyy muchas gracias!!!";
-            } else if (resultado > totalEsperado) {
-                mensajeNpc.textContent = "Oye!!! Esto es una estafa...";
-            } else {
-                mensajeNpc.textContent = "Oh!!! Una ganga!!!";
-            }
-            mensajeNpc.style.display = 'block';
-            setTimeout(() => {
-                npcSale('npc 2.png');
-            }, 3000);
-        }
-
-        function npcSale(npcImage) {
-            const npc = document.getElementById('npc');
-            npc.style.display = 'block';
-            npc.src = npcImage;
-            const mensajeNpc = document.getElementById('mensaje-npc');
-            mensajeNpc.style.display = 'none';
-            setTimeout(() => {
-                npc.style.opacity = 0;
-                setTimeout(() => {
-                    npc.style.display = 'none';
-                }, 500);
-            }, 3000);
-            mostrarNPC2();
-        }
-
-        function mostrarNPC2() {
-            const npc2 = document.getElementById('npc');
-            npc2.style.display = 'block';
-            npc2.style.opacity = 1;
-            npc2.src = 'npc 2.png';
-
-            setTimeout(() => {
-                npc2.style.opacity = 0;
-                setTimeout(() => {
-                    npc2.style.display = 'none';
-                }, 500);
-            }, 3000);
-        }
-
-        function pasarDialogo() {
-            const npc = document.getElementById('npc');
-            if (npc.style.display === 'block') {
-                npc.style.opacity = 0;
-                setTimeout(() => {
-                    npc.style.display = 'none';
-                }, 500);
+        function cerrarCalculadora() {
+            const calculadora = document.getElementById('calculadora');
+            if (calculadora) {
+                calculadora.remove();
             }
         }
 
-        let pantallaNegra = document.getElementById('pantallaNegra');
-        let tienda = document.getElementById('tienda');
-
-        setTimeout(() => {
-            pantallaNegra.style.display = 'none';
-            tienda.style.display = 'block';
-            iniciarNPCs();
-        }, 4000);
-
-        function iniciarNPCs() {
-            mostrarNPC1();
-        }
-
-        function crearMelodia() {
+        function iniciarCancion() {
             const synth = new Tone.Synth().toDestination();
-            const notas = [
-                'C4', 'E4', 'G4', 'B4', 'C5', 'A4', 'G4', 'E4', 'C4', 'D4', 'E4', 'C4', 
-                'F4', 'G4', 'A4', 'B4', 'C5', 'B4', 'A4', 'G4', 'E4', 'C4'
-            ];
-
-            Tone.Transport.bpm.value = 60;
-
-            let tiempo = 0;
-            notas.forEach((nota, index) => {
-                synth.triggerAttackRelease(nota, '8n', tiempo);
-                tiempo += 0.5;
-            });
-
+            const loop = new Tone.Loop((time) => {
+                synth.triggerAttackRelease("C4", "8n", time);
+                synth.triggerAttackRelease("E4", "8n", time + 0.5);
+                synth.triggerAttackRelease("G4", "8n", time + 1);
+            }, "2n").start(0);
+            Tone.Transport.bpm.value = 90;
             Tone.Transport.start();
         }
 
-        function iniciarMusica() {
-            Tone.start().then(() => {
-                crearMelodia();
-            });
+        window.onload = function() {
+            document.getElementById('pantalla-negra').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('pantalla-negra').style.display = 'none';
+                mostrarDialogo();
+                iniciarCancion();
+            }, 4000);
+        };
+
+        function cambiarVolumen(volumen) {
         }
 
-        function pararMusica() {
-            Tone.Transport.stop();
+        function cambiarVolumenEfectos(volumen) {
+        }
+
+        function activarMenuSonido() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = menuSonido.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function activarPlay() {
+        }
+
+        function activarPausa() {
+        }
+
+        function irAIndex() {
+            window.location.href = 'index.html';
         }
     </script>
 </body>
