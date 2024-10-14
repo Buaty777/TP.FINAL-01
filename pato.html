@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (EL JUEGO)</title>
@@ -18,7 +19,21 @@
             overflow: hidden;
         }
 
-        #panel-dialogo {
+        .oculto {
+            display: none;
+        }
+
+        #abogado {
+            position: absolute;
+            bottom: 20px;
+            right: 10%;
+            width: 250px;
+            display: none;
+            transition: transform 1s ease, opacity 1s ease;
+            opacity: 0;
+        }
+
+        .panel-dialogo {
             position: absolute;
             bottom: 20px;
             left: 50%;
@@ -36,16 +51,33 @@
             font-size: 18px;
         }
 
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .dialogo-animado {
+            animation: slideIn 1s ease-in-out forwards;
+        }
+
+        /* Botones */
         .menu-sonido {
             display: none;
             position: absolute;
-            top: 10%;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 250px;
+            width: 200px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
-            padding: 20px;
+            padding: 10px;
+            box-sizing: border-box;
             backdrop-filter: blur(5px);
         }
 
@@ -59,14 +91,21 @@
             transition: transform 0.2s, border-color 0.2s;
         }
 
+        .boton img {
+            width: 40px;
+            height: 40px;
+        }
+
         .boton:hover {
             transform: scale(1.1);
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        .boton img {
-            width: 40px;
-            height: 40px;
+        #boton-saltar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
         }
 
         #boton-detener {
@@ -74,34 +113,20 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 15px;
-        }
-
-        #abogado {
-            position: absolute;
-            right: 5%;
-            bottom: 5%;
-            width: 150px;
-            display: none;
         }
     </style>
 </head>
 <body>
+    <img src="abogado.png" alt="Abogado" id="abogado">
 
-    <img id="abogado" src="abogado.png" alt="Abogado">
-
-    <div id="panel-dialogo">
+    <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
 
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
-        <label for="control-volumen">Volumen:</label>
         <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        
-        <label for="control-volumen-efectos">Efectos:</label>
         <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
-        
         <div>
             <button class="boton" onclick="irAIndex()">
                 <img src="salir.png" alt="Salir">
@@ -115,50 +140,48 @@
         </div>
     </div>
 
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
     <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
         <img src="stop.png" alt="Control de Sonido">
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        const dialogos = [
-            "[nombre del usuario]: una...una tienda?!",
-            "[nombre del usuario]: no me digas que debo encargarme de esto la #### madre...",
-            "Abogado: muchacho!",
-            "[nombre del usuario] (pensamiento) es...un maniquí?",
-            "[nombre del usuario]: h-hola",
-            "Abogado: bueno,como ya viste,el viejo corps te dejo una tienda. No preguntes el porque ni el como",
-            "[nombre del usuario]: pero...",
-            "Abogado: dije no preguntes!,ahora sígueme.",
-            "[nombre del usuario]: bueno..."
-        ];
-
         let indiceDialogo = 0;
-        let estaReproduciendo = false;
-
-        const panelDialogo = document.getElementById('panel-dialogo');
-        const textoDialogo = document.getElementById('texto-dialogo');
-        const abogado = document.getElementById('abogado');
+        const dialogos = [
+            `Una... una tienda?!`,
+            `No me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `(Es un maniquí?)`,
+            `H-hola`,
+            `Abogado: Bueno, como ya viste, el viejo Corps te dejó una tienda.`,
+            `No preguntes el porqué ni el cómo.`,
+            `Pero...`,
+            `Abogado: ¡Dije que no preguntes! Sígueme.`,
+            `Bueno...`
+        ];
 
         function mostrarDialogo() {
             if (indiceDialogo < dialogos.length) {
-                textoDialogo.textContent = dialogos[indiceDialogo];
-                
-                // Mostrar abogado solo cuando él "habla"
-                if (dialogos[indiceDialogo].startsWith("Abogado:")) {
-                    abogado.style.display = 'block';
-                } else {
-                    abogado.style.display = 'none';
-                }
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.classList.add('dialogo-animado');
+                dialogoElemento.textContent = dialogos[indiceDialogo];
+                indiceDialogo++;
+                mostrarAbogado();
+                setTimeout(mostrarDialogo, 3000);
+            }
+        }
 
-                panelDialogo.style.display = 'block';
-                setTimeout(() => {
-                    indiceDialogo++;
-                    mostrarDialogo();
-                }, 3000); // Ajusta el tiempo para el ritmo del diálogo
+        function mostrarAbogado() {
+            const abogado = document.getElementById('abogado');
+            if (indiceDialogo === 2 || indiceDialogo >= 5) {
+                abogado.style.display = 'block';
+                abogado.style.opacity = 1;
             } else {
-                panelDialogo.style.display = 'none';
-                abogado.style.display = 'none';
+                abogado.style.opacity = 0;
             }
         }
 
@@ -167,36 +190,32 @@
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
+        function irAIndex() {
+            window.location.href = 'index.html';
+        }
+
         function activarPlay() {
-            if (!estaReproduciendo) {
-                Tone.Transport.start();
-                estaReproduciendo = true;
-            }
+            Tone.Transport.start();
         }
 
         function activarPausa() {
-            if (estaReproduciendo) {
-                Tone.Transport.pause();
-                estaReproduciendo = false;
-            }
+            Tone.Transport.pause();
         }
 
-        function cambiarVolumen(valor) {
-            Tone.Destination.volume.value = (valor - 100) / 100;
-        }
+        Tone.Transport.bpm.value = 120;
+        const piano = new Tone.Synth().toDestination();
+        const melodia = ['C4', 'E4', 'G4', 'A4', 'B4', 'C5', 'A4', 'G4'];
 
-        // Melodía estilo Undertale
-        const synth = new Tone.Synth().toDestination();
-        const notasMelodia = ["C4", "E4", "G4", "A4", null, "G4", "E4", "C4"];
-
-        const melodia = new Tone.Sequence((time, note) => {
-            synth.triggerAttackRelease(note, "8n", time);
-        }, notasMelodia, "4n");
+        Tone.Transport.scheduleRepeat((time) => {
+            melodia.forEach((note, index) => {
+                piano.triggerAttackRelease(note, '8n', time + index * 0.3);
+            });
+        }, '1m');
 
         Tone.Transport.start();
-        melodia.start();
 
-        mostrarDialogo(); // Empezar la reproducción automática del diálogo
+        window.onload = mostrarDialogo;
     </script>
 </body>
 </html>
+
