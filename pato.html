@@ -107,6 +107,21 @@
             transform: translateX(-50%);
             padding: 15px 30px;
         }
+
+        .menu-sonido {
+            display: none; /* Oculto por defecto */
+            position: absolute;
+            top: 15%; /* Ajusta según tus necesidades */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px; /* Ajusta el ancho */
+            background-color: rgba(34, 85, 34, 0.8); /* Color de fondo */
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 20px; /* Espaciado interno */
+            box-sizing: border-box;
+            backdrop-filter: blur(5px); /* Efecto de desenfoque de fondo */
+            z-index: 4; /* Aseguramos que el menú de sonido esté por encima */
+        }
     </style>
 </head>
 <body>
@@ -129,8 +144,59 @@
         <img src="menu.png" alt="Menú" width="50">
     </button>
 
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú de Sonido</p>
+        <label for="control-volumen">Volumen:</label>
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        
+        <label for="control-volumen-efectos">Efectos:</label>
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
+        
+        <div>
+            <button class="boton" onclick="irAIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
+        let estaReproduciendo = false;
+
+        function activarPlay() {
+            if (!estaReproduciendo) {
+                Tone.Transport.start(); // Inicia la música
+                estaReproduciendo = true; // Cambia el estado a "reproduciendo"
+            }
+        }
+
+        function activarPausa() {
+            if (estaReproduciendo) {
+                Tone.Transport.pause(); // Pausa la música
+                estaReproduciendo = false; // Cambia el estado a "no reproduciendo"
+            }
+        }
+
+        // Control de volumen
+        function cambiarVolumen(valor) {
+            Tone.Destination.volume.value = (valor - 100) / 100; // Cambia el volumen global
+        }
+
+        function cambiarVolumenEfectos(valor) {
+            // Si tienes efectos específicos, puedes definirlo aquí
+        }
+
+        function activarMenuSonido() {
+            const menu = document.getElementById('menu-sonido');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
         let indiceDialogo = 0;
         const lineasDialogo = [
             `una...una tienda?!`,
@@ -174,11 +240,6 @@
         function saltarCinematica() {
             document.getElementById('panel-dialogo').style.display = 'block';
             mostrarDialogo();
-        }
-
-        function activarMenuSonido() {
-            // Implementar lógica para mostrar/ocultar el menú de sonido.
-            alert("Menú de sonido activado.");
         }
 
         window.onload = iniciarJuego;
