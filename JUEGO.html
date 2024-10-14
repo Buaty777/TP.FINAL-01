@@ -118,6 +118,7 @@
     <div id="panel-sonido">
         <button class="boton" id="iniciar-musica" onclick="iniciarMusica()">Iniciar Música</button>
         <button class="boton" id="parar-musica" onclick="pararMusica()">Detener Música</button>
+        <button class="boton" id="pasar-dialogo" onclick="pasarDialogo()">Pasar Diálogo</button>
     </div>
 
     <div>
@@ -252,18 +253,34 @@
             }, 3000);
         }
 
-        window.onload = () => {
-            crearMelodia();
-            setTimeout(() => {
-                document.getElementById('pantallaNegra').style.display = 'none';
-                document.getElementById('tienda').style.display = 'block';
-            }, 4000);
-        };
+        function pasarDialogo() {
+            const npc = document.getElementById('npc');
+            if (npc.style.display === 'block') {
+                npc.style.opacity = 0;
+                setTimeout(() => {
+                    npc.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        let pantallaNegra = document.getElementById('pantallaNegra');
+        let tienda = document.getElementById('tienda');
+
+        setTimeout(() => {
+            pantallaNegra.style.display = 'none';
+            tienda.style.display = 'block';
+            iniciarNPCs();
+        }, 4000);
+
+        function iniciarNPCs() {
+            mostrarNPC1();
+        }
 
         function crearMelodia() {
             const synth = new Tone.Synth().toDestination();
             const notas = [
-                'C4', 'E4', 'G4', 'B4', 'C5', 'A4', 'G4', 'E4', 'C4', 'D4', 'E4', 'C4'
+                'C4', 'E4', 'G4', 'B4', 'C5', 'A4', 'G4', 'E4', 'C4', 'D4', 'E4', 'C4', 
+                'F4', 'G4', 'A4', 'B4', 'C5', 'B4', 'A4', 'G4', 'E4', 'C4'
             ];
 
             Tone.Transport.bpm.value = 60;
