@@ -90,7 +90,7 @@
             padding: 20px;
             width: 80%;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: none;
+            display: block; /* Cambiado a block para mostrar el panel */
         }
 
         .texto-dialogo {
@@ -145,7 +145,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         const nombreJugador = prompt("Introduce tu nombre:");
-        document.getElementById('nombre-jugador').textContent = nombreJugador;
+        document.getElementById('texto-dialogo').innerHTML = `${nombreJugador} ... *Sonido de teléfono*`;
 
         let estaReproduciendo = false;
         let indiceDialogo = 0;
@@ -162,7 +162,6 @@
         ];
 
         function saltarCinematica() {
-            document.getElementById('panel-dialogo').style.display = 'block';
             mostrarDialogo();
         }
 
@@ -214,7 +213,7 @@
                     } else {
                         clearInterval(intervalo);
                         indiceDialogo++;
-                        setTimeout(mostrarDialogo, 1000);
+                        setTimeout(mostrarDialogo, 1000); // Espera 1 segundo antes de mostrar el siguiente diálogo
                     }
                 }, 80);
             }
