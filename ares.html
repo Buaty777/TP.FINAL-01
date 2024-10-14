@@ -9,8 +9,7 @@
         body {
             font-family: 'Press Start 2P', cursive;
             background-image: url('paisaje_1.png');
-            background-size: cover; /* Asegura que la imagen cubra todo el fondo */
-            background-position: center; /* Centra la imagen */
+            background-size: cover;
             color: white;
             display: flex;
             justify-content: center;
@@ -18,16 +17,97 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
-            position: relative; /* Posiciona el contenedor */
         }
 
-        /* Ocultar todo el contenido del juego */
-        #game-intro,
-        .dialogue-panel,
-        .menu,
-        #skip-button,
+        #game-intro {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .player-text {
+            color: #3498db;
+        }
+
+        .lawyer-text {
+            color: #bada55;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: auto;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        .button img {
+            width: 50px;
+            height: 50px;
+        }
+
+        #skip-button {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            color: white;
+        }
+
         #stop-button {
-            display: none; /* Ocultar todos los elementos */
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: #444;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .volume-slider {
+            width: 200px;
+            margin-top: 10px;
+        }
+
+        .dialogue-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            display: none;
+        }
+
+        .dialogue-text {
+            margin: 0;
+            font-size: 18px;
         }
     </style>
 </head>
