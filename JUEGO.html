@@ -111,6 +111,43 @@
             font-size: 20px;
             display: none;
         }
+
+        #botones {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #botones .boton {
+            margin-bottom: 10px;
+        }
+
+        #calculadora {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        #calculadora input {
+            width: 100px;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #calculadora button {
+            font-size: 18px;
+            margin: 5px;
+            width: 40px;
+            height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -138,13 +175,35 @@
         </div>
     </div>
 
-    <button class="boton" id="boton-calculadora" onclick="toggleCalculadora()">
-        <img src="calculadora.png" alt="Calculadora">
-    </button>
+    <div id="botones">
+        <button class="boton" id="boton-calculadora" onclick="toggleCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
 
-    <button class="boton" id="boton-precios" onclick="togglePrecios()">
-        <img src="nota.png" alt="Precios">
-    </button>
+        <button class="boton" id="boton-precios" onclick="togglePrecios()">
+            <img src="nota.png" alt="Precios">
+        </button>
+
+        <button class="boton" id="boton-sonido" onclick="toggleMenuSonido()">
+            <img src="sonido.png" alt="Sonido">
+        </button>
+    </div>
+
+    <div id="calculadora">
+        <input type="text" id="pantalla" readonly>
+        <br>
+        <button onclick="insertarNumero(1)">1</button>
+        <button onclick="insertarNumero(2)">2</button>
+        <button onclick="insertarNumero(3)">3</button>
+        <br>
+        <button onclick="insertarNumero(4)">4</button>
+        <button onclick="insertarNumero(5)">5</button>
+        <button onclick="operar('+')">+</button>
+        <br>
+        <button onclick="operar('-')">-</button>
+        <button onclick="calcular()">=</button>
+        <button onclick="limpiar()">C</button>
+    </div>
 
     <input type="text" id="resultado" placeholder="Ingrese el total" style="width: 50px; margin: 20px;">
     <button class="boton" id="boton-enviar" onclick="enviarResultado()">Enviar</button>
@@ -186,68 +245,39 @@
         function mostrarNPC() {
             if (npcVisible === 1) {
                 document.getElementById('npc1').style.display = 'block';
+                document.getElementById('npc1').style.opacity = '1';
                 document.getElementById('texto-dialogo').textContent = dialogoNPC1;
-                npcVisible++;
             } else if (npcVisible === 2) {
+                document.getElementById('npc1').style.display = 'none';
                 document.getElementById('npc2').style.display = 'block';
                 document.getElementById('texto-dialogo').textContent = dialogoNPC2;
             }
         }
 
-        function enviarResultado() {
-            const resultadoInput = document.getElementById('resultado');
-            const resultado = parseInt(resultadoInput.value);
-            let mensaje = '';
-
-            if (npcVisible === 2) {
-                if (resultado === precios.Queso * 7) {
-                    mensaje = `"..."`;
-                } else if (resultado > precios.Queso * 7) {
-                    mensaje = `"me querés robar?!!"`;
-                } else {
-                    mensaje = `"gracias..."`;
-                }
-            } else {
-                const total = precios.Jabón + (precios.Refresco * 2) + (precios.Chetos * 3) + precios.Queso;
-                if (resultado === total) {
-                    mensaje = `"ayyy muchas gracias!!!"`;
-                } else if (resultado > total) {
-                    mensaje = `"oye!!! Esto es una estafa..."`;
-                } else {
-                    mensaje = `"oh!!! Una ganga!!!"`;
-                }
-            }
-
-            document.getElementById('cuantoPagar').textContent = mensaje;
-            resultadoInput.value = ''; // Limpiar el input
-            npcVisible++; // Mover al siguiente NPC
-            setTimeout(() => {
-                document.getElementById('npc1').style.display = 'none';
-                document.getElementById('npc2').style.display = 'none';
-                mostrarNPC();
-            }, 7000);
-        }
-
         function toggleCalculadora() {
-            alert("Calculadora abierta.");
+            const calculadora = document.getElementById('calculadora');
+            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
         }
 
         function togglePrecios() {
-            const preciosDiv = document.getElementById('cuantoPagar');
-            preciosDiv.style.display = (preciosDiv.style.display === 'block') ? 'none' : 'block';
-            if (preciosDiv.style.display === 'block') {
-                preciosDiv.innerHTML = Object.entries(precios).map(([producto, precio]) => `${producto} = ${precio}`).join('<br>');
+            const hojaPrecios = document.getElementById('cuantoPagar');
+            if (hojaPrecios.style.display === 'none' || hojaPrecios.style.display === '') {
+                hojaPrecios.style.display = 'block';
+                hojaPrecios.innerHTML = Object.entries(precios).map(([producto, precio]) => `${producto} = ${precio}`).join('<br>');
+            } else {
+                hojaPrecios.style.display = 'none';
             }
         }
 
         function activarMusica() {
             Tone.start();
-            const melodía = new Tone.Part((time, note) => {
-                const synth = new Tone.Synth().toDestination();
-                synth.triggerAttackRelease(note, 0.5, time);
-            }, [
-                // Aquí van las notas de la melodía de tienda japonesa.
-            ]).start(0);
+            const synth = new Tone.Synth().toDestination();
+            const loopMelody = new Tone.Loop((time) => {
+                synth.triggerAttackRelease("C4", "8n", time);
+                synth.triggerAttackRelease("E4", "8n", time + 0.5);
+                synth.triggerAttackRelease("G4", "8n", time + 1);
+                synth.triggerAttackRelease("B4", "8n", time + 1.5);
+            }, "2n").start(0);
 
             Tone.Transport.start();
         }
@@ -258,6 +288,31 @@
 
         function irAIndex() {
             window.location.href = 'index.html';
+        }
+
+        function enviarResultado() {
+            const resultado = parseInt(document.getElementById('resultado').value);
+            let correcto;
+
+            if (npcVisible === 1) {
+                correcto = resultado === (precios.Jabón + 2 * precios.Refresco + 3 * precios.Chetos + precios.Queso);
+                if (correcto) {
+                    document.getElementById('texto-dialogo').textContent = "¡Perfecto! Es correcto.";
+                    setTimeout(() => {
+                        npcVisible = 2;
+                        mostrarNPC();
+                    }, 7000);
+                } else {
+                    document.getElementById('texto-dialogo').textContent = "Mmm, no es el total correcto...";
+                }
+            } else if (npcVisible === 2) {
+                correcto = resultado === (7 * precios.Queso);
+                if (correcto) {
+                    document.getElementById('texto-dialogo').textContent = "¡Correcto! Muchas gracias.";
+                } else {
+                    document.getElementById('texto-dialogo').textContent = "Ese no es el total correcto...";
+                }
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
