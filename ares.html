@@ -8,7 +8,8 @@
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-color: black;
+            background-image: url('paisaje_1.png');
+            background-size: cover;
             color: white;
             display: flex;
             justify-content: center;
@@ -214,7 +215,8 @@
 
         const effectVolumeSlider = document.getElementById('effect-volume-slider');
         effectVolumeSlider.addEventListener('input', (event) => {
-            const effectVolume = event.target.value
+            const effectVolume = event.target.value;
+            Tone.Destination.volume.value = (effectVolume - 100) / 100;
         });
 
         function changeVolume(value) {
@@ -222,7 +224,7 @@
         }
 
         function changeEffectVolume(value) {
-        
+            Tone.Destination.volume.value = (value - 100) / 100;
         }
 
         function displayDialogue() {
@@ -241,9 +243,9 @@
                     } else {
                         clearInterval(typingInterval);
                         dialogueIndex++;
-                        setTimeout(displayDialogue, 1500); 
+                        setTimeout(displayDialogue, 1500);
                     }
-                }, 100); 
+                }, 100);
             }
         }
 
