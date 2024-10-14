@@ -114,8 +114,12 @@
             width: 100%;
             height: 100%;
             background-color: black;
-            display: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 9999;
+            font-size: 24px;
+            color: white;
         }
 
         #resultado {
@@ -139,7 +143,7 @@
     </style>
 </head>
 <body>
-    <div id="pantalla-negra"></div>
+    <div id="pantalla-negra">Cargando...</div>
     <img src="abogado.png" alt="Abogado" id="abogado">
     <img src="npc1.png" alt="NPC 1" id="npc1">
     <img src="npc2.png" alt="NPC 2" id="npc2">
@@ -147,31 +151,6 @@
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
-
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú de Sonido</p>
-        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
-        <div>
-            <button class="boton" onclick="irAIndex()">
-                <img src="salir.png" alt="Salir">
-            </button>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="pausa.png" alt="Pausar Música">
-            </button>
-        </div>
-    </div>
-
-    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
-        <img src="pass.png" alt="Saltar Cinemática">
-    </button>
-
-    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
-        <img src="stop.png" alt="Control de Sonido">
-    </button>
 
     <div id="resultado">¿Cuánto debes pagar?</div>
     <input type="text" id="calculo" placeholder="Ingresa tu cálculo aquí">
@@ -219,7 +198,7 @@
                 dialogoElemento.classList.remove('texto-visible');
                 setTimeout(() => {
                     npc1.style.display = 'none';
-                    mostrarNPC2();
+                    setTimeout(mostrarNPC2, 7000); // Esperar 7 segundos antes de mostrar el segundo NPC
                 }, 2000);
             }, 3000);
         }
@@ -253,37 +232,11 @@
             }, 2000);
         }
 
-        function cambiarVolumen(volumen) {
-        }
-
-        function cambiarVolumenEfectos(volumen) {
-        }
-
-        function activarPlay() {
-        }
-
-        function activarPausa() {
-        }
-
-        function activarMenuSonido() {
-            const menuSonido = document.getElementById('menu-sonido');
-            menuSonido.style.display = menuSonido.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function irAIndex() {
-            window.location.href = 'index.html';
-        }
-
-        function saltarCinematica() {
-            mostrarDialogo();
-            document.getElementById('pantalla-negra').style.display = 'none';
-        }
-
         window.onload = function () {
             setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
                 mostrarDialogo();
-            }, 4000);
+            }, 8000);
         };
     </script>
 </body>
