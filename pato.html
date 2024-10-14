@@ -1,149 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (EL JUEGO)</title>
+    <title>Juego K.P.T</title>
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.png');
             background-size: cover;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
         }
-
-        .panel-dialogo {
-            position: absolute;
-            bottom: 20px;
+        #panel-dialogo {
+            position: fixed;
+            bottom: 10%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             padding: 20px;
             width: 80%;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
-
-        .texto-jugador {
-            color: #3498db;
-        }
-
-        .texto-abogado {
-            color: #bada55;
-        }
-
-        .menu-sonido {
-            display: none;
-            position: absolute;
-            top: 15%;
+        #botones {
+            position: fixed;
+            bottom: 10%;
             left: 50%;
             transform: translateX(-50%);
-            width: 350px;
-            height: auto;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
+            display: flex;
+            gap: 10px;
         }
-
-        .boton {
+        button {
             background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: none;
             cursor: pointer;
-            padding: 20px;
-            margin: 10px;
-            font-size: 24px;
-            transition: transform 0.2s, border-color 0.2s;
+            font-size: 0.8em;
         }
-
-        .boton:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
-        #boton-saltar {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        #boton-detener {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        .barra-volumen {
-            width: 200px;
+        #control-volumen, #control-volumen-efectos {
+            width: 100%;
             margin-top: 10px;
-        }
-
-        .texto-dialogo {
-            margin: 0;
-            font-size: 18px;
         }
     </style>
 </head>
 <body>
-
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
+    <div id="panel-dialogo" class="oculto">
+        <p id="texto-dialogo"></p>
+        <img id="npc-imagen" src="abogado.png" alt="Abogado" style="display: none;">
     </div>
-
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <input type="range" min="0" max="100" value="30" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
-        <div>
-            <button class="boton" onclick="irAIndex()">
-                <img src="salir.png" alt="Salir">
-            </button>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="pausa.png" alt="Pausar Música">
-            </button>
-        </div>
+    <div id="botones">
+        <button id="pass-btn">Pass</button>
+        <button id="sound-btn">Sonido</button>
     </div>
-
-    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
-        <img src="pass.png" alt="Saltar Cinemática">
-    </button>
-
-    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
-        <img src="stop.png" alt="Control de Sonido">
-    </button>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <input id="control-volumen" type="range" min="0" max="100" value="100">
+    <input id="control-volumen-efectos" type="range" min="0" max="100" value="100">
+    
+    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
     <script>
-        let estaReproduciendo = false;
-        let indiceDialogo = 0;
-        let nombreJugador = "";
-
-        function obtenerNombreJugador() {
-            const params = new URLSearchParams(window.location.search);
-            nombreJugador = params.get('nombre');
-            if (!nombreJugador) nombreJugador = "Jugador";
-        }
+        const nombreJugador = localStorage.getItem('nombreJugador');
+        const dialogoElement = document.getElementById('texto-dialogo');
+        const passButton = document.getElementById('pass-btn');
+        const npcImagen = document.getElementById('npc-imagen');
 
         const lineasDialogo = [
             `${nombreJugador}: una...una tienda?!`,
@@ -157,33 +71,60 @@
             `${nombreJugador}: bueno...`
         ];
 
-        function saltarCinematica() {
-            document.getElementById('panel-dialogo').style.display = 'block';
+        let indiceDialogo = 0;
+
+        const synthTexto = new Tone.Synth().toDestination();
+        const synthBoton = new Tone.Synth().toDestination();
+
+        const playTexto = () => {
+            synthTexto.triggerAttackRelease("C4", 0.1);
+        };
+
+        const playBoton = () => {
+            synthBoton.triggerAttackRelease("E4", 0.1);
+        };
+
+        const mostrarDialogo = () => {
+            if (indiceDialogo < lineasDialogo.length) {
+                const texto = lineasDialogo[indiceDialogo];
+                dialogoElement.innerText = texto;
+
+                const panel = document.getElementById('panel-dialogo');
+                panel.style.display = 'block';
+
+                setTimeout(() => {
+                    panel.style.opacity = 1;
+                }, 100);
+
+                playTexto();
+                indiceDialogo++;
+                setTimeout(mostrarDialogo, 3000);
+            } else {
+                document.getElementById('panel-dialogo').style.display = 'none';
+            }
+        };
+
+        passButton.addEventListener('click', () => {
             mostrarDialogo();
-        }
+            passButton.style.display = 'none';
+            playBoton();
+        });
 
-        function activarMenuSonido() {
-            const menu = document.getElementById('menu-sonido');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
+        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5', 'C5', 'E5', 'D5', 'C5', 'B4', 'A4', 'G4'];
 
-        function irAIndex() {
-            window.location.href = 'index.html';
-        }
+        const playMelody = () => {
+            let now = Tone.now();
+            melodyNotes.forEach((note, index) => {
+                synthTexto.triggerAttackRelease(note, 0.5, now + index * 0.5);
+            });
+        };
 
-        function activarPlay() {
-            if (!estaReproduciendo) {
-                Tone.Transport.start();
-                estaReproduciendo = true;
-            }
-        }
-
-        function activarPausa() {
-            if (estaReproduciendo) {
-                Tone.Transport.pause();
-                estaReproduciendo = false;
-            }
-        }
+        Tone.start().then(() => {
+            Tone.Transport.scheduleRepeat((time) => {
+                playMelody();
+            }, '4n');
+            Tone.Transport.start();
+        });
 
         const controlVolumen = document.getElementById('control-volumen');
         controlVolumen.addEventListener('input', (event) => {
@@ -197,64 +138,7 @@
             Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
         });
 
-        function mostrarDialogo() {
-            if (indiceDialogo < lineasDialogo.length) {
-                const texto = lineasDialogo[indiceDialogo];
-                document.getElementById('texto-dialogo').innerText = texto;
-
-                const panel = document.getElementById('panel-dialogo');
-                panel.style.display = 'block';
-
-                setTimeout(() => {
-                    panel.style.opacity = 1;
-                }, 100);
-
-                indiceDialogo++;
-                setTimeout(mostrarDialogo, 3000);
-            } else {
-                document.getElementById('panel-dialogo').style.display = 'none';
-            }
-        }
-
-        function playSonidoBoton() {
-            const audio = new Audio('sonido_boton.mp3');
-            audio.play();
-        }
-
-        const botones = document.querySelectorAll('.boton');
-        botones.forEach(boton => {
-            boton.addEventListener('click', playSonidoBoton);
-        });
-
-        const synth = new Tone.Synth({
-            oscillator: {
-                type: 'triangle'
-            },
-            envelope: {
-                attack: 0.1,
-                decay: 0.2,
-                sustain: 0.5,
-                release: 1
-            }
-        }).toDestination();
-
-        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5'];
-
-        const playMelody = () => {
-            let now = Tone.now();
-            melodyNotes.forEach((note, index) => {
-                synth.triggerAttackRelease(note, 0.5, now + index * 0.5);
-            });
-        };
-
-        Tone.start().then(() => {
-            Tone.Transport.scheduleRepeat((time) => {
-                playMelody();
-            }, '4n');
-            Tone.Transport.start();
-        });
-
-        obtenerNombreJugador();
+        mostrarDialogo();
     </script>
 </body>
 </html>
