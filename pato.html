@@ -109,6 +109,14 @@
         .oculto {
             display: none;
         }
+
+        #imagen-npc {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px; /* Ajustar tamaño según sea necesario */
+        }
     </style>
 </head>
 <body>
@@ -116,6 +124,8 @@
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
+
+    <img id="imagen-npc" src="abogado.png" class="oculto" alt="Abogado">
 
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú</p>
@@ -150,15 +160,15 @@
         let estaReproduciendo = false;
         let indiceDialogo = 0;
         const lineasDialogo = [
-            `${nombreJugador} ... *Sonido de teléfono*`,
-            `${nombreJugador} *contesta*`,
-            `Abogado: Hola muchacho, ¿cómo va el viaje?`,
-            `${nombreJugador}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
-            `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
-            `${nombreJugador}: ...`,
-            `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
-            `*La llamada termina*`,
-            `${nombreJugador}: ..., en verdad esto será raro...`
+            `${nombreJugador}: una...una tienda?!`,
+            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `${nombreJugador} (pensamiento): es...un maniquí?`,
+            `${nombreJugador}: h-hola`,
+            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el por qué ni el cómo.`,
+            `${nombreJugador}: pero...`,
+            `Abogado: dije no preguntes!, ahora sígueme.`,
+            `${nombreJugador}: bueno...`
         ];
 
         function saltarCinematica() {
@@ -206,6 +216,13 @@
                 dialogoElemento.textContent = '';
                 let indiceCaracter = 0;
 
+                // Mostrar imagen del abogado al llegar a su diálogo
+                if (lineasDialogo[indiceDialogo].startsWith("Abogado:")) {
+                    document.getElementById('imagen-npc').classList.remove('oculto');
+                } else {
+                    document.getElementById('imagen-npc').classList.add('oculto');
+                }
+
                 const intervalo = setInterval(() => {
                     if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
                         dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
@@ -227,18 +244,16 @@
             notas.forEach((nota, index) => {
                 synth.triggerAttackRelease(nota, 0.5, now + index * 0.5);
             });
-
             Tone.Transport.scheduleRepeat((time) => {
-                synth.triggerAttackRelease("C4", 0.5, time);
-                synth.triggerAttackRelease("E4", 0.5, time + 0.5);
-                synth.triggerAttackRelease("G4", 0.5, time + 1);
+                notas.forEach((nota, index) => {
+                    synth.triggerAttackRelease(nota, 0.5, time + index * 0.5);
+                });
             }, "4n");
         }
 
         window.onload = () => {
-            crearMelodia();
-            activarMenuSonido();
             mostrarDialogo();
+            crearMelodia();
         };
     </script>
 </body>
