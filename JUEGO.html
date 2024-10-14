@@ -159,6 +159,20 @@
             font-size: 16px;
             border-radius: 5px;
         }
+
+        
+        #menu-superior {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #menu-superior button {
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -204,6 +218,18 @@
             <button onclick="restar()">-</button>
             <button onclick="calcular()">=</button>
         </div>
+    </div>
+
+    <div id="menu-superior">
+        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
+        <button id="boton-precios" class="boton" onclick="togglePrecios()">
+            <img src="nota.png" alt="Precios">
+        </button>
+        <button id="boton-sonido" class="boton" onclick="toggleSonido()">
+            <img src="sonido.png" alt="Panel Sonido">
+        </button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -256,6 +282,24 @@
         melody.start(0);
         bassPattern.start(0);
 
+        function toggleCalculadora() {
+            let calculadora = document.getElementById('calculadora');
+            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function togglePrecios() {
+            alert('Aquí puedes mostrar una lista de precios.');
+        }
+
+        function toggleSonido() {
+            let menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = menuSonido.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function cambiarVolumen(volumen) {
+            Tone.Destination.volume.value = -20 + (volumen / 5);
+        }
+
         function activarPlay() {
             Tone.Transport.start();
         }
@@ -264,19 +308,10 @@
             Tone.Transport.pause();
         }
 
-        function cambiarVolumen(valor) {
-            Tone.Destination.volume.value = (valor - 50) / 50;
-        }
-
-        window.onload = () => {
+        window.onload = function () {
             setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
-            }, 8000);
-
-            document.getElementById('boton-enviar').onclick = () => {
-                let texto = `Has enviado el total: ${document.getElementById('resultado').value}`;
-                document.getElementById('texto-dialogo').innerText = texto;
-            };
+            }, 4000);
         };
     </script>
 </body>
