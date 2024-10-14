@@ -93,20 +93,6 @@
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        #boton-saltar {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
-        }
-
-        #boton-detener {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
         #pantalla-negra {
             position: fixed;
             top: 0;
@@ -132,13 +118,24 @@
 
         #calculo {
             margin-top: 20px;
-            width: 50%;
-            padding: 10px;
+            width: 30%; /* Hacer la barra más pequeña */
+            padding: 5px; /* Hacer un poco más pequeño el padding */
             font-size: 18px;
         }
 
-        #boton-pagar {
+        #boton-enviar {
             margin-top: 10px;
+            padding: 10px 20px;
+        }
+
+        .boton-menu {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        #boton-calculadora, #boton-precios {
+            margin: 5px;
         }
     </style>
 </head>
@@ -153,8 +150,17 @@
     </div>
 
     <div id="resultado">¿Cuánto debes pagar?</div>
-    <input type="text" id="calculo" placeholder="Ingresa tu cálculo aquí">
-    <button class="boton" id="boton-pagar" onclick="verificarPago()">Debe Pagar</button>
+    <input type="number" id="calculo" placeholder="Ingresa tu cálculo aquí" min="0">
+    <button class="boton" id="boton-enviar" onclick="verificarPago()">Enviar</button>
+
+    <div class="boton-menu">
+        <button class="boton" id="boton-calculadora" onclick="abrirCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
+        <button class="boton" id="boton-precios" onclick="abrirPrecios()">
+            <img src="nota.png" alt="Precios">
+        </button>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
@@ -171,13 +177,7 @@
                 indiceDialogo++;
                 setTimeout(() => {
                     dialogoElemento.classList.remove('texto-visible');
-                    setTimeout(() => {
-                        if (indiceDialogo >= dialogos.length) {
-                            mostrarNPC1();
-                        } else {
-                            mostrarDialogo();
-                        }
-                    }, 500);
+                    setTimeout(mostrarNPC1, 500);
                 }, 3000);
             }
         }
@@ -185,33 +185,9 @@
         function mostrarNPC1() {
             const npc1 = document.getElementById('npc1');
             npc1.style.display = 'block';
-            setTimeout(() => {
-                mostrarTextoNPC1();
-            }, 500);
-        }
-
-        function mostrarTextoNPC1() {
             const dialogoElemento = document.getElementById('texto-dialogo');
             dialogoElemento.textContent = "Ay Holis!!!! Me dices cuanto sería el jabón y dos refrescos tres chetos y un queso plis?";
             dialogoElemento.classList.add('texto-visible');
-            setTimeout(() => {
-                dialogoElemento.classList.remove('texto-visible');
-                setTimeout(() => {
-                    npc1.style.display = 'none';
-                    setTimeout(mostrarNPC2, 7000); // Esperar 7 segundos antes de mostrar el segundo NPC
-                }, 2000);
-            }, 3000);
-        }
-
-        function mostrarNPC2() {
-            const npc2 = document.getElementById('npc2');
-            npc2.style.display = 'block';
-            const dialogoElemento = document.getElementById('texto-dialogo');
-            dialogoElemento.textContent = "Dame siete quesos...";
-            dialogoElemento.classList.add('texto-visible');
-            setTimeout(() => {
-                dialogoElemento.classList.remove('texto-visible');
-            }, 3000);
         }
 
         function verificarPago() {
@@ -227,17 +203,31 @@
                 resultadoElemento.textContent = "Oh!!! Una ganga!!!";
             }
 
-            setTimeout(() => {
-                mostrarNPC2();
-            }, 2000);
+            
+        }
+
+        function abrirCalculadora() {
+            alert("Calculadora abierta.");
+            
+        }
+
+        function abrirPrecios() {
+            alert("Lista de precios:\nJabón=900\nChetos=1700\nRefresco=800\nQueso=1200\nUranio=11.000");
+           
         }
 
         window.onload = function () {
             setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
                 mostrarDialogo();
+                reproducirMusica();
             }, 8000);
         };
+
+        function reproducirMusica() {
+            const music = new Tone.Player("tu_ruta_de_musica.mp3").toDestination();
+            music.autostart = true;
+        }
     </script>
 </body>
 </html>
