@@ -8,9 +8,9 @@
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-color: black;
-            background-size: cover;
-            background-position: center;
+            background-image: url('paisaje_1.png');
+            background-size: cover; /* Asegura que la imagen cubra todo el fondo */
+            background-position: center; /* Centra la imagen */
             color: white;
             display: flex;
             justify-content: center;
@@ -18,135 +18,45 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
+            position: relative; /* Posiciona el contenedor */
         }
 
-        #game-intro {
-            background-color: black;
-            display: block;
-            opacity: 1;
-            transition: opacity 2s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .player-text {
-            color: #3498db;
-        }
-
-        .lawyer-text {
-            color: #bada55;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .menu {
-            display: none;
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            height: 300px;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .button {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 30px;
-            margin: 15px;
-            font-size: 24px;
-        }
-
-        .button img {
-            width: 100px;
-            height: 100px;
-        }
-
-        #skip-button {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
-            background-color: #444;
-            border-radius: 5px;
-            color: white;
-        }
-
-        #play-button {
-            position: absolute;
-            bottom: 70px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #444;
-            border-radius: 5px;
-            color: white;
-        }
-
-        #pause-button {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #444;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .volume-slider {
-            width: 200px;
-            margin-top: 10px;
-        }
-
-        .text-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: left;
-            color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .dialogue {
-            display: none;
+        /* Ocultar todo el contenido del juego */
+        #game-intro,
+        .dialogue-panel,
+        .menu,
+        #skip-button,
+        #stop-button {
+            display: none; /* Ocultar todos los elementos */
         }
     </style>
 </head>
 <body>
 
-    <div id="game-intro">
+    <div id="game-intro" class="hidden">
         <p>Un día, yo <span id="player-name" class="player-text"></span> recibí una llamada de un abogado,</p>
         <p class="lawyer-text">su voz era seria y ronca, solo atinó a decir:</p>
         <p class="lawyer-text">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
         <p>Y así empezó mi historia...</p>
     </div>
 
+    <div class="dialogue-panel" id="dialogue-panel">
+        <p class="dialogue-text" id="dialogue-text"></p>
+    </div>
+
     <div class="menu" id="sound-menu">
         <p>Menú</p>
-        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
+        <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider" oninput="changeVolume(this.value)">
+        <input type="range" min="0" max="100" value="30" class="volume-slider" id="effect-volume-slider" oninput="changeEffectVolume(this.value)">
         <div>
             <button class="button" onclick="goToIndex()">
                 <img src="salir.png" alt="Salir">
+            </button>
+            <button class="button" id="play-button" onclick="togglePlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="button" id="pause-button" onclick="togglePause()">
+                <img src="pausa.png" alt="Pausar Música">
             </button>
         </div>
     </div>
@@ -155,17 +65,9 @@
         <img src="pass.png" alt="Saltar Cinemática">
     </button>
 
-    <button class="button" id="play-button" onclick="togglePlay()">
-        <img src="inicio.png" alt="Iniciar Música">
+    <button class="button" id="stop-button" onclick="toggleSoundMenu()">
+        <img src="stop.png" alt="Control de Sonido">
     </button>
-
-    <button class="button" id="pause-button" onclick="togglePause()">
-        <img src="pausa.png" alt="Pausar Música">
-    </button>
-
-    <div class="text-panel" id="dialogue-panel">
-        <p id="dialogue-text"></p>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
@@ -173,15 +75,22 @@
         document.getElementById('player-name').textContent = playerName;
 
         let isPlaying = false;
-        const synth = new Tone.Synth().toDestination();
-
-        async function playNote() {
-            await Tone.start();
-            synth.triggerAttackRelease("C4", "8n");
-        }
+        let dialogueIndex = 0;
+        const dialogueLines = [
+            `${playerName} ... *Sonido de teléfono*`,
+            `${playerName} *contesta*`,
+            `Abogado: Hola muchacho, ¿cómo va el viaje?`,
+            `${playerName}: Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
+            `Abogado: No lo sé... el viejo Corps estaba algo loco jajaja`,
+            `${playerName}: ...`,
+            `Abogado: En fin, te espero donde te dije que estaría, adiós.`,
+            `*La llamada termina*`,
+            `${playerName}: ..., en verdad esto será raro...`
+        ];
 
         function showIntro() {
             const introElement = document.getElementById('game-intro');
+            introElement.classList.remove('hidden');
             introElement.style.display = 'block';
 
             setTimeout(() => {
@@ -191,36 +100,17 @@
 
         function skipCutscene() {
             document.getElementById('game-intro').style.display = 'none';
-            document.body.style.backgroundImage = 'url("paisaje_1.png")';
-            showConversation();
+            document.getElementById('dialogue-panel').style.display = 'block';
+            displayDialogue();
         }
 
-        function showConversation() {
-            const dialoguePanel = document.getElementById('dialogue-panel');
-            dialoguePanel.style.display = 'block';
+        function toggleSoundMenu() {
+            const menu = document.getElementById('sound-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
 
-            let dialogue = [
-                `[${playerName}] ... *Sonido de teléfono*`,
-                `[${playerName}] *contesta*`,
-                `[Abogado] Hola muchacho, ¿cómo va el viaje?`,
-                `[${playerName}] Bueno... va bien, va bien... solo que me sigo pensando por qué debo ir yo...`,
-                `[Abogado] No lo sé... el viejo Crops estaba algo loco jajaja`,
-                `[${playerName}] ...`,
-                `[Abogado] En fin, te espero donde te dije que estaría, adiós.`,
-                `*La llamada termina*`,
-                `[${playerName}] ..., en verdad esto será raro...`
-            ];
-
-            let index = 0;
-            async function displayNextLine() {
-                if (index < dialogue.length) {
-                    playNote(); 
-                    document.getElementById('dialogue-text').textContent = dialogue[index];
-                    index++;
-                    setTimeout(displayNextLine, 2500);
-                }
-            }
-            displayNextLine();
+        function goToIndex() {
+            window.location.href = 'index.html';
         }
 
         function togglePlay() {
@@ -243,18 +133,51 @@
             Tone.Destination.volume.value = (volume - 100) / 100;
         });
 
+        const effectVolumeSlider = document.getElementById('effect-volume-slider');
+        effectVolumeSlider.addEventListener('input', (event) => {
+            const effectVolume = event.target.value;
+        });
+
+        function changeVolume(value) {
+            Tone.Destination.volume.value = (value - 100) / 100;
+        }
+
+        function changeEffectVolume(value) {
+        }
+
+        function displayDialogue() {
+            if (dialogueIndex < dialogueLines.length) {
+                const line = dialogueLines[dialogueIndex];
+                const dialogueText = document.getElementById('dialogue-text');
+                dialogueText.textContent = '';
+                let charIndex = 0;
+
+                const typingInterval = setInterval(() => {
+                    if (charIndex < line.length) {
+                        dialogueText.textContent += line.charAt(charIndex);
+                        charIndex++;
+                        const typingSound = new Tone.Synth().toDestination();
+                        typingSound.triggerAttackRelease('C4', '8n');
+                    } else {
+                        clearInterval(typingInterval);
+                        dialogueIndex++;
+                        setTimeout(displayDialogue, 1000);
+                    }
+                }, 200);
+            }
+        }
+
+        const buttons = document.querySelectorAll('.button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const clickSound = new Tone.Synth().toDestination();
+                clickSound.triggerAttackRelease('C4', '8n');
+            });
+        });
+
         window.onload = function() {
             showIntro();
-            playBackgroundMusic(); 
         };
-
-        function playBackgroundMusic() {
-            const synth = new Tone.Synth().toDestination();
-            const loop = new Tone.Loop((time) => {
-                synth.triggerAttackRelease("C4", "8n", time);
-            }, "4n").start(0);
-            Tone.Transport.start();
-        }
     </script>
 </body>
 </html>
