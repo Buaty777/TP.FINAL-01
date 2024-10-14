@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.T.P (TIENDA)</title>
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            text-align: center;
+            color: white;
+            background-color: black;
+        }
+
+        #background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('tienda.png');
+            background-size: cover;
+            filter: opacity(0);
+            transition: filter 2s ease-in;
+        }
+
+        #pass-button, .sound-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 15px;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        #dialogue-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            display: none;
+        }
+
+        .dialogue-text {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        #lawyer-image {
+            display: none;
+            width: 100px;
+            height: auto;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="background"></div>
+    
+    <div class="dialogue-panel" id="dialogue-panel">
+        <p class="dialogue-text" id="dialogue-text"></p>
+    </div>
+
+    <button id="pass-button" onclick="skipDialogue()">Pass</button>
+    <button class="sound-button" onclick="toggleSoundMenu()">Control de Sonido</button>
+
+    <img src="abogado.png" id="lawyer-image" alt="Abogado NPC">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script>
+        const playerName = prompt("Introduce tu nombre:");
+        const dialogueLines = [
+            `${playerName}: una...una tienda?!`,
+            `${playerName}: no me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `${playerName} (pensamiento): es...un maniquí?`,
+            `${playerName}: h-hola`,
+            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
+            `${playerName}: pero...`,
+            `Abogado: dije no preguntes!, ahora sígueme.`,
+            `${playerName}: bueno...`
+        ];
+
+        let dialogueIndex = 0;
+
+        const background = document.getElementById('background');
+        const dialoguePanel = document.getElementById('dialogue-panel');
+        const dialogueText = document.getElementById('dialogue-text');
+        const lawyerImage = document.getElementById('lawyer-image');
+
+        function showBackground() {
+            background.style.filter = 'opacity(1)';
+        }
+
+        function skipDialogue() {
+            if (dialogueIndex < dialogueLines.length) {
+                dialogueIndex = dialogueLines.length;
+            }
+            displayDialogue();
+        }
+
+        function displayDialogue() {
+            if (dialogueIndex < dialogueLines.length) {
+                const line = dialogueLines[dialogueIndex];
+                dialogueText.textContent = '';
+                let charIndex = 0;
+
+                const typingInterval = setInterval(() => {
+                    if (charIndex < line.length) {
+                        dialogueText.textContent += line.charAt(charIndex);
+                        charIndex++;
+                    } else {
+                        clearInterval(typingInterval);
+                        dialogueIndex++;
+                        setTimeout(displayDialogue, 2000);
+                    }
+                }, 100);
+            } else {
+                setTimeout(() => {
+                    window.location.href = 'otro.html';
+                }, 3000);
+            }
+        }
+
+        function createMusic() {
+            const synth = new Tone.Synth().toDestination();
+            const melody = new Tone.Sequence(
+                (time, note) => {
+                    synth.triggerAttackRelease(note, "10n", time);
+                },
+                ["C4", "E4", "G4", "A4", null, "A4", "G4", "E4", "C4", "A3", "E3", "C3", "G3", null, "E3", "G3", "A3", "C4"],
+                "4n"
+            );
+            Tone.start();
+            Tone.Transport.start();
+            melody.start();
+        }
+
+        window.onload = function() {
+            showBackground();
+            displayDialogue();
+            createMusic();
+        };
+    </script>
+</body>
+</html>
