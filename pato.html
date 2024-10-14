@@ -8,17 +8,22 @@
         body {
             background-image: url('tienda.png');
             background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #333;
         }
         #panel-dialogo {
             position: fixed;
             bottom: 10%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             padding: 20px;
             width: 80%;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
         #botones {
             position: fixed;
@@ -29,19 +34,26 @@
             gap: 10px;
         }
         button {
-            background-color: transparent;
+            background-color: #3498db;
             border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 0.8em;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
         }
-        #control-volumen, #control-volumen-efectos {
+        button:hover {
+            background-color: #2980b9;
+        }
+        input[type="range"] {
             width: 100%;
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="panel-dialogo" class="oculto">
+    <div id="panel-dialogo">
         <p id="texto-dialogo"></p>
         <img id="npc-imagen" src="abogado.png" alt="Abogado" style="display: none;">
     </div>
@@ -54,7 +66,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
     <script>
-        const nombreJugador = localStorage.getItem('nombreJugador');
+        const nombreJugador = localStorage.getItem('nombreJugador') || "Jugador";
         const dialogoElement = document.getElementById('texto-dialogo');
         const passButton = document.getElementById('pass-btn');
         const npcImagen = document.getElementById('npc-imagen');
@@ -91,10 +103,7 @@
 
                 const panel = document.getElementById('panel-dialogo');
                 panel.style.display = 'block';
-
-                setTimeout(() => {
-                    panel.style.opacity = 1;
-                }, 100);
+                panel.style.opacity = 1;
 
                 playTexto();
                 indiceDialogo++;
@@ -142,3 +151,157 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego K.P.T</title>
+    <style>
+        body {
+            background-image: url('tienda.png');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        #panel-dialogo {
+            position: fixed;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        #botones {
+            position: fixed;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="panel-dialogo">
+        <p id="texto-dialogo"></p>
+        <img id="npc-imagen" src="abogado.png" alt="Abogado" style="display: none;">
+    </div>
+    <div id="botones">
+        <button id="pass-btn">Pass</button>
+        <button id="sound-btn">Sonido</button>
+    </div>
+    <input id="control-volumen" type="range" min="0" max="100" value="100">
+    <input id="control-volumen-efectos" type="range" min="0" max="100" value="100">
+    
+    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
+    <script>
+        const nombreJugador = localStorage.getItem('nombreJugador') || "Jugador";
+        const dialogoElement = document.getElementById('texto-dialogo');
+        const passButton = document.getElementById('pass-btn');
+        const npcImagen = document.getElementById('npc-imagen');
+
+        const lineasDialogo = [
+            `${nombreJugador}: una...una tienda?!`,
+            `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `${nombreJugador} (pensamiento): es...un maniquí?`,
+            `${nombreJugador}: h-hola`,
+            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porqué ni el cómo`,
+            `${nombreJugador}: pero...`,
+            `Abogado: dije no preguntes!, ahora sígueme.`,
+            `${nombreJugador}: bueno...`
+        ];
+
+        let indiceDialogo = 0;
+
+        const synthTexto = new Tone.Synth().toDestination();
+        const synthBoton = new Tone.Synth().toDestination();
+
+        const playTexto = () => {
+            synthTexto.triggerAttackRelease("C4", 0.1);
+        };
+
+        const playBoton = () => {
+            synthBoton.triggerAttackRelease("E4", 0.1);
+        };
+
+        const mostrarDialogo = () => {
+            if (indiceDialogo < lineasDialogo.length) {
+                const texto = lineasDialogo[indiceDialogo];
+                dialogoElement.innerText = texto;
+
+                const panel = document.getElementById('panel-dialogo');
+                panel.style.display = 'block';
+                panel.style.opacity = 1;
+
+                playTexto();
+                indiceDialogo++;
+                setTimeout(mostrarDialogo, 3000);
+            } else {
+                document.getElementById('panel-dialogo').style.display = 'none';
+            }
+        };
+
+        passButton.addEventListener('click', () => {
+            mostrarDialogo();
+            passButton.style.display = 'none';
+            playBoton();
+        });
+
+        const melodyNotes = ['C4', 'E4', 'G4', 'F4', 'A4', 'C5', 'G4', 'B4', 'D5', 'C5', 'E5', 'D5', 'C5', 'B4', 'A4', 'G4'];
+
+        const playMelody = () => {
+            let now = Tone.now();
+            melodyNotes.forEach((note, index) => {
+                synthTexto.triggerAttackRelease(note, 0.5, now + index * 0.5);
+            });
+        };
+
+        Tone.start().then(() => {
+            Tone.Transport.scheduleRepeat((time) => {
+                playMelody();
+            }, '4n');
+            Tone.Transport.start();
+        });
+
+        const controlVolumen = document.getElementById('control-volumen');
+        controlVolumen.addEventListener('input', (event) => {
+            const volumen = event.target.value;
+            Tone.Destination.volume.value = (volumen - 100) / 100;
+        });
+
+        const controlVolumenEfectos = document.getElementById('control-volumen-efectos');
+        controlVolumenEfectos.addEventListener('input', (event) => {
+            const volumenEfectos = event.target.value;
+            Tone.Destination.volume.value = (volumenEfectos - 100) / 100;
+        });
+
+        mostrarDialogo();
+    </script>
+</body>
+</html>
+
