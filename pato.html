@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (EL JUEGO)</title>
@@ -17,26 +16,9 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
-            animation: entrada 1s ease-in-out;
-            position: relative;
         }
 
-        @keyframes entrada {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .oculto {
-            display: none;
-        }
-
-        .panel-dialogo {
+        #panel-dialogo {
             position: absolute;
             bottom: 20px;
             left: 50%;
@@ -47,7 +29,6 @@
             width: 80%;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             display: none;
-            z-index: 2; /* Aseguramos que el panel de diálogo esté por encima */
         }
 
         .texto-dialogo {
@@ -55,29 +36,27 @@
             font-size: 18px;
         }
 
-        #abogado {
+        .menu-sonido {
+            display: none;
             position: absolute;
-            bottom: 10%;
-            right: 15%;
-            width: 150px; /* Aumentamos el tamaño del abogado */
-            z-index: 1; /* Aseguramos que el abogado esté detrás del texto */
-            animation: movimiento 1s infinite alternate;
-        }
-
-        @keyframes movimiento {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
         }
 
         .boton {
             background-color: transparent;
             border: 2px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            padding: 20px;
-            margin: 10px;
-            font-size: 24px;
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
             transition: transform 0.2s, border-color 0.2s;
-            z-index: 3; /* Aseguramos que los botones estén por encima */
         }
 
         .boton:hover {
@@ -85,64 +64,35 @@
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        #boton-saltar {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 10px 20px;
+        .boton img {
+            width: 40px;
+            height: 40px;
         }
 
         #boton-detener {
             position: absolute;
-            top: 15px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 15px 30px;
+            padding: 15px;
         }
 
-        #boton-menu {
+        #abogado {
             position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-        }
-
-        .menu-sonido {
-            display: none; /* Oculto por defecto */
-            position: absolute;
-            top: 15%; /* Ajusta según tus necesidades */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px; /* Ajusta el ancho */
-            background-color: rgba(34, 85, 34, 0.8); /* Color de fondo */
-            border-radius: 10px; /* Bordes redondeados */
-            padding: 20px; /* Espaciado interno */
-            box-sizing: border-box;
-            backdrop-filter: blur(5px); /* Efecto de desenfoque de fondo */
-            z-index: 4; /* Aseguramos que el menú de sonido esté por encima */
+            right: 5%;
+            bottom: 5%;
+            width: 150px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
-    </div>
-
     <img id="abogado" src="abogado.png" alt="Abogado">
 
-    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
-        <img src="pass.png" alt="Saltar Cinemática" width="50">
-    </button>
-
-    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
-        <img src="stop.png" alt="Control de Sonido" width="50">
-    </button>
-
-    <button class="boton" id="boton-menu" onclick="activarMenuSonido()">
-        <img src="menu.png" alt="Menú" width="50">
-    </button>
+    <div id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
 
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
@@ -165,31 +115,51 @@
         </div>
     </div>
 
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
+        const dialogos = [
+            "[nombre del usuario]: una...una tienda?!",
+            "[nombre del usuario]: no me digas que debo encargarme de esto la #### madre...",
+            "Abogado: muchacho!",
+            "[nombre del usuario] (pensamiento) es...un maniquí?",
+            "[nombre del usuario]: h-hola",
+            "Abogado: bueno,como ya viste,el viejo corps te dejo una tienda. No preguntes el porque ni el como",
+            "[nombre del usuario]: pero...",
+            "Abogado: dije no preguntes!,ahora sígueme.",
+            "[nombre del usuario]: bueno..."
+        ];
+
+        let indiceDialogo = 0;
         let estaReproduciendo = false;
 
-        function activarPlay() {
-            if (!estaReproduciendo) {
-                Tone.Transport.start(); // Inicia la música
-                estaReproduciendo = true; // Cambia el estado a "reproduciendo"
+        const panelDialogo = document.getElementById('panel-dialogo');
+        const textoDialogo = document.getElementById('texto-dialogo');
+        const abogado = document.getElementById('abogado');
+
+        function mostrarDialogo() {
+            if (indiceDialogo < dialogos.length) {
+                textoDialogo.textContent = dialogos[indiceDialogo];
+                
+                // Mostrar abogado solo cuando él "habla"
+                if (dialogos[indiceDialogo].startsWith("Abogado:")) {
+                    abogado.style.display = 'block';
+                } else {
+                    abogado.style.display = 'none';
+                }
+
+                panelDialogo.style.display = 'block';
+                setTimeout(() => {
+                    indiceDialogo++;
+                    mostrarDialogo();
+                }, 3000); // Ajusta el tiempo para el ritmo del diálogo
+            } else {
+                panelDialogo.style.display = 'none';
+                abogado.style.display = 'none';
             }
-        }
-
-        function activarPausa() {
-            if (estaReproduciendo) {
-                Tone.Transport.pause(); // Pausa la música
-                estaReproduciendo = false; // Cambia el estado a "no reproduciendo"
-            }
-        }
-
-        // Control de volumen
-        function cambiarVolumen(valor) {
-            Tone.Destination.volume.value = (valor - 100) / 100; // Cambia el volumen global
-        }
-
-        function cambiarVolumenEfectos(valor) {
-            // Si tienes efectos específicos, puedes definirlo aquí
         }
 
         function activarMenuSonido() {
@@ -197,52 +167,36 @@
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
-        let indiceDialogo = 0;
-        const lineasDialogo = [
-            `una...una tienda?!`,
-            `no me digas que debo encargarme de esto la #### madre...`,
-            `Abogado: muchacho!`,
-            `es...un maniquí?`,
-            `h-hola`,
-            `Abogado: bueno, como ya viste, el viejo corps te dejó una tienda. No preguntes el porque ni el como.`,
-            `pero...`,
-            `Abogado: dije no preguntes!, ahora sígueme.`,
-            `bueno...`
-        ];
-
-        function mostrarDialogo() {
-            if (indiceDialogo < lineasDialogo.length) {
-                const dialogoElemento = document.getElementById('texto-dialogo');
-                dialogoElemento.textContent = '';
-                let indiceCaracter = 0;
-
-                const intervalo = setInterval(() => {
-                    if (indiceCaracter < lineasDialogo[indiceDialogo].length) {
-                        dialogoElemento.textContent += lineasDialogo[indiceDialogo][indiceCaracter];
-                        indiceCaracter++;
-                    } else {
-                        clearInterval(intervalo);
-                        indiceDialogo++;
-                        setTimeout(mostrarDialogo, 1000);
-                    }
-                }, 80);
-            } else {
-                document.getElementById('panel-dialogo').style.display = 'none';
+        function activarPlay() {
+            if (!estaReproduciendo) {
+                Tone.Transport.start();
+                estaReproduciendo = true;
             }
         }
 
-        function iniciarJuego() {
-            const panel = document.getElementById('panel-dialogo');
-            panel.style.display = 'block';
-            mostrarDialogo();
+        function activarPausa() {
+            if (estaReproduciendo) {
+                Tone.Transport.pause();
+                estaReproduciendo = false;
+            }
         }
 
-        function saltarCinematica() {
-            document.getElementById('panel-dialogo').style.display = 'block';
-            mostrarDialogo();
+        function cambiarVolumen(valor) {
+            Tone.Destination.volume.value = (valor - 100) / 100;
         }
 
-        window.onload = iniciarJuego;
+        // Melodía estilo Undertale
+        const synth = new Tone.Synth().toDestination();
+        const notasMelodia = ["C4", "E4", "G4", "A4", null, "G4", "E4", "C4"];
+
+        const melodia = new Tone.Sequence((time, note) => {
+            synth.triggerAttackRelease(note, "8n", time);
+        }, notasMelodia, "4n");
+
+        Tone.Transport.start();
+        melodia.start();
+
+        mostrarDialogo(); // Empezar la reproducción automática del diálogo
     </script>
 </body>
 </html>
