@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (EL JUEGO)</title>
@@ -15,8 +16,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
             text-align: center;
+            overflow: hidden;
         }
 
         .pantalla-negra {
@@ -35,24 +36,32 @@
             display: none;
         }
 
-        #panel-dialogo {
+        #abogado {
+            position: absolute;
+            bottom: 20px;
+            right: 10%;
+            width: 120px;
+            display: none;
+            transition: transform 1s ease, opacity 1s ease;
+            opacity: 0;
+        }
+
+        .panel-dialogo {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
+            padding: 20px;
             width: 80%;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            transition: opacity 1s ease;
+            display: none;
         }
 
         .texto-dialogo {
-            font-size: 16px;
-            color: white;
             margin: 0;
+            font-size: 18px;
             opacity: 0;
             animation: fadeInText 1.5s ease forwards;
         }
@@ -66,81 +75,68 @@
             }
         }
 
-        #abogado {
-            position: absolute;
-            right: 5%;
-            bottom: 10px;
-            width: 120px;
-            height: auto;
-            opacity: 0;
-            transition: opacity 1s ease, transform 1s ease;
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        #abogado.mostrar {
-            opacity: 1;
-            transform: translateX(0);
+        .dialogo-animado {
+            animation: slideIn 1s ease-in-out forwards;
         }
 
-        #boton-saltar, #boton-detener {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            padding: 10px;
-            background-color: transparent;
-            border: 2px solid white;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #boton-saltar:hover, #boton-detener:hover {
-            transform: scale(1.1);
-        }
-
-        #boton-salir {
+        /* Botones */
+        .menu-sonido {
+            display: none;
             position: absolute;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 10px;
-            background-color: transparent;
-            border: 2px solid white;
-            color: white;
-            cursor: pointer;
-        }
-
-        .menu-sonido {
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
+            width: 200px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
             backdrop-filter: blur(5px);
-            display: none;
         }
 
-        .barra-volumen {
-            width: 100%;
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        button {
-            margin: 10px;
+        .boton img {
+            width: 40px;
+            height: 40px;
         }
 
-        #boton-menu-sonido {
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #boton-saltar {
             position: absolute;
-            top: 20px;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px 20px;
+        }
+
+        #boton-detener {
+            position: absolute;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: transparent;
-            border: 2px solid white;
-            color: white;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -148,52 +144,65 @@
 
     <div class="pantalla-negra" id="pantalla-negra"></div>
 
-    <div id="panel-dialogo">
+    <img src="abogado.png" alt="Abogado" id="abogado">
+
+    <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
 
-    <img src="abogado.png" id="abogado">
-
     <div class="menu-sonido" id="menu-sonido">
-        <label for="control-volumen">Volumen:</label>
+        <p>Menú de Sonido</p>
         <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen">
-        <button class="boton" onclick="activarPlay()">Iniciar Música</button>
-        <button class="boton" onclick="activarPausa()">Pausar Música</button>
-        <button class="boton" onclick="irAIndex()">Salir</button>
+        <div>
+            <button class="boton" onclick="irAIndex()">
+                <img src="salir.png" alt="Salir">
+            </button>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
     </div>
 
-    <button id="boton-saltar">Saltar Cinemática</button>
-    <button id="boton-detener">Detener Sonido</button>
-    <button id="boton-menu-sonido" onclick="activarMenuSonido()">Control de Sonido</button>
+    <button class="boton" id="boton-saltar" onclick="saltarCinematica()">
+        <img src="pass.png" alt="Saltar Cinemática">
+    </button>
+
+    <button class="boton" id="boton-detener" onclick="activarMenuSonido()">
+        <img src="stop.png" alt="Control de Sonido">
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         let indiceDialogo = 0;
-        const lineasDialogo = [
-            "una...una tienda?!",
-            "no me digas que debo encargarme de esto la #### madre...",
-            "Abogado: muchacho!",
-            "(es...un maniquí?)",
-            "h-hola",
-            "Abogado: bueno, como ya viste, el viejo Corps te dejó una tienda.",
-            "No preguntes el porqué ni el cómo.",
-            "pero...",
-            "Abogado: ¡dije no preguntes!, ahora sígueme.",
-            "bueno..."
+        const dialogos = [
+            `Una... una tienda?!`,
+            `No me digas que debo encargarme de esto la #### madre...`,
+            `Abogado: muchacho!`,
+            `(Es un maniquí?)`,
+            `H-hola`,
+            `Abogado: Bueno, como ya viste, el viejo Corps te dejó una tienda.`,
+            `No preguntes el porqué ni el cómo.`,
+            `Pero...`,
+            `Abogado: ¡Dije que no preguntes! Sígueme.`,
+            `Bueno...`
         ];
 
         const dialogoElemento = document.getElementById('texto-dialogo');
         const abogado = document.getElementById('abogado');
 
         function mostrarDialogo() {
-            if (indiceDialogo < lineasDialogo.length) {
-                const texto = lineasDialogo[indiceDialogo];
+            if (indiceDialogo < dialogos.length) {
+                const texto = dialogos[indiceDialogo];
                 dialogoElemento.textContent = texto;
 
                 if (texto.startsWith("Abogado:")) {
-                    abogado.classList.add('mostrar');
+                    abogado.style.display = 'block';
+                    abogado.style.opacity = 1;
                 } else {
-                    abogado.classList.remove('mostrar');
+                    abogado.style.opacity = 0;
                 }
 
                 dialogoElemento.style.opacity = 1;
@@ -233,6 +242,11 @@
             });
         }, '8n');
 
+        document.getElementById('control-volumen').addEventListener('input', (e) => {
+            let valor = e.target.value;
+            Tone.Destination.volume.value = (valor - 100) / 100;
+        });
+
         document.getElementById('boton-saltar').addEventListener('click', () => {
             Tone.Transport.start();
             mostrarDialogo();
@@ -242,24 +256,9 @@
             Tone.Transport.pause();
         });
 
-        document.getElementById('control-volumen').addEventListener('input', (e) => {
-            let valor = e.target.value;
-            Tone.Destination.volume.value = (valor - 100) / 100;
-        });
-
         window.onload = () => {
             iniciarJuego();
-            Tone.start();
-            Tone.Transport.start();
         };
-
-        function activarPlay() {
-            Tone.Transport.start();
-        }
-
-        function activarPausa() {
-            Tone.Transport.pause();
-        }
     </script>
 </body>
 </html>
