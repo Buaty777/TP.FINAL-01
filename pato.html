@@ -19,7 +19,7 @@
             overflow: hidden;
         }
 
-        #introduccion-juego, #texto-despues {
+        #texto-despues {
             display: none;
             opacity: 0;
             transition: opacity 2s ease-in-out;
@@ -34,10 +34,6 @@
 
         .texto-abogado {
             color: #bada55;
-        }
-
-        .oculto {
-            display: none;
         }
 
         .menu-sonido {
@@ -122,13 +118,6 @@
 </head>
 <body>
 
-    <div id="introduccion-juego" class="oculto">
-        <p>Un día, yo <span id="nombre-jugador" class="texto-jugador"></span> recibí una llamada de un abogado,</p>
-        <p class="texto-abogado">su voz era seria y ronca, solo atinó a decir:</p>
-        <p class="texto-abogado">"Muchacho, el Sr. CROPS me encargó que te diera unas cosas... ven a la ciudad Pit para aclarar todo..."</p>
-        <p>Y así empezó mi historia...</p>
-    </div>
-
     <div id="texto-despues" class="oculto">
         <p>Dos horas y diez minutos después...</p>
     </div>
@@ -166,6 +155,7 @@
     <script>
         let estaReproduciendo = false;
         let indiceDialogo = 0;
+        const nombreJugador = "TuNombre"; // Cambia esto por el nombre deseado
         const lineasDialogo = [
             `${nombreJugador}: una...una tienda?!`,
             `${nombreJugador}: no me digas que debo encargarme de esto la #### madre...`,
@@ -178,18 +168,7 @@
             `${nombreJugador}: bueno...`
         ];
 
-        function mostrarIntroduccion() {
-            const introElement = document.getElementById('introduccion-juego');
-            introElement.classList.remove('oculto');
-            introElement.style.display = 'block';
-
-            setTimeout(() => {
-                introElement.style.opacity = 1;
-            }, 100);
-        }
-
         function saltarCinematica() {
-            document.getElementById('introduccion-juego').style.display = 'none';
             document.getElementById('panel-dialogo').style.display = 'block';
             mostrarDialogo();
         }
@@ -262,8 +241,6 @@
                 mostrarTextoDespues();
             }
         }
-
-        mostrarIntroduccion();
     </script>
 </body>
 </html>
