@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (EL JUEGO)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         body {
             font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.png');
@@ -20,30 +19,20 @@
             overflow: hidden;
         }
 
-        .pantalla-negra {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 10;
-            transition: opacity 4s ease;
-            opacity: 1;
-        }
-
-        .oculto {
-            display: none;
-        }
-
         #abogado {
             position: absolute;
             bottom: 20px;
             right: 10%;
-            width: 120px;
+            width: 200px;
             display: none;
-            transition: transform 1s ease, opacity 1s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
             opacity: 0;
+            animation: npcAnimation 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes npcAnimation {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
         }
 
         .panel-dialogo {
@@ -56,41 +45,20 @@
             padding: 20px;
             width: 80%;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            display: none;
+            display: block;
         }
 
         .texto-dialogo {
             margin: 0;
             font-size: 18px;
             opacity: 0;
-            animation: fadeInText 1.5s ease forwards;
+            transition: opacity 0.5s ease;
         }
 
-        @keyframes fadeInText {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .texto-visible {
+            opacity: 1;
         }
 
-        @keyframes slideIn {
-            0% {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .dialogo-animado {
-            animation: slideIn 1s ease-in-out forwards;
-        }
-
-        /* Botones */
         .menu-sonido {
             display: none;
             position: absolute;
@@ -141,9 +109,6 @@
     </style>
 </head>
 <body>
-
-    <div class="pantalla-negra" id="pantalla-negra"></div>
-
     <img src="abogado.png" alt="Abogado" id="abogado">
 
     <div class="panel-dialogo" id="panel-dialogo">
@@ -152,7 +117,8 @@
 
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
-        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen">
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <input type="range" min="0" max="100" value="50" class="barra-volumen" id="control-volumen-efectos" oninput="cambiarVolumenEfectos(this.value)">
         <div>
             <button class="boton" onclick="irAIndex()">
                 <img src="salir.png" alt="Salir">
@@ -190,37 +156,25 @@
             `Bueno...`
         ];
 
-        const dialogoElemento = document.getElementById('texto-dialogo');
-        const abogado = document.getElementById('abogado');
-
         function mostrarDialogo() {
             if (indiceDialogo < dialogos.length) {
-                const texto = dialogos[indiceDialogo];
-                dialogoElemento.textContent = texto;
-
-                if (texto.startsWith("Abogado:")) {
-                    abogado.style.display = 'block';
-                    abogado.style.opacity = 1;
-                } else {
-                    abogado.style.opacity = 0;
-                }
-
-                dialogoElemento.style.opacity = 1;
+                const dialogoElemento = document.getElementById('texto-dialogo');
+                dialogoElemento.classList.add('texto-visible');
+                dialogoElemento.textContent = dialogos[indiceDialogo];
                 indiceDialogo++;
-
-                setTimeout(() => {
-                    dialogoElemento.style.opacity = 0;
-                    setTimeout(mostrarDialogo, 1000);
-                }, 3000);
+                mostrarAbogado();
+                setTimeout(mostrarDialogo, 3000);
             }
         }
 
-        function iniciarJuego() {
-            document.getElementById('pantalla-negra').style.opacity = 0;
-            setTimeout(() => {
-                document.getElementById('pantalla-negra').style.display = 'none';
-                mostrarDialogo();
-            }, 4000);
+        function mostrarAbogado() {
+            const abogado = document.getElementById('abogado');
+            if (indiceDialogo === 2 || indiceDialogo >= 5) {
+                abogado.style.display = 'block';
+                abogado.style.opacity = 1;
+            } else {
+                abogado.style.opacity = 0;
+            }
         }
 
         function activarMenuSonido() {
@@ -232,33 +186,34 @@
             window.location.href = 'index.html';
         }
 
+        function activarPlay() {
+            Tone.Transport.start();
+        }
+
+        function activarPausa() {
+            Tone.Transport.pause();
+        }
+
+        Tone.Transport.bpm.value = 120;
         const piano = new Tone.Synth().toDestination();
-        const melodia = ["C4", "E4", "G4", "A4", "F4", "E4", "C4", "B3", "A3", "C4", "D4", "E4", "F4"];
+        const melodia = [
+            'C4', 'E4', 'G4', 'A4', 'B4', 'C5', 'A4', 'G4',
+            'F4', 'E4', 'D4', 'C4', 'B3', 'A3', 'G3', 'F3'
+        ];
 
         Tone.Transport.scheduleRepeat((time) => {
-            let now = Tone.now();
-            melodia.forEach((nota, i) => {
-                piano.triggerAttackRelease(nota, "8n", now + i * 0.5);
+            melodia.forEach((note, index) => {
+                piano.triggerAttackRelease(note, '8n', time + index * 0.3);
             });
-        }, '8n');
+        }, '2m');
 
-        document.getElementById('control-volumen').addEventListener('input', (e) => {
-            let valor = e.target.value;
+        Tone.Transport.start();
+
+        function cambiarVolumen(valor) {
             Tone.Destination.volume.value = (valor - 100) / 100;
-        });
+        }
 
-        document.getElementById('boton-saltar').addEventListener('click', () => {
-            Tone.Transport.start();
-            mostrarDialogo();
-        });
-
-        document.getElementById('boton-detener').addEventListener('click', () => {
-            Tone.Transport.pause();
-        });
-
-        window.onload = () => {
-            iniciarJuego();
-        };
+        window.onload = mostrarDialogo;
     </script>
 </body>
 </html>
