@@ -103,11 +103,6 @@
             align-items: center;
         }
 
-        #pantalla-negra h1 {
-            color: white;
-            font-size: 24px;
-        }
-
         #calculadora {
             position: absolute;
             top: 50px;
@@ -210,6 +205,8 @@
         </div>
     </div>
 
+    <button class="boton" id="boton-toggle" onclick="togglePanel()">Toggle Panel de Sonido</button>
+
     <div id="calculadora">
         <input type="text" id="resultado" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
@@ -253,6 +250,11 @@
             listaPrecios.style.display = listaPrecios.style.display === 'none' ? 'block' : 'none';
         }
 
+        function togglePanel() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = menuSonido.style.display === 'none' ? 'block' : 'none';
+        }
+
         function agregarNumero(numero) {
             document.getElementById('resultado').value += numero;
         }
@@ -271,7 +273,7 @@
         }
 
         function cambiarVolumen(volumen) {
-            console.log("Volumen cambiado a: " + volumen);
+            console.log("Volumen: " + volumen);
         }
 
         function activarPlay() {
