@@ -53,6 +53,7 @@
         }
 
         .menu-sonido {
+            display: none;
             position: absolute;
             top: 10px;
             left: 50%;
@@ -63,7 +64,6 @@
             padding: 10px;
             box-sizing: border-box;
             backdrop-filter: blur(5px);
-            display: block;
         }
 
         .boton {
@@ -103,10 +103,15 @@
             align-items: center;
         }
 
+        #pantalla-negra h1 {
+            color: white;
+            font-size: 24px;
+        }
+
         #calculadora {
             position: absolute;
             top: 50px;
-            right: 80px;
+            left: 20px;
             width: 100px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
@@ -116,17 +121,17 @@
 
         #calculadora input {
             width: 100%;
-            padding: 5px;
+            padding: 10px;
             margin-bottom: 10px;
-            font-size: 12px;
+            font-size: 16px;
             text-align: right;
         }
 
         #calculadora button {
-            width: 22%;
-            padding: 5px;
-            margin: 2px;
-            font-size: 12px;
+            width: 30%;
+            padding: 8px;
+            margin: 5px;
+            font-size: 16px;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -140,20 +145,19 @@
 
         #resultado {
             width: 100%;
-            padding: 5px;
-            font-size: 14px;
+            padding: 10px;
+            font-size: 16px;
             text-align: right;
             color: black;
             background-color: white;
-            position: relative;
-            bottom: 10px;
         }
 
+        
         #lista-precios {
             position: absolute;
             top: 80px;
-            right: 80px;
-            width: 120px;
+            left: 20px;
+            width: 150px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 10px;
@@ -163,6 +167,7 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
+       
         #menu-superior {
             position: absolute;
             top: 10px;
@@ -174,6 +179,15 @@
 
         #menu-superior button {
             margin: 5px;
+        }
+        #boton-salir {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
         }
     </style>
 </head>
@@ -192,31 +206,32 @@
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
         <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <div style="display: flex; justify-content: center;">
+        <div>
             <button class="boton" id="boton-play" onclick="activarPlay()">
                 <img src="inicio.png" alt="Iniciar Música">
             </button>
             <button class="boton" id="boton-pausa" onclick="activarPausa()">
                 <img src="pausa.png" alt="Pausar Música">
             </button>
-            <button class="boton" id="boton-salir" onclick="salir()">
-                <img src="salir.png" alt="Salir">
-            </button>
-            <button class="boton" id="boton-toggle" onclick="togglePanel()">
-                <img src="stop.png" alt="Toggle Panel">
+            <button class="boton" id="boton-sonido" onclick="toggleSonido()">
+                <img src="stop.png" alt="Abrir/Cerrar Sonido">
             </button>
         </div>
     </div>
 
     <div id="calculadora">
-        <input type="text" id="resultado" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+        <input type="text" id="resultado" disabled>
+        <div>
             <button onclick="agregarNumero(1)">1</button>
             <button onclick="agregarNumero(2)">2</button>
             <button onclick="agregarNumero(3)">3</button>
+        </div>
+        <div>
             <button onclick="agregarNumero(4)">4</button>
             <button onclick="agregarNumero(5)">5</button>
             <button onclick="sumar()">+</button>
+        </div>
+        <div>
             <button onclick="restar()">-</button>
             <button onclick="calcular()">=</button>
         </div>
@@ -238,62 +253,81 @@
         <button id="boton-precios" class="boton" onclick="togglePrecios()">
             <img src="nota.png" alt="Precios">
         </button>
+        <button id="boton-salir" onclick="window.location.href='index.html'">
+            <img src="salir.png" alt="Salir">
+        </button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
+        const synth = new Tone.Synth().toDestination();
+        const melody = new Tone.Sequence(
+            (time, note) => {
+                synth.triggerAttackRelease(note, '8n', time);
+            },
+            ['C4', 'E4', 'G4', 'A4', 'F4', 'D4', 'B3', 'C4'],
+            '4n'
+        );
+
+        Tone.Transport.start();
+        melody.start(0).loop = true;
+
+        function toggleSonido() {
+            const menu = document.getElementById('menu-sonido');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function activarPlay() {
+            Tone.Transport.start();
+        }
+
+        function activarPausa() {
+            Tone.Transport.pause();
+        }
+
+        function cambiarVolumen(volumen) {
+            Tone.Transport.volume.value = volumen - 100;
+        }
+
         function toggleCalculadora() {
             const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = calculadora.style.display === 'none' ? 'block' : 'none';
+            calculadora.style.display = (calculadora.style.display === 'block') ? 'none' : 'block';
         }
 
         function togglePrecios() {
             const listaPrecios = document.getElementById('lista-precios');
-            listaPrecios.style.display = listaPrecios.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function togglePanel() {
-            const menuSonido = document.getElementById('menu-sonido');
-            menuSonido.style.display = menuSonido.style.display === 'none' ? 'block' : 'none';
+            listaPrecios.style.display = (listaPrecios.style.display === 'block') ? 'none' : 'block';
         }
 
         function agregarNumero(numero) {
-            document.getElementById('resultado').value += numero;
+            const resultado = document.getElementById('resultado');
+            resultado.value += numero;
         }
 
         function sumar() {
-            document.getElementById('resultado').value += '+';
+            const resultado = document.getElementById('resultado');
+            resultado.value += '+';
         }
 
         function restar() {
-            document.getElementById('resultado').value += '-';
+            const resultado = document.getElementById('resultado');
+            resultado.value += '-';
         }
 
         function calcular() {
-            const resultado = eval(document.getElementById('resultado').value);
-            document.getElementById('resultado').value = resultado;
+            const resultado = document.getElementById('resultado');
+            try {
+                resultado.value = eval(resultado.value);
+            } catch {
+                resultado.value = 'Error';
+            }
         }
 
-        function cambiarVolumen(volumen) {
-            console.log("Volumen: " + volumen);
-        }
-
-        function activarPlay() {
-            console.log("Música activada");
-        }
-
-        function activarPausa() {
-            console.log("Música pausada");
-        }
-
-        function salir() {
-            window.location.href = 'index.html';
-        }
-
-        window.onload = function() {
-            setTimeout(function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
                 document.getElementById('pantalla-negra').style.display = 'none';
             }, 4000);
-        }
+        });
     </script>
 </body>
 </html>
