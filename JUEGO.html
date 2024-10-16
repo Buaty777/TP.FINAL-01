@@ -112,7 +112,7 @@
             position: absolute;
             top: 50px;
             right: 80px;
-            width: 120px;
+            width: 100px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 10px;
@@ -121,16 +121,16 @@
 
         #calculadora input {
             width: 100%;
-            padding: 10px;
+            padding: 5px;
             margin-bottom: 10px;
             font-size: 12px;
             text-align: right;
         }
 
         #calculadora button {
-            width: 40%;
-            padding: 8px;
-            margin: 5px;
+            width: 22%;
+            padding: 5px;
+            margin: 2px;
             font-size: 12px;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
@@ -145,22 +145,13 @@
 
         #resultado {
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
+            padding: 5px;
+            font-size: 14px;
             text-align: right;
             color: black;
             background-color: white;
-            position: absolute;
-            bottom: 150px;
-        }
-
-        .mensaje-total {
-            margin: 20px;
-            padding: 10px;
-            background-color: black;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
+            position: relative;
+            bottom: 10px;
         }
 
         #lista-precios {
@@ -219,7 +210,7 @@
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
         <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <div>
+        <div style="display: flex; justify-content: center;">
             <button class="boton" id="boton-play" onclick="activarPlay()">
                 <img src="inicio.png" alt="Iniciar Música">
             </button>
@@ -231,19 +222,13 @@
 
     <div id="calculadora">
         <input type="text" id="resultado" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        <div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
             <button onclick="agregarNumero(1)">1</button>
             <button onclick="agregarNumero(2)">2</button>
-        </div>
-        <div>
             <button onclick="agregarNumero(3)">3</button>
             <button onclick="agregarNumero(4)">4</button>
-        </div>
-        <div>
             <button onclick="agregarNumero(5)">5</button>
             <button onclick="sumar()">+</button>
-        </div>
-        <div>
             <button onclick="restar()">-</button>
             <button onclick="calcular()">=</button>
         </div>
@@ -294,6 +279,18 @@
         function calcular() {
             const resultado = eval(document.getElementById('resultado').value);
             document.getElementById('resultado').value = resultado;
+        }
+
+        function cambiarVolumen(volumen) {
+            console.log("Volumen cambiado a: " + volumen);
+        }
+
+        function activarPlay() {
+            console.log("Música activada");
+        }
+
+        function activarPausa() {
+            console.log("Música pausada");
         }
 
         function salir() {
