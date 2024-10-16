@@ -1,117 +1,256 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego</title>
+    <title>K.T.P (EL JUEGO)</title>
     <style>
         body {
+            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.jpg');
             background-size: cover;
-            font-family: 'Press Start 2P', cursive;
-        }
-
-        #panel-sonidos {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            color: white;
+            margin: 0;
+            padding: 0;
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-around;
-            width: 500px;
-        }
-
-        #panel-sonidos img {
-            width: 60px;
-            height: 60px;
-        }
-
-        #resultado {
-            position: relative;
-            top: 20px;
-            background-color: black;
-            color: white;
-            padding: 20px;
-            font-size: 1.5em;
-            border-radius: 10px;
-            width: 200px;
-            margin: 20px auto;
-        }
-
-        .button {
-            width: 150px;
-            height: 150px;
-            margin: 20px;
-        }
-
-        #calculadora {
-            width: 300px;
-            height: 300px;
-            background-color: black;
-            color: green;
-            display: none;
-        }
-
-        #precios {
-            display: none;
-            background-color: #2d2d2d;
-            padding: 20px;
-            border-radius: 5px;
-            width: 250px;
-            font-size: 16px;
-            font-family: monospace;
-            color: white;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
         }
 
         #npc {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
             width: 300px;
-            position: relative;
+            display: block;
+            animation: npcAnimation 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes npcAnimation {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .panel-dialogo {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            display: block;
+        }
+
+        .texto-dialogo {
+            margin: 0;
+            font-size: 18px;
+            opacity: 1;
+        }
+
+        .menu-sonido {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background-color: rgba(34, 85, 34, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .boton {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .boton img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .boton:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #boton-enviar {
+            margin-top: 20px;
+        }
+
+        #pantalla-negra {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #pantalla-negra h1 {
+            color: white;
+            font-size: 24px;
+        }
+
+        #calculadora {
+            position: absolute;
+            top: 50px;
+            right: 80px;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        #calculadora input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        #calculadora button {
+            width: 40%;
+            padding: 8px;
+            margin: 5px;
+            font-size: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #calculadora button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #resultado {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            text-align: right;
+            color: black;
+            background-color: white;
+            position: absolute;
+            bottom: 150px;
+        }
+
+        .mensaje-total {
+            margin: 20px;
+            padding: 10px;
+            background-color: black;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        #lista-precios {
+            position: absolute;
+            top: 80px;
+            right: 80px;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+            font-size: 12px;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #menu-superior {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #menu-superior button {
+            margin: 5px;
         }
 
         #boton-salir {
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
         }
-
     </style>
 </head>
 <body>
-
-    <div id="panel-sonidos">
-        <button id="boton-salir"><img src="salir.png" alt="Salir"></button>
-        <button id="play-sound">Play</button>
-        <button id="pause-sound">Pause</button>
+    <div id="pantalla-negra">
+        <h1>Cargando...</h1>
     </div>
 
-    <div id="resultado">
-        <input type="text" id="total" placeholder="Total" />
-        <button id="enviar">Enviar</button>
+    <img src="npc1.png" alt="NPC" id="npc">
+
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+        <button id="boton-enviar" class="boton">Enviar</button>
     </div>
 
-    <div>
-        <button class="button" id="boton-calculadora"><img src="calculadora.png" alt="Calculadora"></button>
-        <button class="button" id="boton-precios"><img src="nota.png" alt="Precios"></button>
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú de Sonido</p>
+        <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <div>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="pausa.png" alt="Pausar Música">
+            </button>
+        </div>
     </div>
 
     <div id="calculadora">
-        <input type="text" id="pantalla" disabled />
+        <input type="text" id="resultado" disabled oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <div>
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>4</button>
-            <button>5</button>
+            <button onclick="agregarNumero(1)">1</button>
+            <button onclick="agregarNumero(2)">2</button>
         </div>
         <div>
-            <button>+</button>
-            <button>-</button>
-            <button>=</button>
+            <button onclick="agregarNumero(3)">3</button>
+            <button onclick="agregarNumero(4)">4</button>
+        </div>
+        <div>
+            <button onclick="agregarNumero(5)">5</button>
+            <button onclick="sumar()">+</button>
+        </div>
+        <div>
+            <button onclick="restar()">-</button>
+            <button onclick="calcular()">=</button>
         </div>
     </div>
 
-    <div id="precios">
+    <div id="lista-precios">
+        <p><strong>Precios</strong></p>
         <p>Jabón: 900</p>
         <p>Chetos: 1700</p>
         <p>Refresco: 800</p>
@@ -119,93 +258,53 @@
         <p>Uranio: 11000</p>
     </div>
 
-    <img id="npc" src="npc1.png" alt="NPC 1" style="display:none;">
-    <img id="npc2" src="npc2.png" alt="NPC 2" style="display:none;">
+    <div id="menu-superior">
+        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
+        <button id="boton-precios" class="boton" onclick="togglePrecios()">
+            <img src="nota.png" alt="Precios">
+        </button>
+        <button id="boton-salir" class="boton" onclick="salir()">Salir</button>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const playButton = document.getElementById('play-sound');
-            const pauseButton = document.getElementById('pause-sound');
-            const exitButton = document.getElementById('boton-salir');
-            const synth = new Tone.Synth().toDestination();
-            let melody = null;
-
-            playButton.addEventListener('click', () => {
-                melody = new Tone.Sequence((time, note) => {
-                    synth.triggerAttackRelease(note, 0.5, time);
-                }, ['C4', 'E4', 'G4', 'B4', 'C5'], '4n').start(0);
-                Tone.Transport.start();
-            });
-
-            pauseButton.addEventListener('click', () => {
-                Tone.Transport.pause();
-            });
-
-            exitButton.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-
+        function toggleCalculadora() {
             const calculadora = document.getElementById('calculadora');
-            const botonCalculadora = document.getElementById('boton-calculadora');
-            const pantalla = document.getElementById('pantalla');
-            let operacion = '';
+            calculadora.style.display = calculadora.style.display === 'none' ? 'block' : 'none';
+        }
 
-            botonCalculadora.addEventListener('click', () => {
-                calculadora.style.display = calculadora.style.display === 'none' ? 'block' : 'none';
-            });
+        function togglePrecios() {
+            const listaPrecios = document.getElementById('lista-precios');
+            listaPrecios.style.display = listaPrecios.style.display === 'none' ? 'block' : 'none';
+        }
 
-            calculadora.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    const valor = e.target.textContent;
+        function agregarNumero(numero) {
+            document.getElementById('resultado').value += numero;
+        }
 
-                    if (valor === '=') {
-                        pantalla.value = eval(operacion);
-                    } else {
-                        operacion += valor;
-                        pantalla.value = operacion;
-                    }
-                }
-            });
+        function sumar() {
+            document.getElementById('resultado').value += '+';
+        }
 
-            const precios = document.getElementById('precios');
-            const botonPrecios = document.getElementById('boton-precios');
+        function restar() {
+            document.getElementById('resultado').value += '-';
+        }
 
-            botonPrecios.addEventListener('click', () => {
-                precios.style.display = precios.style.display === 'none' ? 'block' : 'none';
-            });
+        function calcular() {
+            const resultado = eval(document.getElementById('resultado').value);
+            document.getElementById('resultado').value = resultado;
+        }
 
-            const npc1 = document.getElementById('npc');
-            const npc2 = document.getElementById('npc2');
-            const enviar = document.getElementById('enviar');
-            const total = document.getElementById('total');
+        function salir() {
+            window.location.href = 'index.html';
+        }
 
-            let npcActual = 1;
-            let precioCorrectoNpc1 = 6000;
-
-            setTimeout(() => {
-                npc1.style.display = 'block';
-            }, 3000);
-
-            enviar.addEventListener('click', () => {
-                const valorIngresado = parseInt(total.value);
-
-                if (npcActual === 1) {
-                    if (valorIngresado === precioCorrectoNpc1) {
-                        alert('NPC1: ¡Gracias!');
-                        npc1.style.display = 'none';
-                        setTimeout(() => npc2.style.display = 'block', 7000);
-                        npcActual = 2;
-                    } else if (valorIngresado > precioCorrectoNpc1) {
-                        alert('NPC1: ¡Esto es una estafa!');
-                    } else {
-                        alert('NPC1: ¡Qué ganga!');
-                    }
-                }
-            });
-        });
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('pantalla-negra').style.display = 'none';
+            }, 4000);
+        }
     </script>
-
 </body>
 </html>
