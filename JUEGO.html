@@ -25,7 +25,7 @@
             bottom: 20px;
             left: 50px;
             width: 300px;
-            display: none;
+            display: block;
             animation: npcAnimation 1.5s infinite alternate ease-in-out;
         }
 
@@ -56,7 +56,8 @@
             display: none;
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 200px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
@@ -111,9 +112,9 @@
             position: absolute;
             top: 50px;
             right: 50px;
-            width: 200px;
+            width: 150px;
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             display: none;
         }
@@ -122,15 +123,15 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
-            font-size: 18px;
+            font-size: 16px;
             text-align: right;
         }
 
         #calculadora button {
-            width: 45%;
-            padding: 10px;
+            width: 40%;
+            padding: 8px;
             margin: 5px;
-            font-size: 18px;
+            font-size: 16px;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -145,7 +146,7 @@
         #resultado {
             width: 100%;
             padding: 10px;
-            font-size: 18px;
+            font-size: 16px;
             text-align: right;
             color: black;
             background-color: white;
@@ -160,7 +161,21 @@
             border-radius: 5px;
         }
 
-        
+       
+        #lista-precios {
+            position: absolute;
+            top: 80px;
+            right: 50px;
+            width: 150px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+            font-size: 12px;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
         #menu-superior {
             position: absolute;
             top: 10px;
@@ -172,6 +187,20 @@
 
         #menu-superior button {
             margin: 5px;
+        }
+
+        
+        #boton-salir {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
         }
     </style>
 </head>
@@ -220,6 +249,15 @@
         </div>
     </div>
 
+    <div id="lista-precios">
+        <p><strong>Precios</strong></p>
+        <p>Jabón: 900</p>
+        <p>Chetos: 1700</p>
+        <p>Refresco: 800</p>
+        <p>Queso: 1200</p>
+        <p>Uranio: 11000</p>
+    </div>
+
     <div id="menu-superior">
         <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
             <img src="calculadora.png" alt="Calculadora">
@@ -232,80 +270,66 @@
         </button>
     </div>
 
+    <button id="boton-salir" onclick="window.location.href='index.html'">Salir</button>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
-        let resultado = '';
-        let operacion = null;
-        let valorAnterior = null;
-
-        function agregarNumero(num) {
-            resultado += num;
-            document.getElementById('resultado').value = resultado;
-        }
-
-        function sumar() {
-            operacion = '+';
-            valorAnterior = parseFloat(resultado);
-            resultado = '';
-        }
-
-        function restar() {
-            operacion = '-';
-            valorAnterior = parseFloat(resultado);
-            resultado = '';
-        }
-
-        function calcular() {
-            let valorActual = parseFloat(resultado);
-            let resultadoFinal;
-            if (operacion === '+') {
-                resultadoFinal = valorAnterior + valorActual;
-            } else if (operacion === '-') {
-                resultadoFinal = valorAnterior - valorActual;
-            }
-            resultado = resultadoFinal.toString();
-            document.getElementById('resultado').value = resultado;
-        }
-
+        
         const synth = new Tone.Synth().toDestination();
-        const melody = new Tone.Pattern((time, note) => {
-            synth.triggerAttackRelease(note, '8n', time);
-        }, ["C4", "D4", "E4", "G4", "A4", "E4", "D4", "C4"], "up");
+        const melody = new Tone.Sequence(
+            (time, note) => {
+                synth.triggerAttackRelease(note, '8n', time);
+            },
+            ['C4', 'E4', 'G4', 'A4', 'F4', 'D4', 'B3', 'C4'],
+            '4n'
+        );
 
-        const bass = new Tone.Synth().toDestination();
-        const bassPattern = new Tone.Pattern((time, note) => {
-            bass.triggerAttackRelease(note, '1n', time);
-        }, ["C2", "G2", "A2", "F2"], "down");
-
-        Tone.Transport.bpm.value = 90;
         Tone.Transport.start();
-        melody.start(0);
-        bassPattern.start(0);
+        melody.start(0).loop = true;
 
-        function toggleCalculadora() {
-            let calculadora = document.getElementById('calculadora');
-            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function togglePrecios() {
-            alert('Aquí puedes mostrar una lista de precios.');
-        }
-
+        
         function toggleSonido() {
             let menuSonido = document.getElementById('menu-sonido');
             menuSonido.style.display = menuSonido.style.display === 'block' ? 'none' : 'block';
         }
 
+        
         function cambiarVolumen(volumen) {
             Tone.Destination.volume.value = -20 + (volumen / 5);
         }
 
-        function activarPlay() {
-            Tone.Transport.start();
+       
+        let operacion = '';
+        function agregarNumero(numero) {
+            document.getElementById('resultado').value += numero;
         }
 
-        function activarPausa() {
-            Tone.Transport.pause();
+        function sumar() {
+            operacion += document.getElementById('resultado').value + '+';
+            document.getElementById('resultado').value = '';
+        }
+
+        function restar() {
+            operacion += document.getElementById('resultado').value + '-';
+            document.getElementById('resultado').value = '';
+        }
+
+        function calcular() {
+            operacion += document.getElementById('resultado').value;
+            document.getElementById('resultado').value = eval(operacion);
+            operacion = '';
+        }
+
+        
+        function toggleCalculadora() {
+            let calculadora = document.getElementById('calculadora');
+            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
+        }
+
+        
+        function togglePrecios() {
+            let listaPrecios = document.getElementById('lista-precios');
+            listaPrecios.style.display = listaPrecios.style.display === 'block' ? 'none' : 'block';
         }
 
         window.onload = function () {
