@@ -3,330 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (EL JUEGO)</title>
+    <title>Juego</title>
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.jpg');
             background-size: cover;
             color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: hidden;
+            font-family: 'Pixel', sans-serif;
         }
-
-        .panel-dialogo {
+        #npc {
+            display: none;
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
         }
-
-        .texto-dialogo {
-            margin: 0;
-            font-size: 18px;
-            opacity: 1;
-        }
-
-        .menu-sonido {
-            display: none;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 200px;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 10px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-
-        .boton {
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            padding: 5px;
-            margin: 5px;
-            font-size: 16px;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .boton img {
-            width: 30px;
-            height: 30px;
-        }
-
-        .boton:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
         #calculadora {
             position: absolute;
-            top: 50px;
-            left: 20px;
-            width: 100px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 5px;
-            border-radius: 10px;
-            display: none;
-            font-size: 10px;
-            border: 4px solid white;
-        }
-
-        #calculadora input {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 5px;
-            font-size: 12px;
-            text-align: right;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        #calculadora button {
-            width: 25%;
-            padding: 5px;
-            margin: 3px;
-            font-size: 12px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 3px solid white;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        #calculadora button:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
-        }
-
-        #resultado {
-            width: 100%;
-            padding: 5px;
-            font-size: 12px;
-            text-align: right;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 3px solid white;
-        }
-
-        #npc {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            transition: transform 1s ease-out;
-            opacity: 0;
-            transition: opacity 1s ease-out;
-        }
-
-        .mostrar-npc {
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
-        }
-
-        #menu-superior {
-            position: absolute;
             top: 10px;
             right: 10px;
+            border: 2px solid #fff;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
         }
-
-        #menu-superior .boton {
-            display: inline-block;
+        #resultado {
+            margin-top: 10px;
+            padding: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
         }
-
         #lista-precios {
             position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            display: none;
-            font-size: 12px;
-            border: 4px solid white;
-            color: white;
-        }
-        
-        #mensaje {
-            width: 80%;
-            margin: 20px auto;
+            top: 10px;
+            left: 10px;
             background-color: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 10px;
+        }
+        .boton {
+            padding: 10px;
+            background-color: #444;
             color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
+
+<div id="lista-precios">
+    <p><strong>Precios</strong></p>
+    <p>Jabón: 900</p>
+    <p>Chetos: 1700</p>
+    <p>Refresco: 800</p>
+    <p>Queso: 1200</p>
+    <p>Uranio: 11000</p>
+</div>
+
+<div id="calculadora">
+    <input type="number" id="input-calculo" placeholder="Escribe tu respuesta">
+    <div>
+        <button class="boton" onclick="calcular('+')">+</button>
+        <button class="boton" onclick="calcular('-')">-</button>
+        <button class="boton" onclick="verificarResultado()">Enviar</button>
     </div>
+    <div id="resultado"></div>
+</div>
 
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú de Sonido</p>
-        <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <div>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="stop.png" alt="Parar Música">
-            </button>
-        </div>
-        <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
-            <img src="salir.png" alt="Salir">
-        </button>
-    </div>
+<img id="npc" src="npc1.png" alt="NPC" width="100">
 
-    <div id="npc">
-        <img src="npc1.png" alt="NPC" width="100">
-    </div>
+<script>
+    let npc = document.getElementById('npc');
+    let dialogos = [
+        "Ay Holis!!!! Me dices cuanto sería el jabón y dos refrescos tres chetos y un queso plis?",
+        "Ayy muchas gracias!!!",
+        "Oye!!! Esto es una estafa...",
+        "Oh!!! Una ganga!!!"
+    ];
+    let index = 0;
+    let total = 0;
 
-    <div id="menu-superior">
-        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
-            <img src="calculadora.png" alt="Calculadora">
-        </button>
-        <button id="boton-precios" class="boton" onclick="togglePrecios()">
-            <img src="nota.png" alt="Precios">
-        </button>
-        <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
-            <img src="stop.png" alt="Panel de Sonido">
-        </button>
-    </div>
+    function iniciarDialogos() {
+        npc.style.display = "block";
+        npc.style.animation = "fadeIn 1s";
+        npc.src = "npc1.png";
 
-    <div id="calculadora">
-        <input type="text" id="resultado" readonly>
-        <button onclick="agregarNumero(7)">7</button>
-        <button onclick="agregarNumero(8)">8</button>
-        <button onclick="agregarNumero(9)">9</button><br>
-        <button onclick="agregarNumero(4)">4</button>
-        <button onclick="agregarNumero(5)">5</button>
-        <button onclick="agregarNumero(6)">6</button><br>
-        <button onclick="agregarNumero(1)">1</button>
-        <button onclick="agregarNumero(2)">2</button>
-        <button onclick="agregarNumero(3)">3</button><br>
-        <button onclick="agregarNumero(0)">0</button>
-        <button onclick="limpiar()">C</button>
-        <button onclick="calcular()">=</button><br>
-        <button onclick="agregarOperacion('+')">+</button>
-        <button onclick="agregarOperacion('-')">-</button>
-    </div>
+        setTimeout(function() {
+            mostrarDialogo(dialogos[index]);
+            index++;
+        }, 5000);
+    }
 
-    <div id="lista-precios">
-        <p><strong>Precios</strong></p>
-        <p>Jabón: 900</p>
-        <p>Chetos: 1700</p>
-        <p>Refresco: 800</p>
-        <p>Queso: 1200</p>
-        <p>Uranio: 11000</p>
-    </div>
+    function mostrarDialogo(texto) {
+        alert(texto);
+        if (index < dialogos.length) {
+            setTimeout(function() {
+                mostrarDialogo(dialogos[index]);
+                index++;
+            }, (index === 1) ? 8000 : 5000);
+        }
+    }
 
-    <div id="mensaje"></div>
+    function calcular(operador) {
+        let jabon = 900;
+        let refresco = 800;
+        let chetos = 1700;
+        let queso = 1200;
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
-    <script>
-        const precios = {
-            jabon: 900,
-            chetos: 1700,
-            refresco: 800,
-            queso: 1200
-        };
+        total = jabon + (2 * refresco) + (3 * chetos) + queso;
+        document.getElementById('input-calculo').value = total;
+    }
 
-        const totalEsperado = precios.jabon + (precios.refresco * 2) + (precios.chetos * 3) + precios.queso;
+    function verificarResultado() {
+        let resultadoUsuario = parseInt(document.getElementById('input-calculo').value);
+        let mensaje = "";
 
-        const synth = new Tone.Synth().toDestination();
-        const melody = new Tone.Sequence((time, note) => {
-            synth.triggerAttackRelease(note, 0.2, time);
-        }, ['C4', 'E4', 'G4', 'B4']).start(0);
-
-        Tone.Transport.start();
-
-        function toggleCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = (calculadora.style.display === 'block') ? 'none' : 'block';
+        if (resultadoUsuario === total) {
+            mensaje = dialogos[1];
+        } else if (resultadoUsuario > total) {
+            mensaje = dialogos[2];
+        } else {
+            mensaje = dialogos[3];
         }
 
-        function togglePrecios() {
-            const listaPrecios = document.getElementById('lista-precios');
-            listaPrecios.style.display = (listaPrecios.style.display === 'block') ? 'none' : 'block';
-        }
+        document.getElementById('resultado').innerText = mensaje;
+    }
 
-        function togglePanelSonido() {
-            const panelSonido = document.getElementById('menu-sonido');
-            panelSonido.style.display = (panelSonido.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function agregarNumero(numero) {
-            const resultadoInput = document.getElementById('resultado');
-            resultadoInput.value += numero;
-        }
-
-        function agregarOperacion(operacion) {
-            const resultadoInput = document.getElementById('resultado');
-            resultadoInput.value += ` ${operacion} `;
-        }
-
-        function limpiar() {
-            document.getElementById('resultado').value = '';
-        }
-
-        function calcular() {
-            const resultadoInput = document.getElementById('resultado');
-            try {
-                resultadoInput.value = eval(resultadoInput.value);
-                mostrarFrase(resultadoInput.value);
-            } catch {
-                resultadoInput.value = 'Error';
-            }
-        }
-
-        function mostrarFrase(resultado) {
-            const mensaje = document.getElementById('mensaje');
-            if (resultado == totalEsperado) {
-                mensaje.innerHTML = 'Ayyy muchas gracias!!!';
-            } else if (resultado > totalEsperado) {
-                mensaje.innerHTML = 'Oye!!! Esto es una estafa...';
-            } else {
-                mensaje.innerHTML = 'Oh!!! Una ganga!!!';
-            }
-        }
-
-        const textos = [
-            "Bienvenido a la tienda",
-            "Aquí puedes comprar productos",
-            "¡Ay Holis! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?"
-        ];
-
-        let indiceTexto = 0;
-        function mostrarSiguienteTexto() {
-            if (indiceTexto < textos.length) {
-                const textoDialogo = document.getElementById('texto-dialogo');
-                textoDialogo.innerHTML = textos[indiceTexto];
-                let retraso = 5000;
-                if (indiceTexto === 2) retraso = 8000;
-                indiceTexto++;
-                setTimeout(mostrarSiguienteTexto, retraso);
-            }
-        }
-
-        window.onload = function() {
-            mostrarSiguienteTexto();
-            const npc = document.getElementById('npc');
-            npc.classList.add('mostrar-npc');
-        };
-    </script>
+    iniciarDialogos();
+</script>
 </body>
 </html>
