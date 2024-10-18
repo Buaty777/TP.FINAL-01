@@ -159,6 +159,15 @@
             border: 4px solid white;
             color: white;
         }
+        
+        #mensaje {
+            width: 80%;
+            margin: 20px auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -225,31 +234,25 @@
         <p>Uranio: 11000</p>
     </div>
 
+    <div id="mensaje"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
+        const precios = {
+            jabon: 900,
+            chetos: 1700,
+            refresco: 800,
+            queso: 1200
+        };
+
+        const totalEsperado = precios.jabon + (precios.refresco * 2) + (precios.chetos * 3) + precios.queso;
+
         const synth = new Tone.Synth().toDestination();
-        const melody = new Tone.Sequence(
-            (time, note) => {
-                synth.triggerAttackRelease(note, '8n', time);
-            },
-            ['C4', 'E4', 'G4', 'B4', 'C5'],
-            '4n'
-        );
+        const melody = new Tone.Sequence((time, note) => {
+            synth.triggerAttackRelease(note, 0.2, time);
+        }, ['C4', 'E4', 'G4', 'B4']).start(0);
 
         Tone.Transport.start();
-        melody.start();
-
-        function cambiarVolumen(volumen) {
-            Tone.Transport.volume.value = volumen - 100;
-        }
-
-        function activarPlay() {
-            Tone.Transport.start();
-        }
-
-        function activarPausa() {
-            Tone.Transport.pause();
-        }
 
         function toggleCalculadora() {
             const calculadora = document.getElementById('calculadora');
@@ -291,20 +294,20 @@
         }
 
         function mostrarFrase(resultado) {
-            const frase = document.getElementById('texto-dialogo');
-            if (resultado > 0) {
-                frase.innerHTML = '¡El resultado es mayor que cero!';
-            } else if (resultado < 0) {
-                frase.innerHTML = '¡El resultado es menor que cero!';
+            const mensaje = document.getElementById('mensaje');
+            if (resultado == totalEsperado) {
+                mensaje.innerHTML = 'Ayyy muchas gracias!!!';
+            } else if (resultado > totalEsperado) {
+                mensaje.innerHTML = 'Oye!!! Esto es una estafa...';
             } else {
-                frase.innerHTML = '¡El resultado es cero!';
+                mensaje.innerHTML = 'Oh!!! Una ganga!!!';
             }
         }
 
         const textos = [
             "Bienvenido a la tienda",
             "Aquí puedes comprar productos",
-            "Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso."
+            "¡Ay Holis! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?"
         ];
 
         let indiceTexto = 0;
