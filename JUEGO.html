@@ -29,7 +29,6 @@
             border-radius: 10px;
             padding: 20px;
             width: 80%;
-            display: block;
         }
 
         .texto-dialogo {
@@ -42,8 +41,7 @@
             display: none;
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 10px;
             width: 200px;
             background-color: rgba(34, 85, 34, 0.8);
             border-radius: 10px;
@@ -136,6 +134,16 @@
             transform: translateX(-50%) scale(1);
             opacity: 1;
         }
+
+        #menu-superior {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #menu-superior .boton {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -175,6 +183,22 @@
         <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
             <img src="stop.png" alt="Panel de Sonido">
         </button>
+    </div>
+
+    <div id="calculadora">
+        <input type="text" id="resultado" readonly>
+        <button onclick="agregarNumero(7)">7</button>
+        <button onclick="agregarNumero(8)">8</button>
+        <button onclick="agregarNumero(9)">9</button><br>
+        <button onclick="agregarNumero(4)">4</button>
+        <button onclick="agregarNumero(5)">5</button>
+        <button onclick="agregarNumero(6)">6</button><br>
+        <button onclick="agregarNumero(1)">1</button>
+        <button onclick="agregarNumero(2)">2</button>
+        <button onclick="agregarNumero(3)">3</button><br>
+        <button onclick="agregarNumero(0)">0</button>
+        <button onclick="limpiar()">C</button>
+        <button onclick="calcular()">=</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -218,40 +242,30 @@
             menuSonido.style.display = (menuSonido.style.display === 'block') ? 'none' : 'block';
         }
 
-        let resultado = 0;
-        let operacion = '';
-
         function agregarNumero(numero) {
             const resultadoInput = document.getElementById('resultado');
             resultadoInput.value += numero;
         }
 
-        function mostrarNPC() {
-            const npc = document.getElementById('npc');
-            npc.classList.add('mostrar-npc');
+        function limpiar() {
+            const resultadoInput = document.getElementById('resultado');
+            resultadoInput.value = '';
         }
 
-        function mostrarDialogo() {
-            const textoDialogo = document.getElementById('texto-dialogo');
-            textoDialogo.innerHTML = dialogos[indiceDialogo];
-            indiceDialogo++;
-            if (indiceDialogo < dialogos.length) {
-                setTimeout(mostrarDialogo, 5000);
+        function calcular() {
+            const resultadoInput = document.getElementById('resultado');
+            try {
+                resultadoInput.value = eval(resultadoInput.value);
+            } catch {
+                resultadoInput.value = 'Error';
             }
         }
 
-        let dialogos = [
-            "Ay Holis!!!! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?",
-            "..."
-        ];
-        let indiceDialogo = 0;
-
+        
         window.onload = function() {
-            setTimeout(() => {
-                mostrarDialogo();
-                mostrarNPC();
-            }, 8000);
-        }
+            const npc = document.getElementById('npc');
+            npc.classList.add('mostrar-npc');
+        };
     </script>
 </body>
 </html>
