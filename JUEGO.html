@@ -148,13 +148,14 @@
         #lista-precios {
             position: absolute;
             top: 50px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 200px;
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 5px;
+            padding: 10px;
             border-radius: 10px;
             display: none;
-            font-size: 10px;
+            font-size: 12px;
             border: 4px solid white;
             color: white;
         }
@@ -216,11 +217,12 @@
     </div>
 
     <div id="lista-precios">
-        <ul>
-            <li>Producto A - $10</li>
-            <li>Producto B - $20</li>
-            <li>Producto C - $30</li>
-        </ul>
+        <p><strong>Precios</strong></p>
+        <p>Jabón: 900</p>
+        <p>Chetos: 1700</p>
+        <p>Refresco: 800</p>
+        <p>Queso: 1200</p>
+        <p>Uranio: 11000</p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -282,15 +284,27 @@
             const resultadoInput = document.getElementById('resultado');
             try {
                 resultadoInput.value = eval(resultadoInput.value);
+                mostrarFrase(resultadoInput.value);
             } catch {
                 resultadoInput.value = 'Error';
+            }
+        }
+
+        function mostrarFrase(resultado) {
+            const frase = document.getElementById('texto-dialogo');
+            if (resultado > 0) {
+                frase.innerHTML = '¡El resultado es mayor que cero!';
+            } else if (resultado < 0) {
+                frase.innerHTML = '¡El resultado es menor que cero!';
+            } else {
+                frase.innerHTML = '¡El resultado es cero!';
             }
         }
 
         const textos = [
             "Bienvenido a la tienda",
             "Aquí puedes comprar productos",
-            ">Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso."
+            "Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso."
         ];
 
         let indiceTexto = 0;
