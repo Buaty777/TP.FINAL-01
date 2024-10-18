@@ -167,7 +167,7 @@
                 <img src="inicio.png" alt="Iniciar Música">
             </button>
             <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="pausa.png" alt="Pausar Música">
+                <img src="stop.png" alt="Parar Música">
             </button>
         </div>
         <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
@@ -210,10 +210,10 @@
             <img src="nota.png" alt="Precios">
         </button>
         <button id="boton-pass" class="boton" onclick="pasarDialogo()">
-            <img src="pass.png" alt="Passar diálogo">
+            <img src="pass.png" alt="Pasar diálogo">
         </button>
         <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
-            <img src="pausa.png" alt="Panel de Sonido">
+            <img src="stop.png" alt="Panel de Sonido">
         </button>
     </div>
 
@@ -311,13 +311,13 @@
         function mostrarRespuestaNPC(respuesta) {
             const textoDialogo = document.getElementById('texto-dialogo');
             textoDialogo.innerText = respuesta;
-            mostrarNPC('npc 1.png');
+            mostrarNPC('npc1.png');
         }
 
         function pasarDialogo() {
             const textoDialogo = document.getElementById('texto-dialogo');
             textoDialogo.innerText = "Dame siete quesos...";
-            mostrarNPC('npc 2.png');
+            mostrarNPC('npc2.png');
             operacion = '';
             resultado = 0;
         }
@@ -326,6 +326,10 @@
             const npc = document.createElement('img');
             npc.src = imagen;
             npc.alt = 'NPC';
+            npc.style.position = 'absolute';
+            npc.style.bottom = '100px';
+            npc.style.left = '50%';
+            npc.style.transform = 'translateX(-50%)';
             document.body.appendChild(npc);
         }
     </script>
