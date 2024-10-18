@@ -144,13 +144,25 @@
         #menu-superior .boton {
             display: inline-block;
         }
+
+        #lista-precios {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 10px;
+            display: none;
+            font-size: 10px;
+            border: 4px solid white;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo">
-            Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso.
-        </p>
+        <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
 
     <div class="menu-sonido" id="menu-sonido">
@@ -198,7 +210,17 @@
         <button onclick="agregarNumero(3)">3</button><br>
         <button onclick="agregarNumero(0)">0</button>
         <button onclick="limpiar()">C</button>
-        <button onclick="calcular()">=</button>
+        <button onclick="calcular()">=</button><br>
+        <button onclick="agregarOperacion('+')">+</button>
+        <button onclick="agregarOperacion('-')">-</button>
+    </div>
+
+    <div id="lista-precios">
+        <ul>
+            <li>Producto A - $10</li>
+            <li>Producto B - $20</li>
+            <li>Producto C - $30</li>
+        </ul>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -238,8 +260,8 @@
         }
 
         function togglePanelSonido() {
-            const menuSonido = document.getElementById('menu-sonido');
-            menuSonido.style.display = (menuSonido.style.display === 'block') ? 'none' : 'block';
+            const panelSonido = document.getElementById('menu-sonido');
+            panelSonido.style.display = (panelSonido.style.display === 'block') ? 'none' : 'block';
         }
 
         function agregarNumero(numero) {
@@ -247,9 +269,13 @@
             resultadoInput.value += numero;
         }
 
-        function limpiar() {
+        function agregarOperacion(operacion) {
             const resultadoInput = document.getElementById('resultado');
-            resultadoInput.value = '';
+            resultadoInput.value += ` ${operacion} `;
+        }
+
+        function limpiar() {
+            document.getElementById('resultado').value = '';
         }
 
         function calcular() {
@@ -261,8 +287,26 @@
             }
         }
 
-        
+        const textos = [
+            "Bienvenido a la tienda",
+            "Aquí puedes comprar productos",
+            ">Luego de unos instantes, el abogado (Max) te explicó lo básico. En la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso."
+        ];
+
+        let indiceTexto = 0;
+        function mostrarSiguienteTexto() {
+            if (indiceTexto < textos.length) {
+                const textoDialogo = document.getElementById('texto-dialogo');
+                textoDialogo.innerHTML = textos[indiceTexto];
+                let retraso = 5000;
+                if (indiceTexto === 2) retraso = 8000;
+                indiceTexto++;
+                setTimeout(mostrarSiguienteTexto, retraso);
+            }
+        }
+
         window.onload = function() {
+            mostrarSiguienteTexto();
             const npc = document.getElementById('npc');
             npc.classList.add('mostrar-npc');
         };
