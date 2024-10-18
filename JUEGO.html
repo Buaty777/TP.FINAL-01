@@ -112,26 +112,27 @@
             position: absolute;
             top: 50px;
             left: 20px;
-            width: 100px;
+            width: 80px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 10px;
             display: none;
+            font-size: 10px;
         }
 
         #calculadora input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-size: 16px;
+            padding: 5px;
+            margin-bottom: 5px;
+            font-size: 12px;
             text-align: right;
         }
 
         #calculadora button {
-            width: 30%;
-            padding: 8px;
-            margin: 5px;
-            font-size: 16px;
+            width: 25%;
+            padding: 5px;
+            margin: 3px;
+            font-size: 12px;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
@@ -145,14 +146,13 @@
 
         #resultado {
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
+            padding: 5px;
+            font-size: 12px;
             text-align: right;
             color: black;
             background-color: white;
         }
 
-        
         #lista-precios {
             position: absolute;
             top: 80px;
@@ -167,7 +167,6 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
-       
         #menu-superior {
             position: absolute;
             top: 10px;
@@ -180,14 +179,10 @@
         #menu-superior button {
             margin: 5px;
         }
-        #boton-salir {
-            background-color: red;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            border: none;
+
+        #boton-salir img {
+            width: 40px;
+            height: 40px;
         }
     </style>
 </head>
@@ -213,10 +208,10 @@
             <button class="boton" id="boton-pausa" onclick="activarPausa()">
                 <img src="pausa.png" alt="Pausar Música">
             </button>
-            <button class="boton" id="boton-sonido" onclick="toggleSonido()">
-                <img src="stop.png" alt="Abrir/Cerrar Sonido">
-            </button>
         </div>
+        <button id="boton-salir" onclick="window.location.href='index.html'">
+            <img src="salir.png" alt="Salir">
+        </button>
     </div>
 
     <div id="calculadora">
@@ -253,8 +248,8 @@
         <button id="boton-precios" class="boton" onclick="togglePrecios()">
             <img src="nota.png" alt="Precios">
         </button>
-        <button id="boton-salir" onclick="window.location.href='index.html'">
-            <img src="salir.png" alt="Salir">
+        <button id="boton-sonido" class="boton" onclick="toggleSonido()">
+            <img src="stop.png" alt="Abrir/Cerrar Sonido">
         </button>
     </div>
 
