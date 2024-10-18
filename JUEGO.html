@@ -20,20 +20,6 @@
             overflow: hidden;
         }
 
-        #npc {
-            position: absolute;
-            bottom: 20px;
-            left: 50px;
-            width: 300px;
-            display: block;
-            animation: npcAnimation 1.5s infinite alternate ease-in-out;
-        }
-
-        @keyframes npcAnimation {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
-
         .panel-dialogo {
             position: absolute;
             bottom: 20px;
@@ -178,8 +164,6 @@
         </p>
     </div>
 
-    <img src="npc1.png" alt="NPC" id="npc">
-
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
         <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
@@ -321,6 +305,17 @@
         function mostrarRespuestaNPC(respuesta) {
             const textoDialogo = document.getElementById('texto-dialogo');
             textoDialogo.innerText = respuesta;
+        }
+
+        window.onload = function() {
+            const textoDialogo = document.getElementById('texto-dialogo');
+            textoDialogo.innerText = textoDialogo.innerText + '...';
+            setTimeout(() => {
+                const npc1 = document.createElement('img');
+                npc1.src = 'npc 1.png';
+                npc1.alt = 'NPC 1';
+                document.body.appendChild(npc1);
+            }, 3000);
         }
     </script>
 </body>
