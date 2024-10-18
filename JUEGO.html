@@ -103,36 +103,32 @@
             align-items: center;
         }
 
-        #pantalla-negra h1 {
-            color: white;
-            font-size: 24px;
-        }
-
         #calculadora {
             position: absolute;
             top: 50px;
             left: 20px;
-            width: 80px;
+            width: 120px; /* Ancho aumentado */
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 10px;
             display: none;
-            font-size: 10px;
+            font-size: 12px;
+            border: 4px solid white;
         }
 
-        #calculadora input {
+        #pantalla {
             width: 100%;
             padding: 5px;
-            margin-bottom: 5px;
             font-size: 12px;
             text-align: right;
             color: black;
-            background-color: transparent; 
-            border: none; 
+            background-color: white;
+            border: 3px solid white;
+            margin-bottom: 5px;
         }
 
         #calculadora button {
-            width: 25%;
+            width: 30%; /* Cambiado para más espacio */
             padding: 5px;
             margin: 3px;
             font-size: 12px;
@@ -141,7 +137,6 @@
             border: 3px solid white;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
-            font-family: 'Press Start 2P', cursive; 
         }
 
         #calculadora button:hover {
@@ -149,28 +144,19 @@
             transform: scale(1.1);
         }
 
-        #resultado {
-            width: 100%;
-            padding: 5px;
-            font-size: 12px;
-            text-align: right;
-            color: black;
-            background-color: transparent; 
-            border: none;  
-        }
-
         #lista-precios {
             position: absolute;
             top: 80px;
             left: 20px;
             width: 150px;
-            background-color: black; 
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 10px;
             display: none;
             font-size: 12px;
             color: white;
-            font-family: 'Press Start 2P', cursive; 
+            font-family: 'Courier New', Courier, monospace;
+            border: 4px solid white;
             box-shadow: 3px 3px white, 6px 6px black;
         }
 
@@ -222,7 +208,7 @@
     </div>
 
     <div id="calculadora">
-        <input type="text" id="resultado" disabled>
+        <input type="text" id="pantalla" disabled>
         <div>
             <button onclick="agregarNumero(1)">1</button>
             <button onclick="agregarNumero(2)">2</button>
@@ -240,7 +226,7 @@
     </div>
 
     <div id="lista-precios">
-        <p><strong>Precios</strong></p>
+        <p style="margin: 0;"><strong>Precios</strong></p>
         <p>Jabón: 900</p>
         <p>Chetos: 1700</p>
         <p>Refresco: 800</p>
@@ -274,62 +260,48 @@
         Tone.Transport.start();
         melody.start();
 
-        function toggleSonido() {
-            const menu = document.getElementById('menu-sonido');
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function activarPlay() {
-            Tone.Transport.start();
-        }
-
-        function activarPausa() {
-            Tone.Transport.pause();
-        }
-
-        function cambiarVolumen(volumen) {
-            Tone.Transport.volume.value = volumen - 100;
-        }
-
         function toggleCalculadora() {
             const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = (calculadora.style.display === 'block') ? 'none' : 'block';
+            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
         }
 
         function togglePrecios() {
             const listaPrecios = document.getElementById('lista-precios');
-            listaPrecios.style.display = (listaPrecios.style.display === 'block') ? 'none' : 'block';
+            listaPrecios.style.display = listaPrecios.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleSonido() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = menuSonido.style.display === 'block' ? 'none' : 'block';
         }
 
         function agregarNumero(numero) {
-            const resultado = document.getElementById('resultado');
-            resultado.value += numero;
+            const pantalla = document.getElementById('pantalla');
+            pantalla.value += numero;
         }
 
         function sumar() {
-            const resultado = document.getElementById('resultado');
-            resultado.value += '+';
+            const pantalla = document.getElementById('pantalla');
+            pantalla.value += '+';
         }
 
         function restar() {
-            const resultado = document.getElementById('resultado');
-            resultado.value += '-';
+            const pantalla = document.getElementById('pantalla');
+            pantalla.value += '-';
         }
 
         function calcular() {
-            const resultado = document.getElementById('resultado');
+            const pantalla = document.getElementById('pantalla');
             try {
-                resultado.value = eval(resultado.value);
-            } catch {
-                resultado.value = 'Error';
+                pantalla.value = eval(pantalla.value);
+            } catch (error) {
+                pantalla.value = 'Error';
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('pantalla-negra').style.display = 'none';
-            }, 4000);
-        });
+        setTimeout(() => {
+            document.getElementById('pantalla-negra').style.display = 'none';
+        }, 4000);
     </script>
 </body>
 </html>
