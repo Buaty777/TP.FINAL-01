@@ -214,6 +214,12 @@
         <button id="boton-precios" class="boton" onclick="togglePrecios()">
             <img src="nota.png" alt="Precios">
         </button>
+        <button id="boton-pass" class="boton" onclick="pasarDialogo()">
+            <img src="pass.png" alt="Passar diálogo">
+        </button>
+        <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
+            <img src="sonido.png" alt="Panel de Sonido">
+        </button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
@@ -252,8 +258,13 @@
             listaPrecios.style.display = (listaPrecios.style.display === 'block') ? 'none' : 'block';
         }
 
-        let operacion = '';
+        function togglePanelSonido() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = (menuSonido.style.display === 'block') ? 'none' : 'block';
+        }
+
         let resultado = 0;
+        let operacion = '';
 
         function agregarNumero(numero) {
             const resultadoInput = document.getElementById('resultado');
@@ -307,9 +318,13 @@
             textoDialogo.innerText = respuesta;
         }
 
+        function pasarDialogo() {
+            const textoDialogo = document.getElementById('texto-dialogo');
+            textoDialogo.innerText = "Diálogo saltado.";
+        }
+
         window.onload = function() {
             const textoDialogo = document.getElementById('texto-dialogo');
-            textoDialogo.innerText = textoDialogo.innerText + '...';
             setTimeout(() => {
                 const npc1 = document.createElement('img');
                 npc1.src = 'npc 1.png';
