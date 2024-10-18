@@ -182,7 +182,7 @@
 
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo">Luego de unos instantes, el abogado (Max) te explicó lo básico, en la parte superior izquierda tienes dos botones, uno te abre una lista la cual tiene los precios de las cosas y el otro una calculadora, arréglate con eso.</p>
-        <button id="boton-enviar" class="boton">Enviar</button>
+        <button id="boton-enviar" class="boton" onclick="iniciarInteraccion()">Enviar</button>
     </div>
 
     <div class="menu-sonido" id="menu-sonido">
@@ -250,14 +250,17 @@
     <audio id="musica" src="tu-musica.mp3" loop></audio>
 
     <script>
-        function toggleCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
-        }
+        let respuestaCorrecta;
+        let textoNPC = "";
+        const npc1Dialogo = "Ay Holis!!!! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?";
+        const npc2Dialogo = "Dame siete quesos...";
 
-        function toggleListaPrecios() {
-            const listaPrecios = document.getElementById('lista-precios');
-            listaPrecios.style.display = listaPrecios.style.display === 'block' ? 'none' : 'block';
+        function iniciarInteraccion() {
+            respuestaCorrecta = 900 + (2 * 800) + (3 * 1700) + 1200;
+            textoNPC = npc1Dialogo;
+            document.getElementById('texto-npc').textContent = textoNPC;
+            document.getElementById('dialogo-npc').style.display = 'block';
+            document.getElementById('panel-dialogo').style.display = 'none';
         }
 
         function agregarNumero(numero) {
@@ -280,21 +283,22 @@
             pantalla.value = eval(pantalla.value);
         }
 
-        let npc1Dialogo = ["Ay Holis!!!! Me dices cuánto sería el jabón y dos refrescos, tres chetos y un queso plis?"];
-        let npc2Dialogo = ["Dame siete quesos..."];
-        let respuestaCorrecta;
-
         function verificarRespuesta() {
             const resultadoNPC = parseInt(document.getElementById('resultado-npc').value);
             const textoNpc = document.getElementById('texto-npc');
+            let respuestaNpc = "";
+
             if (resultadoNPC === respuestaCorrecta) {
-                textoNpc.textContent = "¡Ayyy muchas gracias!!!";
+                respuestaNpc = "¡Ayyy muchas gracias!!!";
             } else if (resultadoNPC > respuestaCorrecta) {
-                textoNpc.textContent = "¡Oye! Esto es una estafa...";
+                respuestaNpc = "¡Oye! Esto es una estafa...";
             } else {
-                textoNpc.textContent = "¡Oh! Una ganga!!!";
+                respuestaNpc = "¡Oh! Una ganga!!!";
             }
+            
+            textoNpc.textContent = respuestaNpc;
             document.getElementById('dialogo-npc').style.display = 'none';
+
             setTimeout(() => {
                 mostrarNPC2();
             }, 2000);
@@ -303,7 +307,7 @@
         function mostrarNPC2() {
             const textoNpc = document.getElementById('texto-npc');
             respuestaCorrecta = 7 * 1200;
-            textoNpc.textContent = npc2Dialogo[0];
+            textoNpc.textContent = npc2Dialogo;
             document.getElementById('dialogo-npc').style.display = 'block';
         }
 
@@ -312,11 +316,27 @@
             musica.volume = volumen / 100;
         }
 
+        function activarPlay() {
+            document.getElementById('musica').play();
+        }
+
+        function activarPausa() {
+            document.getElementById('musica').pause();
+        }
+
+        function toggleCalculadora() {
+            const calculadora = document.getElementById('calculadora');
+            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleListaPrecios() {
+            const listaPrecios = document.getElementById('lista-precios');
+            listaPrecios.style.display = listaPrecios.style.display === 'block' ? 'none' : 'block';
+        }
+
         setTimeout(() => {
             document.getElementById('pantalla-negra').style.display = 'none';
-            document.getElementById('panel-dialogo').style.display = 'none';
-            respuestaCorrecta = 900 + (2 * 800) + (3 * 1700) + 1200;
-            document.getElementById('dialogo-npc').style.display = 'block';
+            document.getElementById('panel-dialogo').style.display = 'block';
         }, 4000);
     </script>
 </body>
