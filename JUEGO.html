@@ -150,11 +150,6 @@
         #menu-superior button {
             margin: 5px;
         }
-
-        #boton-salir img {
-            width: 40px;
-            height: 40px;
-        }
     </style>
 </head>
 <body>
@@ -320,17 +315,24 @@
 
         function pasarDialogo() {
             const textoDialogo = document.getElementById('texto-dialogo');
-            textoDialogo.innerText = "Diálogo saltado.";
+            textoDialogo.innerText = "Dame siete quesos...";
+            operacion = '';
+            resultado = 0;
         }
 
         window.onload = function() {
-            const textoDialogo = document.getElementById('texto-dialogo');
             setTimeout(() => {
-                const npc1 = document.createElement('img');
-                npc1.src = 'npc 1.png';
-                npc1.alt = 'NPC 1';
-                document.body.appendChild(npc1);
+                const textoDialogo = document.getElementById('texto-dialogo');
+                textoDialogo.innerText = "Dame siete quesos...";
+                mostrarNPC('npc 2.png'); 
             }, 3000);
+        }
+
+        function mostrarNPC(imagen) {
+            const npc = document.createElement('img');
+            npc.src = imagen;
+            npc.alt = 'NPC';
+            document.body.appendChild(npc);
         }
     </script>
 </body>
