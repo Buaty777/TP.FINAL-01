@@ -19,6 +19,7 @@
             text-align: center;
             overflow: hidden;
         }
+
         .panel-dialogo {
             position: absolute;
             bottom: 20px;
@@ -29,11 +30,13 @@
             padding: 20px;
             width: 80%;
         }
+
         .texto-dialogo {
             margin: 0;
             font-size: 18px;
             opacity: 1;
         }
+
         .menu-sonido {
             display: none;
             position: absolute;
@@ -46,6 +49,7 @@
             box-sizing: border-box;
             backdrop-filter: blur(5px);
         }
+
         .boton {
             background-color: transparent;
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -55,14 +59,17 @@
             font-size: 16px;
             transition: transform 0.2s, border-color 0.2s;
         }
+
         .boton img {
             width: 30px;
             height: 30px;
         }
+
         .boton:hover {
             transform: scale(1.1);
             border-color: rgba(255, 255, 255, 0.6);
         }
+
         #calculadora {
             position: absolute;
             top: 50px;
@@ -75,6 +82,7 @@
             font-size: 10px;
             border: 4px solid white;
         }
+
         #calculadora input {
             width: 100%;
             padding: 5px;
@@ -84,6 +92,7 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
         }
+
         #calculadora button {
             width: 25%;
             padding: 5px;
@@ -95,10 +104,12 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
         }
+
         #calculadora button:hover {
             background-color: rgba(255, 255, 255, 0.5);
             transform: scale(1.1);
         }
+
         #resultado {
             width: 100%;
             padding: 5px;
@@ -108,27 +119,31 @@
             background-color: rgba(0, 0, 0, 0.5);
             border: 3px solid white;
         }
+
         #npc {
             position: absolute;
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) scale(0);
-            transition: transform 1s ease-out;
+            transition: transform 1s ease-out, opacity 1s ease-out;
             opacity: 0;
-            transition: opacity 1s ease-out;
         }
+
         .mostrar-npc {
             transform: translateX(-50%) scale(1);
             opacity: 1;
         }
+
         #menu-superior {
             position: absolute;
             top: 10px;
             right: 10px;
         }
+
         #menu-superior .boton {
             display: inline-block;
         }
+
         #lista-precios {
             position: absolute;
             top: 50px;
@@ -143,6 +158,7 @@
             border: 4px solid white;
             color: white;
         }
+        
         #mensaje {
             width: 80%;
             margin: 20px auto;
@@ -157,6 +173,7 @@
     <div class="panel-dialogo" id="panel-dialogo">
         <p class="texto-dialogo" id="texto-dialogo"></p>
     </div>
+
     <div class="menu-sonido" id="menu-sonido">
         <p>Menú de Sonido</p>
         <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
@@ -172,9 +189,11 @@
             <img src="salir.png" alt="Salir">
         </button>
     </div>
+
     <div id="npc">
         <img src="npc1.png" alt="NPC" width="100">
     </div>
+
     <div id="menu-superior">
         <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
             <img src="calculadora.png" alt="Calculadora">
@@ -186,6 +205,7 @@
             <img src="stop.png" alt="Panel de Sonido">
         </button>
     </div>
+
     <div id="calculadora">
         <input type="text" id="resultado" readonly>
         <button onclick="agregarNumero(7)">7</button>
@@ -203,6 +223,7 @@
         <button onclick="agregarOperacion('+')">+</button>
         <button onclick="agregarOperacion('-')">-</button>
     </div>
+
     <div id="lista-precios">
         <p><strong>Precios</strong></p>
         <p>Jabón: 900</p>
@@ -211,7 +232,9 @@
         <p>Queso: 1200</p>
         <p>Uranio: 11000</p>
     </div>
+
     <div id="mensaje"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
     <script>
         const precios = {
@@ -220,53 +243,99 @@
             refresco: 800,
             queso: 1200
         };
+
         const totalEsperado = precios.jabon + (precios.refresco * 2) + (precios.chetos * 3) + precios.queso;
+
         const synth = new Tone.Synth().toDestination();
         const melody = new Tone.Sequence((time, note) => {
             synth.triggerAttackRelease(note, 0.2, time);
         }, ['C4', 'E4', 'G4', 'B4']).start(0);
-        Tone.Transport.start();
-        function toggleCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = calculadora.style.display === 'none' ? 'block' : 'none';
+
+        let textoNPC = [
+            "Ay Holis!!!! Me dices cuanto sería el jabón y dos refrescos tres chetos y un queso plis?",
+            "ayyy muchas gracias!!!",
+            "oye!!! Esto es una estafa...",
+            "oh!!! Una ganga!!!"
+        ];
+
+        let textoActual = 0;
+        const textoDialogo = document.getElementById('texto-dialogo');
+        const npc = document.getElementById('npc');
+
+        function mostrarTexto() {
+            if (textoActual < textoNPC.length) {
+                textoDialogo.innerText = textoNPC[textoActual];
+                textoActual++;
+                setTimeout(mostrarTexto, (textoActual === 1) ? 5000 : 8000);
+            } else {
+                npc.classList.remove('mostrar-npc');
+                textoActual = 0;
+                setTimeout(mostrarTexto, 5000);
+            }
         }
-        function togglePrecios() {
-            const listaPrecios = document.getElementById('lista-precios');
-            listaPrecios.style.display = listaPrecios.style.display === 'none' ? 'block' : 'none';
+
+        function iniciarJuego() {
+            npc.classList.add('mostrar-npc');
+            mostrarTexto();
         }
-        function togglePanelSonido() {
-            const menuSonido = document.getElementById('menu-sonido');
-            menuSonido.style.display = menuSonido.style.display === 'none' ? 'block' : 'none';
+
+        function calcular() {
+            const resultado = parseInt(document.getElementById('resultado').value);
+            const mensaje = document.getElementById('mensaje');
+            if (resultado === totalEsperado) {
+                mensaje.innerText = textoNPC[1];
+            } else if (resultado > totalEsperado) {
+                mensaje.innerText = textoNPC[2];
+            } else {
+                mensaje.innerText = textoNPC[3];
+            }
+            setTimeout(() => { mensaje.innerText = ''; }, 3000);
         }
-        function cambiarVolumen(valor) {
-            Tone.Transport.volume.value = valor - 100;
-        }
-        function activarPlay() {
-            Tone.Transport.start();
-        }
-        function activarPausa() {
-            Tone.Transport.pause();
-        }
+
         function agregarNumero(num) {
-            document.getElementById('resultado').value += num;
+            const resultado = document.getElementById('resultado');
+            resultado.value += num;
         }
-        function agregarOperacion(op) {
-            document.getElementById('resultado').value += op;
-        }
+
         function limpiar() {
             document.getElementById('resultado').value = '';
+            document.getElementById('mensaje').innerText = '';
         }
-        function calcular() {
-            const resultado = eval(document.getElementById('resultado').value);
-            document.getElementById('resultado').value = resultado;
-            document.getElementById('mensaje').textContent = resultado === totalEsperado ? '¡Correcto!' : resultado > totalEsperado ? 'Es mayor' : 'Es menor';
+
+        function agregarOperacion(op) {
+            const resultado = document.getElementById('resultado');
+            resultado.value += ' ' + op + ' ';
         }
-        window.onload = function() {
-            const npc = document.getElementById('npc');
-            setTimeout(() => {
-                npc.classList.add('mostrar-npc');
-            }, 2000);
+
+        function toggleCalculadora() {
+            const calculadora = document.getElementById('calculadora');
+            calculadora.style.display = (calculadora.style.display === 'none' || calculadora.style.display === '') ? 'block' : 'none';
         }
+
+        function togglePrecios() {
+            const listaPrecios = document.getElementById('lista-precios');
+            listaPrecios.style.display = (listaPrecios.style.display === 'none' || listaPrecios.style.display === '') ? 'block' : 'none';
+        }
+
+        function togglePanelSonido() {
+            const menuSonido = document.getElementById('menu-sonido');
+            menuSonido.style.display = (menuSonido.style.display === 'none' || menuSonido.style.display === '') ? 'block' : 'none';
+        }
+
+        function cambiarVolumen(volumen) {
+            Tone.setVolume(volumen - 100);
+        }
+
+        function activarPlay() {
+            Tone.start();
+            melody.start();
+        }
+
+        function activarPausa() {
+            melody.stop();
+        }
+
+        window.onload = iniciarJuego;
     </script>
 </body>
 </html>
