@@ -118,6 +118,7 @@
             border-radius: 10px;
             display: none;
             font-size: 10px;
+            border: 4px solid white;
         }
 
         #calculadora input {
@@ -126,6 +127,9 @@
             margin-bottom: 5px;
             font-size: 12px;
             text-align: right;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 3px solid white;
+            color: black;
         }
 
         #calculadora button {
@@ -135,13 +139,14 @@
             font-size: 12px;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            border: none;
+            border: 3px solid white;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
         #calculadora button:hover {
             background-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
         }
 
         #resultado {
@@ -151,6 +156,7 @@
             text-align: right;
             color: black;
             background-color: white;
+            border: 3px solid white;
         }
 
         #lista-precios {
@@ -165,6 +171,8 @@
             font-size: 12px;
             color: white;
             font-family: 'Courier New', Courier, monospace;
+            border: 4px solid white;
+            box-shadow: 3px 3px white, 6px 6px black;
         }
 
         #menu-superior {
@@ -260,12 +268,12 @@
             (time, note) => {
                 synth.triggerAttackRelease(note, '8n', time);
             },
-            ['C4', 'E4', 'G4', 'A4', 'F4', 'D4', 'B3', 'C4'],
+            ['C4', 'E4', 'G4', 'B4', 'C5'],
             '4n'
         );
 
         Tone.Transport.start();
-        melody.start(0).loop = true;
+        melody.start();
 
         function toggleSonido() {
             const menu = document.getElementById('menu-sonido');
