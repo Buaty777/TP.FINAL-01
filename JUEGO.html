@@ -56,15 +56,15 @@
             background-color: transparent;
             border: 2px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            padding: 10px;
+            padding: 5px;
             margin: 5px;
             font-size: 16px;
             transition: transform 0.2s, border-color 0.2s;
         }
 
         .boton img {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
         }
 
         .boton:hover {
@@ -170,7 +170,7 @@
                 <img src="pausa.png" alt="Pausar Música">
             </button>
         </div>
-        <button id="boton-salir" onclick="window.location.href='index.html'">
+        <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
             <img src="salir.png" alt="Salir">
         </button>
     </div>
@@ -213,7 +213,7 @@
             <img src="pass.png" alt="Passar diálogo">
         </button>
         <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
-            <img src="sonido.png" alt="Panel de Sonido">
+            <img src="pausa.png" alt="Panel de Sonido">
         </button>
     </div>
 
@@ -311,21 +311,15 @@
         function mostrarRespuestaNPC(respuesta) {
             const textoDialogo = document.getElementById('texto-dialogo');
             textoDialogo.innerText = respuesta;
+            mostrarNPC('npc 1.png');
         }
 
         function pasarDialogo() {
             const textoDialogo = document.getElementById('texto-dialogo');
             textoDialogo.innerText = "Dame siete quesos...";
+            mostrarNPC('npc 2.png');
             operacion = '';
             resultado = 0;
-        }
-
-        window.onload = function() {
-            setTimeout(() => {
-                const textoDialogo = document.getElementById('texto-dialogo');
-                textoDialogo.innerText = "Dame siete quesos...";
-                mostrarNPC('npc 2.png'); 
-            }, 3000);
         }
 
         function mostrarNPC(imagen) {
