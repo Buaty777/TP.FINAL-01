@@ -3,335 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (EL JUEGO)</title>
+    <title>Juego de Compras</title>
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
             background-image: url('tienda.jpg');
             background-size: cover;
             color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            overflow: hidden;
         }
-        .panel-dialogo {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
-        }
-        .texto-dialogo {
-            margin: 0;
-            font-size: 18px;
-            opacity: 1;
-        }
-        .menu-sonido {
-            display: none;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 200px;
-            background-color: rgba(34, 85, 34, 0.8);
-            border-radius: 10px;
-            padding: 10px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
-        .boton {
-            background-color: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            padding: 5px;
-            margin: 5px;
-            font-size: 16px;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .boton img {
-            width: 30px;
-            height: 30px;
-        }
-        .boton:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-        #calculadora {
-            position: absolute;
-            top: 50px;
-            left: 20px;
-            width: 100px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 5px;
-            border-radius: 10px;
-            display: none;
-            font-size: 10px;
-            border: 4px solid white;
-        }
-        #calculadora input {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 5px;
-            font-size: 12px;
-            text-align: right;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        #calculadora button {
-            width: 25%;
-            padding: 5px;
-            margin: 3px;
-            font-size: 12px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 3px solid white;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        #calculadora button:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
-        }
-        #resultado {
-            width: 100%;
-            padding: 5px;
-            font-size: 12px;
-            text-align: right;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 3px solid white;
+        #temporizador {
+            font-size: 2em;
+            margin: 20px 0;
         }
         #npc {
-            position: absolute;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            transition: transform 1s ease-out, opacity 1s ease-out;
-            opacity: 0;
+            display: none;
+            margin: 20px 0;
+        }
+        .pantalla-victoria, .pantalla-derrota {
+            display: none;
+            font-size: 2em;
+        }
+        #menu-sonido, #calculadora, #lista-precios {
+            display: none;
         }
         .mostrar-npc {
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
+            display: block;
         }
-        #menu-superior {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        #calculadora {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin: auto;
+            width: fit-content;
+        }
+        #resultado {
+            font-size: 1.5em;
+            width: 100%;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
         }
         #lista-precios {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
-            display: none;
-            font-size: 12px;
-            border: 4px solid white;
-            color: white;
-        }
-        #mensaje {
-            width: 80%;
-            margin: 20px auto;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px;
-            color: white;
-        }
-        #victoria, #derrota {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: white;
-            width: 300px;
+            margin: auto;
+            width: fit-content;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
-    </div>
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú de Sonido</p>
-        <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <div>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="stop.png" alt="Parar Música">
-            </button>
-        </div>
-        <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
-            <img src="salir.png" alt="Salir">
-        </button>
-    </div>
+    <h1>Juego de Compras</h1>
+    <div id="temporizador">25</div>
     <div id="npc">
         <img src="npc1.png" alt="NPC" width="100">
     </div>
-    <div id="menu-superior">
-        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
-            <img src="calculadora.png" alt="Calculadora">
-        </button>
-        <button id="boton-precios" class="boton" onclick="togglePrecios()">
-            <img src="nota.png" alt="Precios">
-        </button>
-        <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
-            <img src="stop.png" alt="Panel de Sonido">
-        </button>
+    <div id="panel-dialogo">
+        <p id="texto-dialogo"></p>
     </div>
+    <div id="pantalla-victoria">
+        <p>¡Has Ganado!</p>
+        <button onclick="reiniciarJuego()">Volver a Jugar</button>
+    </div>
+    <div id="pantalla-derrota">
+        <p>¡Has Perdido!</p>
+        <button onclick="reiniciarJuego()">Volver a Jugar</button>
+    </div>
+
     <div id="calculadora">
         <input type="text" id="resultado" readonly>
-        <button onclick="agregarNumero(7)">7</button>
-        <button onclick="agregarNumero(8)">8</button>
-        <button onclick="agregarNumero(9)">9</button><br>
-        <button onclick="agregarNumero(4)">4</button>
-        <button onclick="agregarNumero(5)">5</button>
-        <button onclick="agregarNumero(6)">6</button><br>
-        <button onclick="agregarNumero(1)">1</button>
-        <button onclick="agregarNumero(2)">2</button>
-        <button onclick="agregarNumero(3)">3</button><br>
-        <button onclick="agregarNumero(0)">0</button>
-        <button onclick="limpiar()">C</button>
-        <button onclick="calcular()">=</button><br>
-        <button onclick="agregarOperacion('+')">+</button>
-        <button onclick="agregarOperacion('-')">-</button>
+        <div>
+            <button onclick="agregarNumero('1')">1</button>
+            <button onclick="agregarNumero('2')">2</button>
+            <button onclick="agregarNumero('3')">3</button>
+            <button onclick="agregarOperacion('+')">+</button>
+        </div>
+        <div>
+            <button onclick="agregarNumero('4')">4</button>
+            <button onclick="agregarNumero('5')">5</button>
+            <button onclick="agregarNumero('6')">6</button>
+            <button onclick="agregarOperacion('-')">-</button>
+        </div>
+        <div>
+            <button onclick="agregarNumero('7')">7</button>
+            <button onclick="agregarNumero('8')">8</button>
+            <button onclick="agregarNumero('9')">9</button>
+            <button onclick="agregarOperacion('*')">*</button>
+        </div>
+        <div>
+            <button onclick="limpiar()">C</button>
+            <button onclick="agregarNumero('0')">0</button>
+            <button onclick="calcular()">=</button>
+            <button onclick="agregarOperacion('/')">/</button>
+        </div>
     </div>
+
     <div id="lista-precios">
-        <p><strong>Precios</strong></p>
-        <p>Jabón: 900</p>
-        <p>Chetos: 1700</p>
-        <p>Refresco: 800</p>
-        <p>Queso: 1200</p>
-        <p>Uranio: 11000</p>
+        <h2>Lista de Precios</h2>
+        <ul>
+            <li>Jabón: 1000</li>
+            <li>Refresco: 800</li>
+            <li>Chetos: 500</li>
+            <li>Queso: 1600</li>
+        </ul>
     </div>
-    <div id="mensaje"></div>
-    <div id="victoria">
-        <p>¡Victoria!</p>
-        <button onclick="reiniciar()">Reiniciar</button>
+
+    <div id="menu-sonido">
+        <button onclick="activarSonido()">Activar Sonido</button>
+        <button onclick="desactivarSonido()">Desactivar Sonido</button>
     </div>
-    <div id="derrota">
-        <p>¡Derrota!</p>
-        <button onclick="reiniciar()">Reiniciar</button>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.8/Tone.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
     <script>
-        let sonido = new Tone.Player("ruta/de/tu/sonido.mp3").toDestination();
-        let volumen = 0.5;
         let timer;
-        let npcVisible = false;
-        let contador = 0;
+        let tiempoRestante = 25;
 
-        function cambiarVolumen(valor) {
-            volumen = valor / 100;
-            Tone.Master.volume.value = Math.log10(volumen) * 20;
+        function activarSonido() {
+            Tone.start();
         }
 
-        function activarPlay() {
-            sonido.start();
+        function desactivarSonido() {
+            Tone.Transport.stop();
         }
 
-        function activarPausa() {
-            sonido.stop();
-        }
-
-        function togglePanelSonido() {
-            const panel = document.getElementById('menu-sonido');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function toggleCalculadora() {
-            const calculadora = document.getElementById('calculadora');
-            calculadora.style.display = calculadora.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function togglePrecios() {
-            const precios = document.getElementById('lista-precios');
-            precios.style.display = precios.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function agregarNumero(numero) {
-            document.getElementById('resultado').value += numero;
+        function agregarNumero(num) {
+            const resultado = document.getElementById("resultado");
+            resultado.value += num;
         }
 
         function agregarOperacion(operacion) {
-            document.getElementById('resultado').value += ` ${operacion} `;
+            const resultado = document.getElementById("resultado");
+            resultado.value += operacion;
         }
 
         function limpiar() {
-            document.getElementById('resultado').value = '';
+            document.getElementById("resultado").value = '';
         }
 
         function calcular() {
-            let resultado = eval(document.getElementById('resultado').value);
-            const mensaje = document.getElementById('mensaje');
-            contador++;
-            mensaje.innerHTML = `Resultado: ${resultado}`;
-            mostrarNPC();
-            if (resultado === 3900) {
-                mostrarVictoria();
+            const resultado = document.getElementById("resultado").value;
+            const valorEsperado = 3900; 
+            const npc = document.getElementById("npc");
+
+            if (resultado == valorEsperado) {
+                npcDialogo("correcto");
+                mostrarPantallaVictoria();
+            } else if (resultado > valorEsperado) {
+                npcDialogo("incorrecto");
+                mostrarPantallaDerrota();
             } else {
-                mostrarDerrota();
+                npcDialogo("menor");
+                mostrarPantallaDerrota();
             }
         }
 
-        function mostrarNPC() {
-            const npc = document.getElementById('npc');
-            npc.classList.add('mostrar-npc');
-            npcVisible = true;
-            setTimeout(() => {
-                npc.classList.remove('mostrar-npc');
-            }, 2000);
+        function npcDialogo(tipo) {
+            const textoDialogo = document.getElementById("texto-dialogo");
+            const npc = document.getElementById("npc");
+            const mensajes = {
+                correcto: "ayyy muchas gracias!!!",
+                incorrecto: "oye!!! Esto es una estafa...",
+                menor: "oh!!! Una ganga!!!"
+            };
+            textoDialogo.innerText = mensajes[tipo];
+            npc.classList.add("mostrar-npc");
         }
 
-        function mostrarVictoria() {
-            const victoria = document.getElementById('victoria');
-            victoria.style.display = 'block';
-            victoria.scrollIntoView({ behavior: 'smooth' });
-            Tone.start();
-            const victoriaSound = new Tone.Players({
-                sound: "ruta/de/tu/victoria.mp3"
-            }).toDestination();
-            victoriaSound.start();
+        function mostrarPantallaVictoria() {
+            document.getElementById("pantalla-victoria").style.display = "block";
+            document.getElementById("pantalla-derrota").style.display = "none";
         }
 
-        function mostrarDerrota() {
-            const derrota = document.getElementById('derrota');
-            derrota.style.display = 'block';
-            derrota.scrollIntoView({ behavior: 'smooth' });
-            Tone.start();
-            const derrotaSound = new Tone.Players({
-                sound: "ruta/de/tu/derrota.mp3"
-            }).toDestination();
-            derrotaSound.start();
+        function mostrarPantallaDerrota() {
+            document.getElementById("pantalla-derrota").style.display = "block";
+            document.getElementById("pantalla-victoria").style.display = "none";
         }
 
-        function reiniciar() {
-            document.getElementById('victoria').style.display = 'none';
-            document.getElementById('derrota').style.display = 'none';
+        function reiniciarJuego() {
+            document.getElementById("pantalla-victoria").style.display = "none";
+            document.getElementById("pantalla-derrota").style.display = "none";
             limpiar();
-            document.getElementById('mensaje').innerHTML = '';
-            contador = 0;
+            document.getElementById("texto-dialogo").innerText = '';
+            tiempoRestante = 25;
+            document.getElementById("temporizador").innerText = tiempoRestante;
+            const npc = document.getElementById("npc");
+            npc.classList.remove("mostrar-npc");
+            startTimer();
         }
 
-        setInterval(() => {
-            document.getElementById('mensaje').innerHTML = `Contador: ${contador}`;
-        }, 1000);
+        function startTimer() {
+            timer = setInterval(() => {
+                tiempoRestante--;
+                document.getElementById("temporizador").innerText = tiempoRestante;
+                if (tiempoRestante <= 0) {
+                    clearInterval(timer);
+                    mostrarPantallaDerrota();
+                    npcDialogo("menor");
+                }
+            }, 1000);
+        }
+
+        function iniciarMusicaAmbiente() {
+            const synth = new Tone.PolySynth().toDestination();
+            const part = new Tone.Part((time, note) => {
+                synth.triggerAttackRelease(note, 0.5, time);
+            }, [
+                ["0:0:0", "C4"],
+                ["0:1:0", "E4"],
+                ["0:2:0", "G4"],
+                ["0:3:0", "B4"],
+                ["1:0:0", "C5"],
+                ["1:1:0", "E5"],
+                ["1:2:0", "G5"],
+                ["1:3:0", "B5"],
+                ["2:0:0", "C4"],
+                ["2:1:0", "E4"],
+                ["2:2:0", "G4"],
+                ["2:3:0", "B4"],
+            ]);
+            part.loop = true;
+            part.loopEnd = "2:0:0";
+            part.start(0);
+        }
+
+        window.onload = () => {
+            startTimer();
+            reiniciarJuego();
+            iniciarMusicaAmbiente();
+        };
     </script>
 </body>
 </html>
