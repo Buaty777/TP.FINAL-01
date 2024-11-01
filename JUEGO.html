@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de Compras</title>
+    <title>K.T.P (THE GAME)</title>
     <style>
         body {
             background-image: url('tienda.jpg');
             background-size: cover;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Press Start 2P', cursive;
             text-align: center;
         }
         #temporizador {
@@ -24,12 +24,6 @@
             display: none;
             font-size: 2em;
         }
-        #menu-sonido, #calculadora, #lista-precios {
-            display: none;
-        }
-        .mostrar-npc {
-            display: block;
-        }
         #calculadora {
             background-color: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
@@ -42,10 +36,18 @@
             width: 100%;
         }
         button {
+            background-color: #444;
+            border: 2px solid #fff;
+            color: #fff;
             margin: 5px;
             padding: 10px;
             font-size: 1em;
             cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #666;
         }
         #lista-precios {
             background-color: rgba(0, 0, 0, 0.5);
@@ -55,7 +57,13 @@
             width: fit-content;
             display: inline-block;
         }
+        #menu-sonido {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
     </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap">
 </head>
 <body>
     <h1>Juego de Compras</h1>
@@ -147,7 +155,7 @@
 
         function calcular() {
             const resultado = document.getElementById("resultado").value;
-            const valorEsperado = 3900; 
+            const valorEsperado = 3900; // Suma total: Jabón (1000) + 2 Refrescos (1600) + 3 Chetos (1500) + Queso (1600)
             const npc = document.getElementById("npc");
 
             if (resultado == valorEsperado) {
