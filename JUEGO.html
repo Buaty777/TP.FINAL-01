@@ -3,247 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (THE GAME)</title>
-    <style>
-        body {
-            background-image: url('tienda.jpg');
-            background-size: cover;
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            text-align: center;
-        }
-        #temporizador {
-            font-size: 2em;
-            margin: 20px 0;
-        }
-        #npc {
-            display: none;
-            margin: 20px 0;
-        }
-        .pantalla-victoria, .pantalla-derrota {
-            display: none;
-            font-size: 2em;
-        }
-        #calculadora {
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            margin: auto;
-            width: fit-content;
-        }
-        #resultado {
-            font-size: 1.5em;
-            width: 100%;
-        }
-        button {
-            background-color: #444;
-            border: 2px solid #fff;
-            color: #fff;
-            margin: 5px;
-            padding: 10px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #666;
-        }
-        #lista-precios {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 20px;
-            margin: auto;
-            width: fit-content;
-            display: inline-block;
-        }
-        #menu-sonido {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap">
+    <title>K.T.P (the game)</title>
+    <link rel="stylesheet" href="deto.css">
 </head>
 <body>
-    <h1>Juego de Compras</h1>
-    <div id="temporizador">25</div>
+    <div class="panel-dialogo" id="panel-dialogo">
+        <p class="texto-dialogo" id="texto-dialogo"></p>
+    </div>
+    <div class="menu-sonido" id="menu-sonido">
+        <p>Menú de Sonido</p>
+        <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
+        <div>
+            <button class="boton" id="boton-play" onclick="activarPlay()">
+                <img src="inicio.png" alt="Iniciar Música">
+            </button>
+            <button class="boton" id="boton-pausa" onclick="activarPausa()">
+                <img src="stop.png" alt="Parar Música">
+            </button>
+        </div>
+        <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
+            <img src="salir.png" alt="Salir">
+        </button>
+    </div>
     <div id="npc">
         <img src="npc1.png" alt="NPC" width="100">
     </div>
-    <div id="panel-dialogo">
-        <p id="texto-dialogo"></p>
+    <div id="menu-superior">
+        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
+            <img src="calculadora.png" alt="Calculadora">
+        </button>
+        <button id="boton-precios" class="boton" onclick="togglePrecios()">
+            <img src="nota.png" alt="Precios">
+        </button>
+        <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
+            <img src="stop.png" alt="Panel de Sonido">
+        </button>
     </div>
-    <div id="pantalla-victoria">
-        <p>¡Has Ganado!</p>
-        <button onclick="reiniciarJuego()">Volver a Jugar</button>
-    </div>
-    <div id="pantalla-derrota">
-        <p>¡Has Perdido!</p>
-        <button onclick="reiniciarJuego()">Volver a Jugar</button>
-    </div>
-
     <div id="calculadora">
         <input type="text" id="resultado" readonly>
-        <div>
-            <button onclick="agregarNumero('1')">1</button>
-            <button onclick="agregarNumero('2')">2</button>
-            <button onclick="agregarNumero('3')">3</button>
-            <button onclick="agregarOperacion('+')">+</button>
-        </div>
-        <div>
-            <button onclick="agregarNumero('4')">4</button>
-            <button onclick="agregarNumero('5')">5</button>
-            <button onclick="agregarNumero('6')">6</button>
-            <button onclick="agregarOperacion('-')">-</button>
-        </div>
-        <div>
-            <button onclick="agregarNumero('7')">7</button>
-            <button onclick="agregarNumero('8')">8</button>
-            <button onclick="agregarNumero('9')">9</button>
-            <button onclick="agregarOperacion('*')">*</button>
-        </div>
-        <div>
-            <button onclick="limpiar()">C</button>
-            <button onclick="agregarNumero('0')">0</button>
-            <button onclick="calcular()">=</button>
-            <button onclick="agregarOperacion('/')">/</button>
-        </div>
+        <button onclick="agregarNumero(7)">7</button>
+        <button onclick="agregarNumero(8)">8</button>
+        <button onclick="agregarNumero(9)">9</button><br>
+        <button onclick="agregarNumero(4)">4</button>
+        <button onclick="agregarNumero(5)">5</button>
+        <button onclick="agregarNumero(6)">6</button><br>
+        <button onclick="agregarNumero(1)">1</button>
+        <button onclick="agregarNumero(2)">2</button>
+        <button onclick="agregarNumero(3)">3</button><br>
+        <button onclick="agregarNumero(0)">0</button>
+        <button onclick="limpiar()">C</button>
+        <button onclick="calcular()">=</button><br>
+        <button onclick="agregarOperacion('+')">+</button>
+        <button onclick="agregarOperacion('-')">-</button>
     </div>
-
     <div id="lista-precios">
-        <h2>Lista de Precios</h2>
-        <ul>
-            <li>Jabón: 1000</li>
-            <li>Refresco: 800</li>
-            <li>Chetos: 500</li>
-            <li>Queso: 1600</li>
-        </ul>
+        <p><strong>Precios</strong></p>
+        <p>Jabón: 900</p>
+        <p>Chetos: 1700</p>
+        <p>Refresco: 800</p>
+        <p>Queso: 1200</p>
+        <p>Uranio: 11000</p>
     </div>
-
-    <div id="menu-sonido">
-        <button onclick="activarSonido()">Activar Sonido</button>
-        <button onclick="desactivarSonido()">Desactivar Sonido</button>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/tone/build/Tone.js"></script>
-    <script>
-        let timer;
-        let tiempoRestante = 25;
-
-        function activarSonido() {
-            Tone.start();
-        }
-
-        function desactivarSonido() {
-            Tone.Transport.stop();
-        }
-
-        function agregarNumero(num) {
-            const resultado = document.getElementById("resultado");
-            resultado.value += num;
-        }
-
-        function agregarOperacion(operacion) {
-            const resultado = document.getElementById("resultado");
-            resultado.value += operacion;
-        }
-
-        function limpiar() {
-            document.getElementById("resultado").value = '';
-        }
-
-        function calcular() {
-            const resultado = document.getElementById("resultado").value;
-            const valorEsperado = 3900; // Suma total: Jabón (1000) + 2 Refrescos (1600) + 3 Chetos (1500) + Queso (1600)
-            const npc = document.getElementById("npc");
-
-            if (resultado == valorEsperado) {
-                npcDialogo("correcto");
-                mostrarPantallaVictoria();
-            } else if (resultado > valorEsperado) {
-                npcDialogo("incorrecto");
-                mostrarPantallaDerrota();
-            } else {
-                npcDialogo("menor");
-                mostrarPantallaDerrota();
-            }
-        }
-
-        function npcDialogo(tipo) {
-            const textoDialogo = document.getElementById("texto-dialogo");
-            const npc = document.getElementById("npc");
-            const mensajes = {
-                correcto: "ayyy muchas gracias!!!",
-                incorrecto: "oye!!! Esto es una estafa...",
-                menor: "oh!!! Una ganga!!!"
-            };
-            textoDialogo.innerText = mensajes[tipo];
-            npc.classList.add("mostrar-npc");
-        }
-
-        function mostrarPantallaVictoria() {
-            document.getElementById("pantalla-victoria").style.display = "block";
-            document.getElementById("pantalla-derrota").style.display = "none";
-        }
-
-        function mostrarPantallaDerrota() {
-            document.getElementById("pantalla-derrota").style.display = "block";
-            document.getElementById("pantalla-victoria").style.display = "none";
-        }
-
-        function reiniciarJuego() {
-            document.getElementById("pantalla-victoria").style.display = "none";
-            document.getElementById("pantalla-derrota").style.display = "none";
-            limpiar();
-            document.getElementById("texto-dialogo").innerText = '';
-            tiempoRestante = 25;
-            document.getElementById("temporizador").innerText = tiempoRestante;
-            const npc = document.getElementById("npc");
-            npc.classList.remove("mostrar-npc");
-            startTimer();
-        }
-
-        function startTimer() {
-            timer = setInterval(() => {
-                tiempoRestante--;
-                document.getElementById("temporizador").innerText = tiempoRestante;
-                if (tiempoRestante <= 0) {
-                    clearInterval(timer);
-                    mostrarPantallaDerrota();
-                    npcDialogo("menor");
-                }
-            }, 1000);
-        }
-
-        function iniciarMusicaAmbiente() {
-            const synth = new Tone.PolySynth().toDestination();
-            const part = new Tone.Part((time, note) => {
-                synth.triggerAttackRelease(note, 0.5, time);
-            }, [
-                ["0:0:0", "C4"],
-                ["0:1:0", "E4"],
-                ["0:2:0", "G4"],
-                ["0:3:0", "B4"],
-                ["1:0:0", "C5"],
-                ["1:1:0", "E5"],
-                ["1:2:0", "G5"],
-                ["1:3:0", "B5"],
-                ["2:0:0", "C4"],
-                ["2:1:0", "E4"],
-                ["2:2:0", "G4"],
-                ["2:3:0", "B4"],
-            ]);
-            part.loop = true;
-            part.loopEnd = "2:0:0";
-            part.start(0);
-        }
-
-        window.onload = () => {
-            startTimer();
-            reiniciarJuego();
-            iniciarMusicaAmbiente();
-        };
-    </script>
+    <div id="mensaje"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
+    <script src="deto.js"></script>
 </body>
 </html>
