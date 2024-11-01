@@ -54,7 +54,21 @@ function calcular() {
     try {
         const resultado = eval(document.getElementById("resultado").value);
         document.getElementById("resultado").value = resultado;
+        mostrarMensajeSegunResultado(resultado);
     } catch (error) {
         document.getElementById("resultado").value = "Error";
+    }
+}
+
+function mostrarMensajeSegunResultado(resultado) {
+    const mensaje = document.getElementById("mensaje");
+    if (resultado === 7300) {
+        mensaje.textContent = "¡Ayyy muchas gracias!";
+    } else if (resultado > 7300) {
+        mensaje.textContent = "¡Oye! Esto es una estafa...";
+    } else if (resultado < 7300) {
+        mensaje.textContent = "¡Oh! Una ganga...";
+    } else {
+        mensaje.textContent = "";
     }
 }

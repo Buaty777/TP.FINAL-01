@@ -1,71 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" href="LOGO 1.ico" type="image/x-icon">
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K.T.P (the game)</title>
-    <link rel="stylesheet" href="deto.css">
+    <title>K.T.P (THE GAME)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="panel-dialogo" id="panel-dialogo">
-        <p class="texto-dialogo" id="texto-dialogo"></p>
+    <div id="menu-sonido">
+        <button onclick="activarPlay()"><img src="inicio.png" alt="Play"></button>
+        <button onclick="activarPausa()"><img src="pausa.png" alt="Pause"></button>
+        <input type="range" min="0" max="100" onchange="cambiarVolumen(this.value)">
+        <button onclick="togglePanelSonido()"><img src="salir.png" alt="Salir"></button>
     </div>
-    <div class="menu-sonido" id="menu-sonido">
-        <p>Menú de Sonido</p>
-        <input type="range" min="0" max="100" value="50" id="control-volumen" oninput="cambiarVolumen(this.value)">
-        <div>
-            <button class="boton" id="boton-play" onclick="activarPlay()">
-                <img src="inicio.png" alt="Iniciar Música">
-            </button>
-            <button class="boton" id="boton-pausa" onclick="activarPausa()">
-                <img src="stop.png" alt="Parar Música">
-            </button>
-        </div>
-        <button id="boton-salir" onclick="window.location.href='index.html'" class="boton">
-            <img src="salir.png" alt="Salir">
-        </button>
-    </div>
-    <div id="npc">
-        <img src="npc1.png" alt="NPC" width="100">
-    </div>
-    <div id="menu-superior">
-        <button id="boton-calculadora" class="boton" onclick="toggleCalculadora()">
-            <img src="calculadora.png" alt="Calculadora">
-        </button>
-        <button id="boton-precios" class="boton" onclick="togglePrecios()">
-            <img src="nota.png" alt="Precios">
-        </button>
-        <button id="boton-panel-sonido" class="boton" onclick="togglePanelSonido()">
-            <img src="stop.png" alt="Panel de Sonido">
-        </button>
-    </div>
+
+    <button onclick="toggleCalculadora()"><img src="calculadora.png" alt="Calculadora"></button>
+    <button onclick="togglePrecios()"><img src="nota.png" alt="Lista de Precios"></button>
+
     <div id="calculadora">
         <input type="text" id="resultado" readonly>
-        <button onclick="agregarNumero(7)">7</button>
-        <button onclick="agregarNumero(8)">8</button>
-        <button onclick="agregarNumero(9)">9</button><br>
-        <button onclick="agregarNumero(4)">4</button>
-        <button onclick="agregarNumero(5)">5</button>
-        <button onclick="agregarNumero(6)">6</button><br>
-        <button onclick="agregarNumero(1)">1</button>
-        <button onclick="agregarNumero(2)">2</button>
-        <button onclick="agregarNumero(3)">3</button><br>
-        <button onclick="agregarNumero(0)">0</button>
-        <button onclick="limpiar()">C</button>
-        <button onclick="calcular()">=</button><br>
-        <button onclick="agregarOperacion('+')">+</button>
-        <button onclick="agregarOperacion('-')">-</button>
+        <div class="botones">
+            <button onclick="agregarNumero('1')">1</button>
+            <button onclick="agregarNumero('2')">2</button>
+            <button onclick="agregarNumero('3')">3</button>
+            <button onclick="agregarOperacion('+')">+</button>
+            <button onclick="agregarNumero('4')">4</button>
+            <button onclick="agregarNumero('5')">5</button>
+            <button onclick="agregarNumero('6')">6</button>
+            <button onclick="agregarOperacion('-')">-</button>
+            <button onclick="agregarNumero('7')">7</button>
+            <button onclick="agregarNumero('8')">8</button>
+            <button onclick="agregarNumero('9')">9</button>
+            <button onclick="agregarOperacion('*')">*</button>
+            <button onclick="agregarNumero('0')">0</button>
+            <button onclick="calcular()">=</button>
+            <button onclick="limpiar()">C</button>
+            <button onclick="agregarOperacion('/')">/</button>
+        </div>
     </div>
+
     <div id="lista-precios">
-        <p><strong>Precios</strong></p>
-        <p>Jabón: 900</p>
-        <p>Chetos: 1700</p>
-        <p>Refresco: 800</p>
-        <p>Queso: 1200</p>
-        <p>Uranio: 11000</p>
+        <p>Jabón: $1500</p>
+        <p>Refresco: $1200</p>
+        <p>Chetos: $1000</p>
+        <p>Queso: $1800</p>
     </div>
+
     <div id="mensaje"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.js"></script>
-    <script src="deto.js"></script>
 </body>
 </html>
