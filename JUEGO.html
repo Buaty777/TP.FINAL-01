@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K.T.P (THE GAME)</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="deto.css">
+    <script defer src="deto.js"></script>
 </head>
 <body>
     <div id="menu-sonido">
@@ -17,8 +17,10 @@
         <button onclick="togglePanelSonido()"><img src="salir.png" alt="Salir"></button>
     </div>
 
-    <button onclick="toggleCalculadora()"><img src="calculadora.png" alt="Calculadora"></button>
-    <button onclick="togglePrecios()"><img src="nota.png" alt="Lista de Precios"></button>
+    <div class="botones-principales">
+        <button onclick="toggleCalculadora()"><img src="calculadora.png" alt="Calculadora"></button>
+        <button onclick="togglePrecios()"><img src="nota.png" alt="Lista de Precios"></button>
+    </div>
 
     <div id="calculadora">
         <input type="text" id="resultado" readonly>

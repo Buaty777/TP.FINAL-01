@@ -16,7 +16,9 @@ function cambiarVolumen(valor) {
 }
 
 function activarPlay() {
-    Tone.Transport.start();
+    Tone.start().then(() => {
+        Tone.Transport.start();
+    });
 }
 
 function activarPausa() {
